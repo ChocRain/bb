@@ -1,0 +1,48 @@
+<html>
+<head>
+    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
+    <script src="/socket.io/socket.io.js"></script>
+    <script>
+        // TODO: Throw away this code.
+
+        $(function(){
+            var iosocket = io.connect();
+ 
+            iosocket.on('connect', function () {
+                $('#incomingChatMessages').append($('<li>Connected</li>'));
+ 
+                iosocket.on('message', function(messageStr) {
+                    var message = JSON.parse(messageStr);
+                    var payload = message.payload;
+                    var nick = payload.nick;
+                    var text = payload.text;
+                    $('#incomingChatMessages').append($('<li></li>').text("[" + nick + "] " + text));
+                });
+                iosocket.on('disconnect', function() {
+                    $('#incomingChatMessages').append('<li>Disconnected</li>');
+                });
+            });
+ 
+            $('#outgoingChatMessage').keypress(function(event) {
+                if(event.which == 13) {
+                    event.preventDefault();
+                    iosocket.send(JSON.stringify({
+                        type: "client.chat.message",
+                        payload: {
+                            text: $('#outgoingChatMessage').val()
+                        }
+                    }));
+                    $('#outgoingChatMessage').val('');
+                }
+            });
+        });
+    </script>
+</head>
+<body>
+Incoming Chat: <ul id="incomingChatMessages"></ul>
+
+
+<input type="text" id="outgoingChatMessage">
+</body>
+</html>
+
