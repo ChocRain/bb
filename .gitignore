@@ -1,4 +1,6 @@
+# specfial files and directories
 node_modules/
+secret.json
 
 # temp file
 *.swp
