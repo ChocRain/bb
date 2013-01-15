@@ -1,5 +1,7 @@
 <html>
 <head>
+    <link rel="stylesheet" type="text/css" href="/css/style.css" />
+
     <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
     <script src="/socket.io/socket.io.js"></script>
     <script>
@@ -16,7 +18,11 @@
                     var payload = message.payload;
                     var nick = payload.nick;
                     var text = payload.text;
-                    $('#incomingChatMessages').append($('<li></li>').text("[" + nick + "] " + text));
+
+                    var li = $('<li></li>');
+                    li.append($('<span class="nick"></span>').text("[" + nick + "]"));
+                    li.append($('<span class="text"></span>').text(text));
+                    $('#incomingChatMessages').append(li);
                 });
                 iosocket.on('disconnect', function() {
                     $('#incomingChatMessages').append('<li>Disconnected</li>');
@@ -39,7 +45,10 @@
     </script>
 </head>
 <body>
-Incoming Chat: <ul id="incomingChatMessages"></ul>
+
+<h1>ponyverse</h1>
+
+<ul id="incomingChatMessages"></ul>
 
 
 <input type="text" id="outgoingChatMessage">
