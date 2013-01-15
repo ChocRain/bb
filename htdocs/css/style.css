@@ -1,4 +1,7 @@
-/* TODO: Throw away */
+body {
+    margin: 0;
+    padding: 0;
+}
 
 h1 {
     color: #EE3F96;
@@ -14,5 +17,31 @@ ul > li {
 
 .text {
     padding-left: 5px;
+}
+
+.on-top {
+    position: absolute;
+    left: 50px;
+    top: 50px;
+    z-index: 100;
+}
+
+#cr-stage {
+    z-index: 1;
+}
+
+/* FIXME: chatbox styling is broken when set to 100% width */
+
+#chatbox {
+    position: fixed;
+    width: 80%;
+    bottom: 0px;
+    left: 0px;
+    padding: 20px;
+    z-index: 2; /* above cr-stage */
+}
+
+#chatbox .text {
+    width: 100%;
 }
 
