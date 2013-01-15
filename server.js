@@ -32,10 +32,18 @@ if (user && password) {
     auth = express.basicAuth(user, password);
 }
 
-// routes
-app.get("/", auth, function(req, res) {
-    res.writeHead(200, { "Content-type": "text/html"});
-    res.end(fs.readFileSync(__dirname + "/htdocs/index.html"));
+app.use(auth);
+
+// static content
+app.use("/", express.static(__dirname + "/htdocs"));
+
+app.get("/", function(req, res) {
+    fs.readFile(__dirname + "/htdocs/index.html", "utf8", function (err, body) {
+        if (err) return next(err);
+
+        res.writeHead(200, { "Content-type": "text/html"});
+        res.end(body);
+    });
 });
 
 
