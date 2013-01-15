@@ -1,3 +1,6 @@
+// Config
+var port = process.env.PORT || 8080;
+
 // library imports
 
 var fs = require("fs");
@@ -14,8 +17,8 @@ var clientRegistry = require("./server/clientRegistry.js");
 var app = express(); 
 var httpServer = http.createServer(app);
 
-httpServer.listen(8080, function() {
-    console.log("Listening at: http://localhost:8080");
+httpServer.listen(port, function() {
+    console.log("Listening at: http://localhost:" + port);
 });
 
 // basic authentication to keep public out for now
