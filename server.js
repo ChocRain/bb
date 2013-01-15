@@ -1,6 +1,7 @@
 // library imports
 
 var fs = require("fs");
+var express = require('express');
 var http = require("http")
 var socketio = require("socket.io");
 
@@ -9,11 +10,16 @@ var clientRegistry = require("./server/clientRegistry.js");
 
 
 // setup HTTP server
- 
-var httpServer = http.createServer(function(req, res) {
+
+var app = express(); 
+var httpServer = http.createServer(app);
+
+app.get("/", function(req, res) {
     res.writeHead(200, { "Content-type": "text/html"});
     res.end(fs.readFileSync(__dirname + "/htdocs/index.html"));
-}).listen(8080, function() {
+});
+
+httpServer.listen(8080, function() {
     console.log("Listening at: http://localhost:8080");
 });
 
