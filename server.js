@@ -1,5 +1,7 @@
 // Config
 var port = process.env.PORT || 8080;
+var user = process.env.BASIC_AUTH_USER || null;
+var password = process.env.BASIC_AUTH_PASSWORD || null;
 
 // library imports
 
@@ -26,9 +28,8 @@ var auth = function (req, res, next) {
     next();
 };
 
-if (fs.existsSync("secret.json")) {
-    var secret = JSON.parse(fs.readFileSync("secret.json"));
-    auth = express.basicAuth(secret.user, secret.password);
+if (user && password) {
+    auth = express.basicAuth(user, password);
 }
 
 // routes
