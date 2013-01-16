@@ -47,10 +47,16 @@ Message body
 
 Every message body is structured as follows, e. g.:
 
-  {
-    "type": "client.user.enter",
-    "payload": { ... } // payload is optional (?)
-  }
+    {
+        // required
+        "type": "client.user.enter",
+
+        // only if available, required for most messages by the client
+        "sessionId": "1234567890abcdef",
+
+        // payload is required, always an object
+        "payload": { ... }
+    }
 
 
 Incoming
@@ -61,11 +67,11 @@ client.user.enter
 
 Payload:
 
-  { "nick": "nickname" }
+    { "nick": "nickname" }
 
 Response:
 
-  erver.user.entered
+    server.user.entered
 
 
 client.chat.message
@@ -73,24 +79,30 @@ client.chat.message
 
 Payload:
 
-  { "text": "Message text goes here..." }
+    { "text": "Message text goes here..." }
 
 Response:
 
-  server.chat.message
+    server.chat.message
 
 
 Outgoing
 ========
 
 server.user.entered
+-------------------
 
-  { "nick": "nickname" }
+Payload:
+
+    { "nick": "nickname" }
 
 server.chat.message
+-------------------
 
-  {
-    "nick": "nickname",
-    "text": "Message text goes here..."
-  }
+Payload:
+
+    {
+        "nick": "nickname",
+        "text": "Message text goes here..."
+    }
 

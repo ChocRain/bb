@@ -1,9 +1,7 @@
 // library imports
-
 var _ = require("underscore");
 
 // own imports
-
 var Client = require("./Client.js");
 
 /**
@@ -17,13 +15,15 @@ var ClientRegistry = function () {
 ClientRegistry.prototype._newClientId = function () {
     this._lastId += 1;
     return this._lastId;
-}
+};
 
 ClientRegistry.prototype.register = function (socket) {
     console.log("Registering new client.");
 
     var clientId = this._newClientId();
     this._connectedClients[clientId] = new Client(clientId, socket, this);
+
+    console.log("Current number of clients:", _.size(this._connectedClients));
 };
 
 ClientRegistry.prototype.unregister = function (client) {
@@ -32,6 +32,8 @@ ClientRegistry.prototype.unregister = function (client) {
     console.log("Unregistering client:", clientId);
 
     delete this._connectedClients[clientId];
+
+    console.log("Number of remaining clients:", _.size(this._connectedClients));
 };
 
 /**

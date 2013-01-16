@@ -33,40 +33,76 @@ define([
         // Cruel code for chat handling. TODO: Rewrite.
 
         var iosocket = io.connect();
+        this._sessionId = null;
 
         iosocket.on('connect', function () {
             $('#incomingChatMessages').append($('<li>Connected</li>'));
 
             iosocket.on('message', function(messageStr) {
                 var message = JSON.parse(messageStr);
+                var type = message.type;
                 var payload = message.payload;
-                var nick = payload.nick;
-                var text = payload.text;
+
+                this._sessionId = message.sessionId || null;
 
                 var li = $('<li></li>');
-                li.append($('<span class="nick"></span>').text("[" + nick + "]"));
-                li.append($('<span class="text"></span>').text(text));
-                $('#incomingChatMessages').append(li);
-            });
+
+                switch (type) {
+                    case "server.user.entered":
+                        var nick = payload.nick;
+                        li.append($('<span class="nick"></span>').text("[" + nick + "]"));
+                        li.append($('<span class="action"></span>').text("Entered the chat..."));
+                        $('#incomingChatMessages').append(li);
+                    break;
+                    case "server.chat.message":
+                        var nick = payload.nick;
+                        var text = payload.text;
+
+                        li.append($('<span class="nick"></span>').text("[" + nick + "]"));
+                        li.append($('<span class="text"></span>').text(text));
+                        $('#incomingChatMessages').append(li);
+                    break;
+                }
+            }.bind(this));
             iosocket.on('disconnect', function() {
                 $('#incomingChatMessages').append('<li>Disconnected</li>');
             });
-        });
+        }.bind(this));
+
+        var $loginForm = $("#login form");
+        $loginForm.submit(function (e) {
+            e.preventDefault();
+
+            var $nick = $("#login form input[name=nick]");
+
+            iosocket.send(JSON.stringify({
+                type: "client.user.enter",
+                payload: {
+                    nick: $nick.val()
+                }
+            }));
+        }.bind(this));
 
         var $chatboxText = $('#chatbox input.text');
-        $chatboxText.keypress(function(event) {
-            if(event.which == 13) {
-                event.preventDefault();
+        $chatboxText.keypress(function(e) {
+            if(e.which == 13) {
+                e.preventDefault();
+
+                if (!this._sessionId) {
+                    alert("Enter a nick first!");
+                    return;
+                }
 
                 iosocket.send(JSON.stringify({
                     type: "client.chat.message",
                     payload: {
                         text: $chatboxText.val()
-                    }
+                    },
+                    sessionId: this._sessionId
                 }));
                 $chatboxText.val('');
             }
-        });
+        }.bind(this));
     };
 
     return App;
