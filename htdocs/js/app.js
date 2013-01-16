@@ -4,47 +4,29 @@
 define([
     "jquery",
     "crafty",
-    "socket.io"
+    "util/Socket"
 ], function (
     $,
     Crafty,
-    io
+    Socket
 ) {
     "use strict";
 
     // TODO: Clean up...
 
     var App = function () {
-        // initialize crafty
-        Crafty.init();
-        Crafty.background('rgb(127,127,127)');
+        // initialize socket
+        var socket = new Socket({
+            connected: function () {
+                $('#incomingChatMessages').append($('<li>Connected</li>'));
+            }.bind(this),
 
-        // Hack to allow usage of input fields, as Crafty will handle all keyboard events otherwise.
-        $("input").focus(function () {
-            Crafty.removeEvent(this, "keydown", Crafty.keyboardDispatch);
-            Crafty.removeEvent(this, "keyup", Crafty.keyboardDispatch);
-        });
+            disconnected: function() {
+                $('#incomingChatMessages').append('<li>Disconnected</li>');
+            }.bind(this),
 
-        $("input").blur(function () {
-            Crafty.addEvent(this, "keydown", Crafty.keyboardDispatch);
-            Crafty.addEvent(this, "keyup", Crafty.keyboardDispatch);
-        });
-
-        // Cruel code for chat handling. TODO: Rewrite.
-
-        var iosocket = io.connect();
-        this._sessionId = null;
-
-        iosocket.on('connect', function () {
-            $('#incomingChatMessages').append($('<li>Connected</li>'));
-
-            iosocket.on('message', function(messageStr) {
-                var message = JSON.parse(messageStr);
-                var type = message.type;
-                var payload = message.payload;
-
-                this._sessionId = message.sessionId || null;
-
+            message: function (type, payload) {
+                // TODO: Clean up
                 var li = $('<li></li>');
 
                 switch (type) {
@@ -63,11 +45,25 @@ define([
                         $('#incomingChatMessages').append(li);
                     break;
                 }
-            }.bind(this));
-            iosocket.on('disconnect', function() {
-                $('#incomingChatMessages').append('<li>Disconnected</li>');
-            });
-        }.bind(this));
+            }.bind(this)
+        });
+
+        // initialize crafty
+        Crafty.init();
+        Crafty.background('rgb(127,127,127)');
+
+        // Hack to allow usage of input fields, as Crafty will handle all keyboard events otherwise.
+        $("input").focus(function () {
+            Crafty.removeEvent(this, "keydown", Crafty.keyboardDispatch);
+            Crafty.removeEvent(this, "keyup", Crafty.keyboardDispatch);
+        });
+
+        $("input").blur(function () {
+            Crafty.addEvent(this, "keydown", Crafty.keyboardDispatch);
+            Crafty.addEvent(this, "keyup", Crafty.keyboardDispatch);
+        });
+
+        // Cruel code for chat handling. TODO: Rewrite.
 
         var $loginForm = $("#login form");
         $loginForm.submit(function (e) {
@@ -75,12 +71,9 @@ define([
 
             var $nick = $("#login form input[name=nick]");
 
-            iosocket.send(JSON.stringify({
-                type: "client.user.enter",
-                payload: {
-                    nick: $nick.val()
-                }
-            }));
+            socket.send("client.user.enter", {
+                nick: $nick.val()
+            });
         }.bind(this));
 
         var $chatboxText = $('#chatbox input.text');
@@ -88,18 +81,16 @@ define([
             if(e.which == 13) {
                 e.preventDefault();
 
+/*
                 if (!this._sessionId) {
                     alert("Enter a nick first!");
                     return;
                 }
+*/
 
-                iosocket.send(JSON.stringify({
-                    type: "client.chat.message",
-                    payload: {
-                        text: $chatboxText.val()
-                    },
-                    sessionId: this._sessionId
-                }));
+                socket.send("client.chat.message", {
+                    text: $chatboxText.val()
+                });
                 $chatboxText.val('');
             }
         }.bind(this));
