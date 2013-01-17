@@ -4,7 +4,9 @@
     out: "build/htdocs/js/main.js",
 
     paths: {
-        _socketio: "empty:"
+        jquery: "empty:",
+        _socketio: "empty:",
+        _underscore: "libs/underscore-amd-1.4.3-min"
     }
 })
 

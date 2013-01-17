@@ -3,11 +3,24 @@
  */
 require.config({
     paths: {
-        "_socketio": "/socket.io/socket.io" // do never use directly
+        // Internal modules that will be wrapped. Do never use directly!
+        "_socketio": "/socket.io/socket.io",
+        "_underscore": "libs/underscore-amd-1.4.3-min"
     }
 });
 
 // wrapper modules for keeping the global namespace clean
+
+define("backbone", ["_underscore", "libs/backbone-amd-0.9.10-min"], function () {
+    "use strict";
+
+    // this is dirty, but doesn't seem to work otherwise...
+    // we enforce to always load backbone at least once to ensure
+    // cleanup of the global namepsace also for jQuery
+    window.jQuery.noConflict(true);
+
+    return window.Backbone.noConflict(); // clear global namepsace
+});
 
 define("crafty", ["libs/crafty-0.5.3-min"], function () {
     "use strict";
@@ -16,12 +29,6 @@ define("crafty", ["libs/crafty-0.5.3-min"], function () {
     window.Crafty = undefined; // clear global namespace
 
     return Crafty;
-});
-
-define("jquery", ["libs/jquery-1.9.0.min"], function () {
-    "use strict";
-
-    return window.jQuery.noConflict(true); // clear global namepsace
 });
 
 define("socketio", ["_socketio"], function () {
@@ -33,7 +40,8 @@ define("socketio", ["_socketio"], function () {
     return io;
 });
 
-define("underscore", ["libs/underscore-amd-1.4.3-min"], function () {
+// depend on backbone to make sure it is loaded before and has _ in scope.
+define("underscore", ["_underscore", "backbone"], function () {
     "use strict";
 
     return window._.noConflict(); // clear global namespace
@@ -42,7 +50,8 @@ define("underscore", ["libs/underscore-amd-1.4.3-min"], function () {
 // main entry point
 
 require([
-    "app" 
+    "app",
+    "backbone" // enforce loading at least once for dirty hack above
 ], function (
     App 
 ) {
