@@ -1,10 +1,15 @@
 /**
  * The main entrypoint for require.js, but only used for configuration.
  */
+require.config({
+    paths: {
+        "_socketio": "/socket.io/socket.io" // do never use directly
+    }
+});
 
 // wrapper modules for keeping the global namespace clean
 
-define("crafty", ["/js/libs/crafty-0.5.3-min.js"], function () {
+define("crafty", ["libs/crafty-0.5.3-min"], function () {
     "use strict";
 
     var Crafty = window.Crafty;
@@ -13,13 +18,13 @@ define("crafty", ["/js/libs/crafty-0.5.3-min.js"], function () {
     return Crafty;
 });
 
-define("jquery", ["/js/libs/jquery-1.9.0.min.js"], function () {
+define("jquery", ["libs/jquery-1.9.0.min"], function () {
     "use strict";
 
     return window.jQuery.noConflict(true); // clear global namepsace
 });
 
-define("socket.io", ["/socket.io/socket.io.js"], function () {
+define("socketio", ["_socketio"], function () {
     "use strict";
 
     var io = window.io;
@@ -28,7 +33,7 @@ define("socket.io", ["/socket.io/socket.io.js"], function () {
     return io;
 });
 
-define("underscore", ["/js/libs/underscore-amd-1.4.3-min.js"], function () {
+define("underscore", ["libs/underscore-amd-1.4.3-min"], function () {
     "use strict";
 
     return window._.noConflict(); // clear global namespace

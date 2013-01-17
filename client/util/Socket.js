@@ -3,7 +3,7 @@
  */
 define([
     "underscore",
-    "socket.io"
+    "socketio"
 ],
 function (
     _,
