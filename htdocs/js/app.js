@@ -4,49 +4,19 @@
 define([
     "jquery",
     "crafty",
-    "util/Socket"
+    "util/ClientMessageDispatcher"
 ], function (
     $,
     Crafty,
-    Socket
+    MessageDispatcher
 ) {
     "use strict";
 
     // TODO: Clean up...
 
     var App = function () {
-        // initialize socket
-        var socket = new Socket({
-            connected: function () {
-                $('#incomingChatMessages').append($('<li>Connected</li>'));
-            }.bind(this),
-
-            disconnected: function() {
-                $('#incomingChatMessages').append('<li>Disconnected</li>');
-            }.bind(this),
-
-            message: function (type, payload) {
-                // TODO: Clean up
-                var li = $('<li></li>');
-
-                switch (type) {
-                    case "server.user.entered":
-                        var nick = payload.nick;
-                        li.append($('<span class="nick"></span>').text("[" + nick + "]"));
-                        li.append($('<span class="action"></span>').text("Entered the chat..."));
-                        $('#incomingChatMessages').append(li);
-                    break;
-                    case "server.chat.message":
-                        var nick = payload.nick;
-                        var text = payload.text;
-
-                        li.append($('<span class="nick"></span>').text("[" + nick + "]"));
-                        li.append($('<span class="text"></span>').text(text));
-                        $('#incomingChatMessages').append(li);
-                    break;
-                }
-            }.bind(this)
-        });
+        // initialize message dispatcher
+        var messageDispatcher = new MessageDispatcher();
 
         // initialize crafty
         Crafty.init();
@@ -70,10 +40,8 @@ define([
             e.preventDefault();
 
             var $nick = $("#login form input[name=nick]");
-
-            socket.send("client.user.enter", {
-                nick: $nick.val()
-            });
+            var nick = $nick.val();
+            messageDispatcher.sendUserEnter(nick);
         }.bind(this));
 
         var $chatboxText = $('#chatbox input.text');
@@ -88,9 +56,7 @@ define([
                 }
 */
 
-                socket.send("client.chat.message", {
-                    text: $chatboxText.val()
-                });
+                messageDispatcher.sendChatMessage($chatboxText.val());
                 $chatboxText.val('');
             }
         }.bind(this));
