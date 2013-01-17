@@ -2,8 +2,10 @@
  * Dispatcher for messaging via a socket.
  */
 define([
+    "jquery",
     "util/AbstractMessageDispatcher"
 ], function (
+    $,
     AbstractMessageDispatcher
 ) {
     "use strict";
