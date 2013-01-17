@@ -2,59 +2,64 @@
  * Dispatcher for messaging via a socket.
  */
 define([
-    "util/Socket"
+    "util/AbstractMessageDispatcher"
 ], function (
-    Socket
+    AbstractMessageDispatcher
 ) {
     "use strict";
 
     var ClientMessageDispatcher = function () {
-        // initialize socket
-        this._socket = new Socket({
-            connected: function () {
-                $('#incomingChatMessages').append($('<li>Connected</li>'));
-            }.bind(this),
+        // initialize message dispatcher
+        this._initialize();
+   };
 
-            disconnected: function() {
-                $('#incomingChatMessages').append('<li>Disconnected</li>');
-            }.bind(this),
-
-            message: function (type, payload) {
-                // TODO: Clean up
-                var li = $('<li></li>');
-
-                switch (type) {
-                    case "server.user.entered":
-                        var nick = payload.nick;
-                        li.append($('<span class="nick"></span>').text("[" + nick + "]"));
-                        li.append($('<span class="action"></span>').text("Entered the chat..."));
-                        $('#incomingChatMessages').append(li);
-                    break;
-                    case "server.chat.message":
-                        var nick = payload.nick;
-                        var text = payload.text;
-
-                        li.append($('<span class="nick"></span>').text("[" + nick + "]"));
-                        li.append($('<span class="text"></span>').text(text));
-                        $('#incomingChatMessages').append(li);
-                    break;
-                }
-            }.bind(this)
-        });
-    };
+    ClientMessageDispatcher.prototype = AbstractMessageDispatcher;
 
     // sending messages
 
     ClientMessageDispatcher.prototype.sendUserEnter = function (nick) {
-        this._socket.send("client.user.enter", {
+        this._send("client.user.enter", {
             nick: nick
         });
     };
 
     ClientMessageDispatcher.prototype.sendChatMessage = function (text) {
-        this._socket.send("client.chat.message", {
+        this._send("client.chat.message", {
             text: text
         });
+    };
+
+    // receiving messages
+
+    // override
+    ClientMessageDispatcher.prototype.connected = function () {
+        $("#incomingChatMessages").append($("<li>Connected</li>"));
+    };
+
+    // override
+    ClientMessageDispatcher.prototype.disconnected = function() {
+        $("#incomingChatMessages").append("<li>Disconnected</li>");
+    };
+
+    // implement
+    ClientMessageDispatcher.prototype.messageHandlers = {
+        "server.user.entered": function (payload) {
+            var li = $("<li></li>");
+            var nick = payload.nick;
+            li.append($("<span class=\"nick\"></span>").text("[" + nick + "]"));
+            li.append($("<span class=\"action\"></span>").text("Entered the chat..."));
+            $("#incomingChatMessages").append(li);
+        }.bind(this),
+
+        "server.chat.message": function (payload) {
+            var nick = payload.nick;
+            var text = payload.text;
+
+            var li = $("<li></li>");
+            li.append($("<span class=\"nick\"></span>").text("[" + nick + "]"));
+            li.append($("<span class=\"text\"></span>").text(text));
+            $("#incomingChatMessages").append(li);
+        }.bind(this)
     };
 
     return ClientMessageDispatcher;
