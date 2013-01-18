@@ -1,52 +1,54 @@
-// library imports
-var _ = require("underscore");
-
-// own imports
-var Client = require("./Client.js");
-
 /**
  * Registry for all connected clients.
  */
-var ClientRegistry = function () {
-    this._connectedClients = {};
-    this._lastId = 0;
-};
+define([
+    "underscore",
+    "server/Client"
+],
+function (
+    _,
+    Client
+) {
+    "use strict";
 
-ClientRegistry.prototype._newClientId = function () {
-    this._lastId += 1;
-    return this._lastId;
-};
+    var ClientRegistry = function () {
+        this._connectedClients = {};
+        this._lastId = 0;
+    };
 
-ClientRegistry.prototype.register = function (socket) {
-    console.log("Registering new client.");
+    ClientRegistry.prototype._newClientId = function () {
+        this._lastId += 1;
+        return this._lastId;
+    };
 
-    var clientId = this._newClientId();
-    this._connectedClients[clientId] = new Client(clientId, socket, this);
+    ClientRegistry.prototype.register = function (socket) {
+        console.log("Registering new client.");
 
-    console.log("Current number of clients:", _.size(this._connectedClients));
-};
+        var clientId = this._newClientId();
+        this._connectedClients[clientId] = new Client(clientId, socket, this);
 
-ClientRegistry.prototype.unregister = function (client) {
-    var clientId = client.getId();
+        console.log("Current number of clients:", _.size(this._connectedClients));
+    };
 
-    console.log("Unregistering client:", clientId);
+    ClientRegistry.prototype.unregister = function (client) {
+        var clientId = client.getId();
 
-    delete this._connectedClients[clientId];
+        console.log("Unregistering client:", clientId);
 
-    console.log("Number of remaining clients:", _.size(this._connectedClients));
-};
+        delete this._connectedClients[clientId];
 
-/**
- * Broadcasts a message to all connected clients.
- */
-ClientRegistry.prototype.broadcast = function (type, payload) {
-    _.each(this._connectedClients, function (client) {
-        client.send(type, payload);
-    }, this);
-}
+        console.log("Number of remaining clients:", _.size(this._connectedClients));
+    };
 
-// exports
+    /**
+     * Broadcasts a message to all connected clients.
+     */
+    ClientRegistry.prototype.broadcast = function (type, payload) {
+        _.each(this._connectedClients, function (client) {
+            client.send(type, payload);
+        }, this);
+    }
 
-// we want exactly one registry, thus it's a singleton
-module.exports = new ClientRegistry();
+    return new ClientRegistry();
+});
 
