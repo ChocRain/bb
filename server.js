@@ -37,6 +37,7 @@ app.use(auth);
 // static content
 if (process.env.NODE_ENV !== "production") {
     app.use("/js", express.static(__dirname + "/client"));
+    app.use("/js", express.static(__dirname + "/shared"));
 }
 app.use("/", express.static(__dirname + "/htdocs"));
 
