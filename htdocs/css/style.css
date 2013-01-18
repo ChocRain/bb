@@ -46,8 +46,6 @@ h1 {
     font-weight: bold;
 }
 
-/* FIXME: chatbox styling is broken when set to 100% width */
-
 .chat-input-view {
     position: fixed;
     width: 80%;
@@ -58,9 +56,5 @@ h1 {
 
 .chat-input-view input[name=text] {
     width: 80%;
-}
-
-.chat-input-view button[type=submit] {
-    color: red;
 }
 
