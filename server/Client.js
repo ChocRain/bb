@@ -42,7 +42,7 @@ var Client = function (id, socket, registry) {
     console.log("We have a new client:", this._id);
 
     var clientMessageHandlers = {
-        "client.user.enter": {
+        "client.user.login": {
             allowWithoutSession: true, // TODO: Only login later on
 
             // TODO: Add message validation constraints
@@ -56,6 +56,8 @@ var Client = function (id, socket, registry) {
 
                 this._newSession();
                 this._putIntoSession("nick", nick); // hold user instead?
+
+                this.send("server.user.loggedin", {});
 
                 this._registry.broadcast("server.user.entered", {
                     nick: nick

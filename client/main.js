@@ -3,6 +3,9 @@
  */
 require.config({
     paths: {
+        // require.js plugins
+        "text": "libs/text-2.0.3",
+
         // Internal modules that will be wrapped. Do never use directly!
         "_socketio": "/socket.io/socket.io",
         "_underscore": "libs/underscore-amd-1.4.3-min"

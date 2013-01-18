@@ -4,13 +4,13 @@
 define([
     "jquery",
     "backbone",
-    "util/ClientMessageDispatcher",
-    "router/RootRouter",
+    "utils/clientMessageSource",
+    "routes/RootRouter",
     "crafty"
 ], function (
     $,
     Backbone,
-    MessageDispatcher,
+    messageSource, // initialize implicitely
     RootRouter,
     Crafty
 ) {
@@ -20,12 +20,12 @@ define([
 
     var App = Backbone.View.extend({
         initialize: function () {
-            // initialize message dispatcher
-            var messageDispatcher = new MessageDispatcher();
-
             // start navigation
             new RootRouter();
             Backbone.history.start();
+
+            // TODO: Clean up below...
+
 
             // initialize crafty
             Crafty.init();
@@ -42,33 +42,24 @@ define([
                 Crafty.addEvent(this, "keyup", Crafty.keyboardDispatch);
             });
 
+    /*
             // Cruel code for chat handling. TODO: Rewrite.
-
-            var $loginForm = $("#login form");
-            $loginForm.submit(function (e) {
-                e.preventDefault();
-
-                var $nick = $("#login form input[name=nick]");
-                var nick = $nick.val();
-                messageDispatcher.sendUserEnter(nick);
-            }.bind(this));
 
             var $chatboxText = $('#chatbox input.text');
             $chatboxText.keypress(function(e) {
                 if(e.which == 13) {
                     e.preventDefault();
 
-    /*
                     if (!this._sessionId) {
                         alert("Enter a nick first!");
                         return;
                     }
-    */
 
                     messageDispatcher.sendChatMessage($chatboxText.val());
                     $chatboxText.val('');
                 }
             }.bind(this));
+    */
         }
     });
 
