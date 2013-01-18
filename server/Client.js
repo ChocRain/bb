@@ -5,11 +5,13 @@
 define([
     "underscore",
     "crypto",
-    "node-uuid"
+    "node-uuid",
+    "moment"
 ], function (
     _,
     crypto,
-    uuid
+    uuid,
+    moment
 ) {
     "use strict";
 
@@ -24,7 +26,7 @@ define([
 
         // to ensure we always get a new session id we append the current timestamp
         // in millis (a little paranoid about the uuid I guess...)
-        randomSecret += new Date().getTime();
+        randomSecret += moment().valueOf();
 
         // generate the SHA1 hash of the random secret
         var sha1sum = crypto.createHash("sha1");
@@ -157,7 +159,7 @@ define([
         var message = {
             type: type,
             payload: payload,
-            timestamp: new Date().getTime()
+            timestamp: moment.valueOf()
         };
 
         if (this._hasSession()) {

@@ -3,9 +3,11 @@
  */
 define([
     "underscore",
+    "moment",
     "utils/Socket"
 ], function (
     _,
+    moment,
     Socket
 ) {
     "use strict";
@@ -73,9 +75,9 @@ define([
             }
 
             var timestamp = message.timestamp;
-            var date = new Date(timestamp);
+            var date = moment(timestamp);
 
-            if (!_.isNumber(timestamp) || !isFinite(date)) {
+            if (!_.isNumber(timestamp) || !date.isValid()) {
                 throw new Error("Invalid timestamp: "+ JSON.stringify(message));
             }
 

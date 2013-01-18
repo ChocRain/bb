@@ -29,11 +29,13 @@ define([
             // add renderers
             viewModel.r = {
                 time: function (date) {
-                    if (!_.isDate(date) || !isFinite(date)) {
+                    var m = moment(date);
+
+                    if (!m.isValid()) {
                         throw new Error("Invalid arguemnt for renderer time:" + date);
                     }
 
-                    return moment(date).format("HH:mm");
+                    return m.format("HH:mm");
                 }
             };
 
