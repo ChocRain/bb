@@ -39,6 +39,13 @@ define([
                 });
             },
 
+            "server.user.left": function (payload) {
+                chatLogCollection.add({
+                    type: "left",
+                    nick: payload.nick
+                });
+            },
+
             "server.chat.message": function (payload) {
                 chatLogCollection.add({
                     type: "message",

@@ -4,6 +4,11 @@
             <span class="chat-log-entry-nick"><%- model.nick %></span>
             <span class="chat-log-entry-text">just entered the chat...</span>
         <% break; %>
+
+        <% case "left": %>
+            <span class="chat-log-entry-nick"><%- model.nick %></span>
+            <span class="chat-log-entry-text">has left the chat...</span>
+        <% break; %>
         
         <% case "message": %>
             <span class="chat-log-entry-nick">&lt;<%- model.nick %>&gt;</span>

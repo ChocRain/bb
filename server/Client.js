@@ -131,8 +131,16 @@ var Client = function (id, socket, registry) {
     this._socket.on("disconnect", function () {
         console.log("Client disconnected:", this._id);
 
+        var nick = this._hasSession() ? this._getFromSession("nick") : null;
+
         this._invalidateSession();
         this._registry.unregister(this);
+
+        if (nick) {
+            this._registry.broadcast("server.user.left", {
+                nick: nick
+            });
+        }
     }.bind(this));
 };
 

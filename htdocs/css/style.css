@@ -73,16 +73,14 @@ li.chat-log-entry-view {
     list-style: none;
 }
 
-.chat-log-entry-type-entered  {
+.chat-log-entry-type-entered,
+.chat-log-entry-type-left {
     font-style: italic;    
 }
 
-.chat-log-entry-type-entered .chat-log-entry-nick {
-    font-weight: bold;
-}
-
+.chat-log-entry-type-entered .chat-log-entry-nick,
+.chat-log-entry-type-left .chat-log-entry-nick,
 .chat-log-entry-type-message .chat-log-entry-nick {
     font-weight: bold;
 }
-
 
