@@ -3,10 +3,12 @@
  */
 define([
     "underscore",
-    "backbone"
+    "backbone",
+    "moment"
 ], function (
     _,
-    Backbone
+    Backbone,
+    moment
 ) {
     "use strict";
 
@@ -23,6 +25,17 @@ define([
             if (this.model) {
                 viewModel.model = _.clone(this.model.attributes);
             }
+
+            // add renderers
+            viewModel.r = {
+                time: function (date) {
+                    if (!_.isDate(date) || !isFinite(date)) {
+                        throw new Error("Invalid arguemnt for renderer time:" + date);
+                    }
+
+                    return moment(date).format("HH:mm");
+                }
+            };
 
             this.$el.html(_.template(this.template, viewModel));
 

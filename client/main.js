@@ -35,6 +35,15 @@ define("crafty", ["libs/crafty-0.5.3-min"], function () {
     return Crafty;
 });
 
+define("moment", ["libs/moment-1.7.2-min"], function () {
+    "use strict";
+
+    var moment = window.moment;
+    window.moment = undefined; // clear global namespace
+
+    return moment;
+});
+
 define("socketio", ["_socketio"], function () {
     "use strict";
 

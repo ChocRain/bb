@@ -61,14 +61,22 @@ define([
 
         _handleMessage: function (message) {
             var type = message.type;
-            var payload = message.payload;
 
             if (!_.isString(type)) {
                 throw new Error("Malformed message type: " + JSON.stringify(message));
             }
 
+            var payload = message.payload;
+
             if (!_.isObject(payload)) {
                 throw new Error("Invalid payload: " + JSON.stringify(message));
+            }
+
+            var timestamp = message.timestamp;
+            var date = new Date(timestamp);
+
+            if (!_.isNumber(timestamp) || !isFinite(date)) {
+                throw new Error("Invalid timestamp: "+ JSON.stringify(message));
             }
 
             var sessionId = message.sessionId || null;
@@ -89,7 +97,7 @@ define([
                 throw new Error("No or invalid handler for message type: " + type);
             }
 
-            handler(payload);
+            handler(payload, date);
         }
     };
 

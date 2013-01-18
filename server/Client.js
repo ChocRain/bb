@@ -156,7 +156,8 @@ define([
     Client.prototype.send = function (type, payload) {
         var message = {
             type: type,
-            payload: payload
+            payload: payload,
+            timestamp: new Date().getTime()
         };
 
         if (this._hasSession()) {

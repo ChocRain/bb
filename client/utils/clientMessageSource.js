@@ -32,23 +32,26 @@ define([
                 rootNavigator.root().go();
             },
 
-            "server.user.entered": function (payload) {
+            "server.user.entered": function (payload, date) {
                 chatLogCollection.add({
                     type: "entered",
+                    date: date,
                     nick: payload.nick
                 });
             },
 
-            "server.user.left": function (payload) {
+            "server.user.left": function (payload, date) {
                 chatLogCollection.add({
                     type: "left",
+                    date: date,
                     nick: payload.nick
                 });
             },
 
-            "server.chat.message": function (payload) {
+            "server.chat.message": function (payload, date) {
                 chatLogCollection.add({
                     type: "message",
+                    date: date,
                     nick: payload.nick,
                     text: payload.text
                 });

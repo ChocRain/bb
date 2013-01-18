@@ -1,4 +1,5 @@
 <span class="chat-log-entry-type-<%- model.type %>">
+    <span class="chat-log-entry-date">[<%- r.time(model.date) %>]</span>
     <% switch(model.type) {
         case "entered": %>
             <span class="chat-log-entry-nick"><%- model.nick %></span>
