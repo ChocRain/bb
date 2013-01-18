@@ -2,17 +2,23 @@
  * View for the chat log.
  */
 define([
-    "views/BaseView",
-    "text!templates/ChatLogView.html"
+    "views/ListView",
+    "views/ChatLogEntryView",
+    "collections/chatLogCollection"
 ], function (
-    BaseView,
-    Template
+    ListView,
+    ChatLogEntryView,
+    chatLogCollection
 ) {
     "use strict";
 
-    var ChatLogView = BaseView.extend({
+    var ChatLogView = ListView.extend({
         className: "chat-log-view view",
-        template: Template
+        collection: chatLogCollection,
+
+        createItemView: function (model) {
+            return new ChatLogEntryView({model: model});
+        }
     });
 
     return ChatLogView;

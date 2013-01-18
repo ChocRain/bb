@@ -1,0 +1,13 @@
+<span class="chat-log-entry-type-<%- model.type %>">
+    <% switch(model.type) {
+        case "entered": %>
+            <span class="chat-log-entry-nick"><%- model.nick %></span>
+            <span class="chat-log-entry-text">just entered the chat...</span>
+        <% break; %>
+        
+        <% case "message": %>
+            <span class="chat-log-entry-nick">&lt;<%- model.nick %>&gt;</span>
+            <span class="chat-log-entry-text"><%- model.text %></span>
+        <% break;
+    } %>
+</span>

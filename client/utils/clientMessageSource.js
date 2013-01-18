@@ -2,15 +2,15 @@
  * Source for messaging via a socket. Must be required once to initialize.
  */
 define([
-    "jquery",
     "routes/rootNavigator",
     "models/userSession",
-    "utils/clientMessageDispatcher"
+    "utils/clientMessageDispatcher",
+    "collections/chatLogCollection"
 ], function (
-    $,
     rootNavigator,
     userSession,
-    messageDispatcher
+    messageDispatcher,
+    chatLogCollection
 ) {
     "use strict";
 
@@ -33,23 +33,18 @@ define([
             },
 
             "server.user.entered": function (payload) {
-                // TODO: Proper handling
-                var li = $("<li></li>");
-                var nick = payload.nick;
-                li.append($("<span class=\"nick\"></span>").text("[" + nick + "]"));
-                li.append($("<span class=\"action\"></span>").text("Entered the chat..."));
-                $("#incomingChatMessages").append(li);
+                chatLogCollection.add({
+                    type: "entered",
+                    nick: payload.nick
+                });
             },
 
             "server.chat.message": function (payload) {
-                // TODO: Proper handling
-                var nick = payload.nick;
-                var text = payload.text;
-
-                var li = $("<li></li>");
-                li.append($("<span class=\"nick\"></span>").text("[" + nick + "]"));
-                li.append($("<span class=\"text\"></span>").text(text));
-                $("#incomingChatMessages").append(li);
+                chatLogCollection.add({
+                    type: "message",
+                    nick: payload.nick,
+                    text: payload.text
+                });
             }
         }
     };
