@@ -20,6 +20,14 @@ define([
             "submit form": "handleLogin"
         },
 
+        render: function (opts) {
+            opts = opts || {};
+            opts.viewModel = opts.viewModel || {};
+            opts.viewModel.constraints = validator.getConstraints("login");
+
+            return BaseView.prototype.render.call(this, opts);
+        },
+
         handleLogin: function (e) {
             if (e) {
                 e.preventDefault();
@@ -43,8 +51,14 @@ define([
                 // TODO: Handle nicely
                 console.log(validationResult);
 
+                var constraints = validator.getConstraints("login");
+
                 var errorMsg = "Invalild nick. "
-                errorMsg += "Must be at least 3 and at most 20 characters long. ";
+                errorMsg += "Must be at least ";
+                errorMsg += constraints.nick.minlength;
+                errorMsg += " and at most ";
+                errorMsg += constraints.nick.maxlength;
+                errorMsg += " characters long. ";
                 errorMsg += "Allowed are only letters, numbers and _."
                 alert(errorMsg);
             }

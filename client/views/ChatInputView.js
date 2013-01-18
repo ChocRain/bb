@@ -4,11 +4,13 @@
 define([
     "views/BaseView",
     "text!templates/ChatInputView.html",
-    "models/ChatMessageModel"
+    "models/ChatMessageModel",
+    "utils/validator"
 ], function (
     BaseView,
     Template,
-    ChatMessageModel
+    ChatMessageModel,
+    validator
 ) {
     "use strict";
 
@@ -20,6 +22,14 @@ define([
             "submit form": "sendChatMessage"
         },
 
+        render: function (opts) {
+            opts = opts || {};
+            opts.viewModel = opts.viewModel || {};
+            opts.viewModel.constraints = validator.getConstraints("chat-message");
+
+            return BaseView.prototype.render.call(this, opts);
+        },
+
         sendChatMessage: function (e) {
             if (e) {
                 e.preventDefault();
@@ -28,12 +38,32 @@ define([
             var $text = this.$("form input[name=text]");
             var text = $text.val();
 
-            // TODO: Validation
+            // TODO: Nicer validation
 
-            var model = new ChatMessageModel();
-            model.sendMessage(text);
+            var attrs = {
+                text: text
+            };
 
-            $text.val("");
+            var validationResult = validator.validate("chat-message", attrs);
+
+            if (!validationResult.hasErrors) {
+                var model = new ChatMessageModel();
+                model.sendMessage(text);
+
+                $text.val("");
+            }
+            else {
+                // TODO: Handle nicely
+                console.log(validationResult);
+
+                var constraints = validator.getConstraints("chat-message");
+
+                var errorMsg = "Please enter a message. "
+                errorMsg += "May not be longer than ";
+                errorMsg += constraints.text.maxlength;
+                errorMsg += " characters. ";
+                alert(errorMsg);
+            }
         }
     });
 

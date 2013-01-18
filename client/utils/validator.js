@@ -72,6 +72,16 @@ define([
             result.unknown = unknown;
 
             return result;
+        },
+
+        getConstraints: function (constraintsName) {
+            var objectConstraints = constraints[constraintsName];
+
+            if (!_.isObject(objectConstraints)) {
+                throw new Error("Cannot find valid constraints: " + constraintsName);
+            }
+
+            return objectConstraints;
         }
     };
 });

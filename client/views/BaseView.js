@@ -18,7 +18,7 @@ define([
                 throw new Error("Cannot render view without template!");
             }
 
-            var viewModel = {};
+            var viewModel = opts && opts.viewModel ? opts.viewModel : {};
 
             if (this.model) {
                 viewModel.model = _.clone(this.model.attributes);
