@@ -29,8 +29,8 @@ define([
         messageHandlers: {
             "server.user.loggedin": function (payload) {
                 userSession.setLoggedIn(true);
-                rootNavigator.root().go();
-            },
+                rootNavigator.redirectAfterLogin();
+            }.bind(this),
 
             "server.user.entered": function (payload, date) {
                 chatLogCollection.add({

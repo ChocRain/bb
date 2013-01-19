@@ -9,12 +9,30 @@ define([
     "use strict";
 
     var RootNavigator = BaseNavigator.extend({
+        _redirectAfterLogin: null,
+
         root: function () {
             return this.createRoute("");
         },
 
-        login: function () {
-            return this.createRoute("login");
+        login: function (redirect) {
+            var suffix = redirect ? "/" + redirect : "";
+            return this.createRoute("login" + suffix);
+        },
+
+        setRedirectAfterLogin: function (redirect) {
+            this._redirectAfterLogin = redirect || null;
+        },
+
+        redirectAfterLogin: function () {
+            if (this._redirectAfterLogin) {
+                var route = this.createRoute(this._redirectAfterLogin);
+                this._redirectAfterLogin = null;
+                route.go();
+            }
+            else {
+                this.root().go();
+            }
         }
     });
 
