@@ -10,14 +10,15 @@ define([
     Backbone,
     userSession
 ) {
+    "use strict";
+
     var BaseRouter = Backbone.Router.extend({
         initialize: function (opts) {
             Backbone.Router.prototype.initialize.call(this, opts);
 
             if (this.loggedInRoutes) {
                 if (!_.isObject(this.loggedInRoutes)
-                    || !_.isFunction(this.loginRoute)
-                ) {
+                        || !_.isFunction(this.loginRoute)) {
                     throw new Error("Router not set up correctly for logged in routes!");
                 }
 
@@ -32,8 +33,7 @@ define([
                     var wrappedCallback = function () {
                         if (userSession.isLoggedIn()) {
                             originalCallback.apply(this, arguments);
-                        }
-                        else {
+                        } else {
                             var loginRoute = this.loginRoute(Backbone.history.fragment);
                             loginRoute.go();
                         }

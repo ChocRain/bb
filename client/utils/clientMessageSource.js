@@ -20,10 +20,10 @@ define([
             console.log("Connected...");
         },
 
-        disconnected: function() {
-            // TODO: Nicer handling.
+        disconnected: function () {
+            /*global alert: true */ // TODO: Nicer handling.
             alert("Connection lost...");
-            window.location = "/";
+            rootNavigator.root().reload();
         },
 
         messageHandlers: {

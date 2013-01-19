@@ -20,14 +20,15 @@ define([
 
         return _.every(valueConstraints, function (constraint, type) {
             switch (type) {
-                case "minlength":
-                    return value.length >= constraint;
 
-                case "maxlength":
-                    return value.length <= constraint;
+            case "minlength":
+                return value.length >= constraint;
 
-                case "regexp":
-                    return new RegExp(constraint).test(value);
+            case "maxlength":
+                return value.length <= constraint;
+
+            case "regexp":
+                return new RegExp(constraint).test(value);
             }
 
             throw new Error("Unknown constraint type: " + type);
@@ -53,15 +54,14 @@ define([
                 if (object[key] === null || object[key] === undefined) {
                     missing.push(key);
                     result.hasErrors = true;
-                }   
+                }
             });
 
             _.each(object, function (value, key) {
                 if (!objectConstraints[key]) {
                     unknown.push(key);
                     result.hasErrors = true;
-                }
-                else if (!isValid(objectConstraints[key], value)) {
+                } else if (!isValid(objectConstraints[key], value)) {
                     invalid.push(key);
                     result.hasErrors = true;
                 }

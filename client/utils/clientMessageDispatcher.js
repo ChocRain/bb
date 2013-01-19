@@ -20,7 +20,7 @@ define([
             this.connectedHandler = handlers.connected;
             this.disconnectedHandler = handlers.disconnected;
             this.messageHandlers = handlers.messageHandlers;
-        }        
+        }
     });
 
     return new ClientMessageDispatcher();

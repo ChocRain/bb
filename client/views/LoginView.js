@@ -53,20 +53,21 @@ define([
             if (!validationResult.hasErrors) {
                 this.model.doLogin(nick);
                 $nick.val("");
-            }
-            else {
+            } else {
                 // TODO: Handle nicely
                 console.log(validationResult);
 
                 var constraints = validator.getConstraints("login");
 
-                var errorMsg = "Invalild nick. "
+                var errorMsg = "Invalild nick. ";
                 errorMsg += "Must be at least ";
                 errorMsg += constraints.nick.minlength;
                 errorMsg += " and at most ";
                 errorMsg += constraints.nick.maxlength;
                 errorMsg += " characters long. ";
-                errorMsg += "Allowed are only letters, numbers and _."
+                errorMsg += "Allowed are only letters, numbers and _.";
+
+                /*global alert: true */ // TODO: Nicer handling
                 alert(errorMsg);
             }
         }

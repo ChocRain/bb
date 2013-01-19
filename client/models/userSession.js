@@ -8,6 +8,8 @@ define([
     BaseModel,
     messageSink
 ) {
+    "use strict";
+
     var UserSessionModel = BaseModel.extend({
         initalize: function (attrs, opts) {
             attrs = attrs || {};

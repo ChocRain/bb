@@ -19,7 +19,7 @@ define([
     var App = Backbone.View.extend({
         initialize: function () {
             // start navigation
-            new RootRouter();
+            var rootRouter = new RootRouter();
             Backbone.history.start();
 
             // TODO: Get crafty into shape... (e.g. move code below to own modules)
@@ -44,6 +44,3 @@ define([
     return App;
 });
 
-window.onload = function() {
-
-};

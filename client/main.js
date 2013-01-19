@@ -1,6 +1,7 @@
 /**
  * The main entrypoint for require.js, but only used for configuration.
  */
+/*global window: true */ // for cleaning up the namespace only
 require.config({
     paths: {
         // require.js plugins
@@ -70,6 +71,6 @@ require([
 ) {
     "use strict";
 
-    new App(); // run the app
+    var app = new App(); // run the app
 });
 

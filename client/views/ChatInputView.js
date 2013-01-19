@@ -51,17 +51,18 @@ define([
                 model.sendMessage(text);
 
                 $text.val("");
-            }
-            else {
+            } else {
                 // TODO: Handle nicely
                 console.log(validationResult);
 
                 var constraints = validator.getConstraints("chat-message");
 
-                var errorMsg = "Please enter a message. "
+                var errorMsg = "Please enter a message. ";
                 errorMsg += "May not be longer than ";
                 errorMsg += constraints.text.maxlength;
                 errorMsg += " characters. ";
+
+                /*global alert: true*/ // TODO: Nicer handling
                 alert(errorMsg);
             }
         }

@@ -1,6 +1,7 @@
 /**
  * Base class for navigators.
  */
+/*global location: true */
 define([
     "backbone"
 ], function (
@@ -19,11 +20,15 @@ define([
                 }.bind(this),
 
                 goSilent: function () {
-                    debugger;
                     this.navigate(fragment, {
                         trigger: true, // trigger route
                         replace: false // don't track in history
                     });
+                }.bind(this),
+
+                reload: function () {
+                    location.hash = "#" + fragment;
+                    location.reload();
                 }.bind(this)
             };
         }

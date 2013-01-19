@@ -4,8 +4,7 @@
 define([
     "underscore",
     "socketio"
-],
-function (
+], function (
     _,
     io
 ) {
@@ -14,14 +13,14 @@ function (
     var Socket = function (opts) {
         if (!opts || !opts.connected || !opts.disconnected || !opts.message) {
             throw new Error("Please configure the socket.");
-        };
+        }
 
         this._socket = io.connect();
 
         this._socket.on('connect', opts.connected);
         this._socket.on('disconnect', opts.disconnected);
 
-        this._socket.on('message', function(messageStr) {
+        this._socket.on('message', function (messageStr) {
             var message = JSON.parse(messageStr);
 
             if (!_.isObject(message)) {

@@ -18,6 +18,8 @@ define([
     LoginView,
     rootNavigator
 ) {
+    "use strict";
+
     var RootRouter = BaseRouter.extend({
         routes: {
             "login": "login",
@@ -38,16 +40,15 @@ define([
         },
 
         root: function () {
-                // TODO: Nicer handling of views
-                $("#ui").html(new ChatView({model: userSession}).render().el);
+            // TODO: Nicer handling of views
+            $("#ui").html(new ChatView({model: userSession}).render().el);
         },
 
         login: function (redirect) {
             rootNavigator.setRedirectAfterLogin(redirect);
             if (userSession.isLoggedIn()) {
                 rootNavigator.redirectAfterLogin();
-            }
-            else {
+            } else {
                 // TODO: Nicer handling of views
                 $("#ui").html(new LoginView({
                     model: userSession,

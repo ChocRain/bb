@@ -29,8 +29,7 @@ define([
                 var route = this.createRoute(this._redirectAfterLogin);
                 this._redirectAfterLogin = null;
                 route.go();
-            }
-            else {
+            } else {
                 this.root().go();
             }
         }

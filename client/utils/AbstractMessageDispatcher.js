@@ -25,7 +25,7 @@ define([
                 connected: this.connected.bind(this),
                 disconnected: this.disconnected.bind(this),
                 message: this._handleMessage.bind(this)
-           });
+            });
         },
 
         // sending messages
@@ -78,7 +78,7 @@ define([
             var date = moment(timestamp);
 
             if (!_.isNumber(timestamp) || !date.isValid()) {
-                throw new Error("Invalid timestamp: "+ JSON.stringify(message));
+                throw new Error("Invalid timestamp: " + JSON.stringify(message));
             }
 
             var sessionId = message.sessionId || null;

@@ -28,10 +28,10 @@ requirejs([
 
     // setup HTTP server
 
-    var app = express(); 
+    var app = express();
     var httpServer = http.createServer(app);
 
-    httpServer.listen(port, function() {
+    httpServer.listen(port, function () {
         console.log("Listening at: http://localhost:" + port);
     });
 
@@ -53,9 +53,11 @@ requirejs([
     }
     app.use("/", express.static(__dirname + "/htdocs"));
 
-    app.get("/", function(req, res) {
+    app.get("/", function (req, res, next) {
         fs.readFile(__dirname + "/htdocs/index.html", "utf8", function (err, body) {
-            if (err) return next(err);
+            if (err) {
+                return next(err);
+            }
 
             res.writeHead(200, { "Content-type": "text/html"});
             res.end(body);
@@ -64,7 +66,7 @@ requirejs([
 
 
     // setup socket.io
-     
+
     socketio.listen(httpServer).on("connection", function (socket) {
         clientRegistry.register(socket);
     });

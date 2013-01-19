@@ -8,6 +8,8 @@ define([
     BaseModel,
     messageSink
 ) {
+    "use strict";
+
     var ChatMessageModel = BaseModel.extend({
         sendMessage: function (text) {
             messageSink.sendChatMessage(text);

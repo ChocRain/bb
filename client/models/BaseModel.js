@@ -6,6 +6,8 @@ define([
 ], function (
     Backbone
 ) {
+    "use strict";
+
     var BaseModel = Backbone.Model.extend({
     });
 

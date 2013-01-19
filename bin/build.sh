@@ -3,15 +3,42 @@
 cd `dirname $0`/.. || exit 1
 
 
-# paths
+# directories
 
-BUILD_DIR=`pwd`/build
+REPO_DIR=`pwd`
+BUILD_DIR=$REPO_DIR/build
+NODE_MODULES_DIR=$REPO_DIR/node_modules
+
+
+# binaries
+
+JSLINT=$NODE_MODULES_DIR/jslint/bin/jslint.js
 
 
 # clean up
 
 rm -rf $BUILD_DIR || exit 1
 mkdir $BUILD_DIR || exit 1
+
+
+# install required packages
+
+npm install
+
+
+# check JS files
+
+$JSLINT \
+    --vars \
+    --nomen \
+    --indent=4 \
+    --maxlen=120 \
+    --predef="define" \
+\
+    server.js \
+    $(find server -name '*.js') \
+    $(find client -name '*.js' | grep -v '^client/libs/') \
+|| exit 1
 
 
 # copy static content

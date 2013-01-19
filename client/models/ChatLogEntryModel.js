@@ -6,6 +6,8 @@ define([
 ], function (
     BaseModel
 ) {
+    "use strict";
+
     var ChatLogEntryModel = BaseModel.extend({
     });
 

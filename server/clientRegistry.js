@@ -4,8 +4,7 @@
 define([
     "underscore",
     "server/Client"
-],
-function (
+], function (
     _,
     Client
 ) {
@@ -47,7 +46,7 @@ function (
         _.each(this._connectedClients, function (client) {
             client.send(type, payload);
         }, this);
-    }
+    };
 
     return new ClientRegistry();
 });
