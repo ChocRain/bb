@@ -2,10 +2,12 @@
  * View for loggin in.
  */
 define([
+    "underscore",
     "views/BaseView",
     "text!templates/LoginView.html",
     "utils/validator"
 ], function (
+    _,
     BaseView,
     Template,
     validator
@@ -24,6 +26,11 @@ define([
             opts = opts || {};
             opts.viewModel = opts.viewModel || {};
             opts.viewModel.constraints = validator.getConstraints("login");
+
+            // Hopefully focus after view being put into DOM.
+            _.defer(function () {
+                this.$("input[name=nick]").focus();
+            }.bind(this));
 
             return BaseView.prototype.render.call(this, opts);
         },
