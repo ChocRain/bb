@@ -130,7 +130,10 @@ input[type=text]:disabled {
     height: 300px;
     overflow-y: scroll;
 
-    background-color: lightgrey;
+    border: 1px solid #EE3F96;
+    background-color: white;
+
+    padding: 2px;
 }
 
 li.chat-log-entry-view {
