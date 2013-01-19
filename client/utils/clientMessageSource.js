@@ -2,15 +2,19 @@
  * Source for messaging via a socket. Must be required once to initialize.
  */
 define([
+    "jquery",
     "routes/rootNavigator",
     "models/userSession",
     "utils/clientMessageDispatcher",
-    "collections/chatLogCollection"
+    "collections/chatLogCollection",
+    "views/DisconnectedView"
 ], function (
+    $,
     rootNavigator,
     userSession,
     messageDispatcher,
-    chatLogCollection
+    chatLogCollection,
+    DisconnectedView
 ) {
     "use strict";
 
@@ -21,9 +25,7 @@ define([
         },
 
         disconnected: function () {
-            /*global alert: true */ // TODO: Nicer handling.
-            alert("Connection lost...");
-            rootNavigator.root().reload();
+            new DisconnectedView().show();
         },
 
         messageHandlers: {

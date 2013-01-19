@@ -3,8 +3,10 @@
  */
 /*global location: true */
 define([
+    "underscore",
     "backbone"
 ], function (
+    _,
     Backbone
 ) {
     "use strict";
@@ -27,10 +29,16 @@ define([
                 }.bind(this),
 
                 reload: function () {
-                    location.hash = "#" + fragment;
-                    location.reload();
+                    this.reload(fragment);
                 }.bind(this)
             };
+        },
+
+        reload: function (opt_fragment) {
+            var fragment = _.isString(opt_fragment) ? opt_fragment : Backbone.history.fragment;
+
+            location.hash = "#" + fragment;
+            location.reload();
         }
     });
 

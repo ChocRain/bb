@@ -24,10 +24,16 @@ h1 {
 .view {
 }
 
-.login-view {
-    position: relative;
-    margin: 0px auto;
+.login-view,
+.disconnected-view {
+    position: fixed;
     top: 40%;
+    width: 100%;
+}
+
+.login-view .modal,
+.disconnected-view .modal {
+    margin: 0px auto;
     width: 400px;
     padding: 20px;
 
@@ -44,6 +50,26 @@ h1 {
 
 .login-view form label {
     font-weight: bold;
+}
+
+.disconnected-view {
+    z-index: 101; /* above modal-overlay */
+}
+
+.disconnected-view .modal {
+    width: 450px;
+}
+
+.modal-overlay {
+    z-index: 100; /* above ui */
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+
+    background-color: black;
+    opacity: 0.8;
 }
 
 .chat-input-view {
