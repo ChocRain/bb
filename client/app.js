@@ -6,20 +6,27 @@ define([
     "backbone",
     "utils/clientMessageSource",
     "routes/RootRouter",
-    "crafty"
+    "crafty",
+    "utils/spinner"
 ], function (
     $,
     Backbone,
     messageSource,
     RootRouter,
-    Crafty
+    Crafty,
+    spinner
 ) {
     "use strict";
 
     var App = Backbone.View.extend({
         initialize: function () {
+            var connectingSpinner = spinner.create();
+            $("#ui").append(connectingSpinner.el);
+
             messageSource.init({
                 connected: function () {
+                    connectingSpinner.stop();
+
                     // start navigation
                     var rootRouter = new RootRouter();
                     Backbone.history.start();

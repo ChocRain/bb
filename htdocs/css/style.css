@@ -21,6 +21,11 @@ h1 {
     height: 100%;
 }
 
+#ui > .spinner { /* the connecting spinner */
+    top: 45%;
+    left: 50%;
+}
+
 .view {
 }
 
