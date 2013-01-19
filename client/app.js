@@ -37,16 +37,6 @@ define([
                     Crafty.init();
                     Crafty.background('rgb(127,127,127)');
 
-                    // Hack to allow usage of input fields, as Crafty will handle all keyboard events otherwise.
-                    $("input").focus(function () {
-                        Crafty.removeEvent(this, "keydown", Crafty.keyboardDispatch);
-                        Crafty.removeEvent(this, "keyup", Crafty.keyboardDispatch);
-                    });
-
-                    $("input").blur(function () {
-                        Crafty.addEvent(this, "keydown", Crafty.keyboardDispatch);
-                        Crafty.addEvent(this, "keyup", Crafty.keyboardDispatch);
-                    });
                 }.bind(this)
             });
         }

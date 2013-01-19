@@ -4,11 +4,13 @@
 define([
     "underscore",
     "backbone",
-    "moment"
+    "moment",
+    "crafty"
 ], function (
     _,
     Backbone,
-    moment
+    moment,
+    Crafty
 ) {
     "use strict";
 
@@ -40,6 +42,17 @@ define([
             };
 
             this.$el.html(_.template(this.template, viewModel));
+
+            // Hack to allow usage of input fields, as Crafty will handle all keyboard events otherwise.
+            this.$("input").focus(function () {
+                Crafty.removeEvent(this, "keydown", Crafty.keyboardDispatch);
+                Crafty.removeEvent(this, "keyup", Crafty.keyboardDispatch);
+            });
+
+            this.$("input").blur(function () {
+                Crafty.addEvent(this, "keydown", Crafty.keyboardDispatch);
+                Crafty.addEvent(this, "keyup", Crafty.keyboardDispatch);
+            });
 
             return this;
         }
