@@ -63,7 +63,7 @@ define([
             }
         };
 
-        messageDispatcher.initHandlers(handlers);
+        messageDispatcher.initSocket(handlers);
     };
 
     return {

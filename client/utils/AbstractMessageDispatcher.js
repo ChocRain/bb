@@ -15,15 +15,23 @@ define([
     var AbstractMessageDispatcher = {
         _initialize: function () {
             this._sessionId = null;
+            this._messageHandlers = null;
+            this._socket = null;
+        },
 
-            this.messageHandlers = null;
-            this.connectedHandler = null;
-            this.disconnectedHandler = null;
+        initSocket: function (handlers) {
+            if (!_.isFunction(handlers.connected)
+                    || !_.isFunction(handlers.disconnected)
+                    || !_.isObject(handlers.messageHandlers)) {
+                throw new Error("Message handlers not initialize properly!");
+            }
+
+            this._messageHandlers = handlers.messageHandlers;
 
             // initialize socket
             this._socket = new Socket({
-                connected: this.connected.bind(this),
-                disconnected: this.disconnected.bind(this),
+                connected: _.once(handlers.connected),
+                disconnected: _.once(handlers.disconnected),
                 message: this._handleMessage.bind(this)
             });
         },
@@ -44,23 +52,6 @@ define([
         },
 
         // receiving messages
-
-        connected: function () {
-            if (!_.isFunction(this.connectedHandler)) {
-                throw new Error("Set connected handler in concrete message dispatcher!");
-            }
-
-            this.connectedHandler();
-        },
-
-        disconnected: function () {
-            if (!_.isFunction(this.disconnectedHandler)) {
-                throw new Error("Set disconnected handler in concrete message dispatcher!");
-            }
-
-            this.disconnectedHandler();
-        },
-
         _handleMessage: function (message) {
             var type = message.type;
 
@@ -89,11 +80,11 @@ define([
 
             this._sessionId = sessionId;
 
-            if (!_.isObject(this.messageHandlers)) {
+            if (!_.isObject(this._messageHandlers)) {
                 throw new Error("Add object messageHandlers in concrete message dispatcher!");
             }
 
-            var handler = this.messageHandlers[type];
+            var handler = this._messageHandlers[type];
 
             if (!_.isFunction(handler)) {
                 throw new Error("No or invalid handler for message type: " + type);

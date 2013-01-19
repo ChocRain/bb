@@ -15,13 +15,7 @@ define([
         this._initialize();
     };
 
-    _.extend(ClientMessageDispatcher.prototype, AbstractMessageDispatcher, {
-        initHandlers: function (handlers) {
-            this.connectedHandler = _.once(handlers.connected);
-            this.disconnectedHandler = _.once(handlers.disconnected);
-            this.messageHandlers = handlers.messageHandlers;
-        }
-    });
+    _.extend(ClientMessageDispatcher.prototype, AbstractMessageDispatcher);
 
     return new ClientMessageDispatcher();
 });
