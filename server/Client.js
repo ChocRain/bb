@@ -166,6 +166,9 @@ define([
             message.sessionId = this._sessionId;
         }
 
+        // FIXME: Only for debugging! Remove me soon!
+        console.log("sending:", message);
+
         this._socket.emit(
             "message",
             JSON.stringify(message)
