@@ -16,7 +16,7 @@ define([
         render: function (opts) {
             Backbone.View.prototype.render.call(this, opts);
 
-            if (!this.template) {
+            if (!_.isString(this.template)) {
                 throw new Error("Cannot render view without template!");
             }
 

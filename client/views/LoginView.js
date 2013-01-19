@@ -5,12 +5,14 @@ define([
     "underscore",
     "views/BaseView",
     "text!templates/LoginView.html",
-    "utils/validator"
+    "utils/validator",
+    "views/Button"
 ], function (
     _,
     BaseView,
     Template,
-    validator
+    validator,
+    Button
 ) {
     "use strict";
 
@@ -22,23 +24,51 @@ define([
             "submit form": "handleLogin"
         },
 
+        initialize: function (opts) {
+            BaseView.prototype.initialize.call(this, opts);
+
+            this._enterButton = new Button({
+                caption: "Enter",
+                attrs: {
+                    type: "submit"
+                }
+            });
+        },
+
         render: function (opts) {
             opts = opts || {};
             opts.viewModel = opts.viewModel || {};
             opts.viewModel.constraints = validator.getConstraints("login");
+
+            BaseView.prototype.render.call(this, opts);
 
             // Hopefully focus after view being put into DOM.
             _.defer(function () {
                 this.$("input[name=nick]").focus();
             }.bind(this));
 
-            return BaseView.prototype.render.call(this, opts);
+            this.$("form").append(this._enterButton.render().el);
+
+            return this;
+        },
+
+        setEnabled: function (enabled) {
+            this._enterButton.setEnabled(enabled);
+
+            var $nick = this.$("form input[name=nick]");
+            if (enabled) {
+                $nick.removeAttr("disabled");
+            } else {
+                $nick.attr({ disabled: "disabled" });
+            }
         },
 
         handleLogin: function (e) {
             if (e) {
                 e.preventDefault();
             }
+
+            this.setEnabled(false);
 
             // TODO: More general solution.
             var $nick = this.$("form input[name=nick]");
@@ -51,6 +81,7 @@ define([
             var validationResult = validator.validate("login", attrs);
 
             if (!validationResult.hasErrors) {
+                this._enterButton.setLoading(true);
                 this.model.doLogin(nick);
                 $nick.val("");
             } else {
@@ -69,6 +100,8 @@ define([
 
                 /*global alert: true */ // TODO: Nicer handling
                 alert(errorMsg);
+
+                this.setEnabled(true);
             }
         }
     });
