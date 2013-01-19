@@ -18,51 +18,56 @@ define([
 ) {
     "use strict";
 
-    var handlers = {
-        connected: function () {
-            // TODO: Handle somehow?
-            console.log("Connected...");
-        },
-
-        disconnected: function () {
-            new DisconnectedView().show();
-        },
-
-        messageHandlers: {
-            "server.user.loggedin": function (payload) {
-                userSession.setLoggedIn(true);
-                rootNavigator.redirectAfterLogin();
-            }.bind(this),
-
-            "server.user.entered": function (payload, date) {
-                chatLogCollection.add({
-                    type: "entered",
-                    date: date,
-                    nick: payload.nick
-                });
-            },
-
-            "server.user.left": function (payload, date) {
-                chatLogCollection.add({
-                    type: "left",
-                    date: date,
-                    nick: payload.nick
-                });
-            },
-
-            "server.chat.message": function (payload, date) {
-                chatLogCollection.add({
-                    type: "message",
-                    date: date,
-                    nick: payload.nick,
-                    text: payload.text
-                });
-            }
+    var init = function (opts) {
+        if (!opts || !opts.connected) {
+            throw new Error("No connected callback given!");
         }
+
+        var handlers = {
+            connected: opts.connected,
+
+            disconnected: function () {
+                new DisconnectedView().show();
+            },
+
+            messageHandlers: {
+                "server.user.loggedin": function (payload) {
+                    userSession.setLoggedIn(true);
+                    rootNavigator.redirectAfterLogin();
+                }.bind(this),
+
+                "server.user.entered": function (payload, date) {
+                    chatLogCollection.add({
+                        type: "entered",
+                        date: date,
+                        nick: payload.nick
+                    });
+                },
+
+                "server.user.left": function (payload, date) {
+                    chatLogCollection.add({
+                        type: "left",
+                        date: date,
+                        nick: payload.nick
+                    });
+                },
+
+                "server.chat.message": function (payload, date) {
+                    chatLogCollection.add({
+                        type: "message",
+                        date: date,
+                        nick: payload.nick,
+                        text: payload.text
+                    });
+                }
+            }
+        };
+
+        messageDispatcher.initHandlers(handlers);
     };
 
-    messageDispatcher.initHandlers(handlers);
-
-    return {}; // nothing to expose, require only for binding
+    return {
+        init: init
+    };
 });
 
