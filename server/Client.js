@@ -159,15 +159,12 @@ define([
         var message = {
             type: type,
             payload: payload,
-            timestamp: moment.valueOf()
+            timestamp: moment().valueOf()
         };
 
         if (this._hasSession()) {
             message.sessionId = this._sessionId;
         }
-
-        // FIXME: Only for debugging! Remove me soon!
-        console.log("sending:", message);
 
         this._socket.emit(
             "message",
