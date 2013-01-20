@@ -35,6 +35,9 @@ define([
                     var rootRouter = new RootRouter();
                     Backbone.history.start();
 
+                    // init crafty for full window usage
+                    Crafty.init();
+
                     // show title screen scene
                     titleScene.run();
                 }.bind(this)

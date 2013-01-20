@@ -33,9 +33,6 @@ define("crafty", ["libs/crafty-0.5.3-min"], function () {
     var Crafty = window.Crafty;
     window.Crafty = undefined; // clear global namespace
 
-    // make sure crafty is initialized
-    Crafty.init();
-
     return Crafty;
 });
 
