@@ -2,19 +2,23 @@
  * The main entrypoint of the application invoked after configuring require.js.
  */
 define([
+    "underscore",
     "jquery",
     "backbone",
     "utils/clientMessageSource",
     "routes/RootRouter",
     "crafty",
-    "utils/spinner"
+    "utils/spinner",
+    "scenes/titleScene"
 ], function (
+    _,
     $,
     Backbone,
     messageSource,
     RootRouter,
     Crafty,
-    spinner
+    spinner,
+    titleScene
 ) {
     "use strict";
 
@@ -31,12 +35,8 @@ define([
                     var rootRouter = new RootRouter();
                     Backbone.history.start();
 
-                    // TODO: Get crafty into shape... (e.g. move code below to own modules)
-
-                    // initialize crafty
-                    Crafty.init();
-                    Crafty.background('rgb(127,127,127)');
-
+                    // show title screen scene
+                    titleScene.run();
                 }.bind(this)
             });
         }

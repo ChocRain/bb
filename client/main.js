@@ -33,6 +33,9 @@ define("crafty", ["libs/crafty-0.5.3-min"], function () {
     var Crafty = window.Crafty;
     window.Crafty = undefined; // clear global namespace
 
+    // make sure crafty is initialized
+    Crafty.init();
+
     return Crafty;
 });
 
@@ -64,13 +67,12 @@ define("underscore", ["_underscore", "backbone"], function () {
 // main entry point
 
 require([
-    "app",
-    "backbone" // enforce loading at least once for dirty hack above
-], function (
-    App
-) {
+    "backbone" // enforce loading at least once first for dirty hack above
+], function () {
     "use strict";
 
-    var app = new App(); // run the app
+    require(["app"], function (App) {
+        var app = new App(); // run the app
+    });
 });
 
