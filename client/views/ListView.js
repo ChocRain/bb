@@ -18,27 +18,27 @@ define([
                 throw new Error("List view is missing createItemView().");
             }
 
-            this.collection.on("add", this._add.bind(this));
-            this.collection.on("remove", this._remove.bind(this));
-            this.collection.on("reset", this._reset.bind(this));
+            this.collection.on("add", this.add.bind(this));
+            this.collection.on("remove", this.remove.bind(this));
+            this.collection.on("reset", this.reset.bind(this));
         },
 
         render: function (opts) {
             this.$el.empty();
-            this.collection.each(this._add.bind(this));
+            this.collection.each(this.add.bind(this));
 
             return this;
         },
 
-        _add: function (model) {
+        add: function (model) {
             this.$el.append(this.createItemView(model).render().el);
         },
 
-        _remove: function () {
+        remove: function () {
             throw new Error("Unsupported opertation: remove");
         },
 
-        _reset: function () {
+        reset: function () {
             throw new Error("Unsupported opertation: reset");
         }
     });
