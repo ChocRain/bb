@@ -18,6 +18,8 @@ define([
         className: "chat-input-view view",
         template: Template,
 
+        initialFocus: "input[name=text]",
+
         events: {
             "submit form": "sendChatMessage"
         },

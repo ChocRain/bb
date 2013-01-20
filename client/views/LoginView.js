@@ -20,6 +20,8 @@ define([
         className: "login-view view",
         template: Template,
 
+        initialFocus: "input[name=nick]",
+
         events: {
             "submit form": "handleLogin"
         },
@@ -41,12 +43,6 @@ define([
             opts.viewModel.constraints = validator.getConstraints("login");
 
             BaseView.prototype.render.call(this, opts);
-
-            // Hopefully focus after view being put into DOM.
-            _.defer(function () {
-                this.$("input[name=nick]").focus();
-            }.bind(this));
-
             this.$("form").append(this._enterButton.render().el);
 
             return this;

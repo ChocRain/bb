@@ -54,6 +54,13 @@ define([
                 Crafty.addEvent(this, "keyup", Crafty.keyboardDispatch);
             });
 
+            if (this.initialFocus) {
+                // Hopefully focus after view being put into DOM.
+                _.defer(function () {
+                    this.$(this.initialFocus).focus();
+                }.bind(this));
+            }
+
             return this;
         }
     });
