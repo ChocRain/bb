@@ -57,22 +57,24 @@ define("socketio", ["_socketio"], function () {
     return io;
 });
 
-// depend on backbone to make sure it is loaded before and has _ in scope.
-define("underscore", ["_underscore", "backbone"], function () {
+define("underscore", ["_underscore"], function () {
     "use strict";
 
-    return window._.noConflict(); // clear global namespace
+    var _ = window._;
+
+    require(["backbone"], function () {
+        // backbone needs to be initialized before cleaning up global namespace
+        window._.noConflict();
+    });
+
+    return _;
 });
 
 // main entry point
 
-require([
-    "backbone" // enforce loading at least once first for dirty hack above
-], function () {
+require(["app"], function (App) {
     "use strict";
 
-    require(["app"], function (App) {
-        var app = new App(); // run the app
-    });
+    var app = new App(); // run the app
 });
 
