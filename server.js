@@ -51,7 +51,7 @@ requirejs([
         app.use("/js", express.static(__dirname + "/client"));
         app.use("/js", express.static(__dirname + "/shared"));
     }
-    app.use("/", express.static(__dirname + "/htdocs"));
+    app.use("/", express.static(__dirname + "/htdocs", { maxAge: 365 *  24 * 60 * 60 }));
 
     app.get("/", function (req, res, next) {
         fs.readFile(__dirname + "/htdocs/index.html", "utf8", function (err, body) {
