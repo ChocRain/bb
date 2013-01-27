@@ -8,6 +8,17 @@ requirejs.config({
     }
 });
 
+// encapsulate node.js specific stuff
+requirejs.define("_nodejs", [
+], function (
+) {
+    "use strict";
+
+    return {
+        rootDirectory: __dirname
+    };
+});
+
 
 // TODO: Clean up this mess!
 
@@ -20,12 +31,11 @@ requirejs([
     "http",
     "socket.io",
     "server/clientRegistry",
-    "glob",
     "server/utils/parallel",
-    "text!server/templates/index.html",
-    "server/utils/crypto",
+    "text!server/templates/index.html" ,
 
-    "server/config"
+    "server/config",
+    "server/utils/asset"
 ], function (
     _,
     moment,
@@ -34,12 +44,11 @@ requirejs([
     http,
     io,
     clientRegistry,
-    glob,
     parallel,
     Template,
-    crypto,
 
-    config
+    config,
+    asset
 ) {
     "use strict";
 
@@ -65,78 +74,25 @@ requirejs([
 
     // asset management / static content
 
-    var htdocsPath = __dirname + "/htdocs";
-
     if (config.isDevelopment) {
-        app.use("/js", express.static(__dirname + "/client"));
-        app.use("/js", express.static(__dirname + "/shared"));
+        app.use("/js", express.static(config.paths.client));
+        app.use("/js", express.static(config.paths.shared));
     }
 
-    app.use("/", express.static(htdocsPath, {maxAge: 365 * 24 * 60 * 60 * 1000}));
+    app.use("/", express.static(config.paths.htdocs, {maxAge: 365 * 24 * 60 * 60 * 1000}));
 
     app.get("/", function (req, res, next) {
-        var getAssetHashes = function (callback) {
-            // TODO: Cache for production
-            // TODO: Include /shared and /client for development
-            glob(htdocsPath + "/**/*", function (err, paths) {
-                if (err) {
-                    return callback(err);
-                }
-
-                parallel.filter(
-                    paths,
-                    function (path, predicateCallback) {
-                        fs.stat(path, function (err, stats) {
-                            if (err) {
-                                return predicateCallback(err);
-                            }
-
-                            predicateCallback(null, stats.isFile());
-                        });
-                    },
-                    function (err, filenames) {
-                        if (err) {
-                            return callback(err);
-                        }
-
-                        parallel.map(
-                            filenames,
-                            function (filename, transformerCallback) {
-                                crypto.md5FileSum(filename, function (err, sum) {
-                                    if (err) {
-                                        return transformerCallback(err);
-                                    }
-
-                                    var result = {};
-                                    result[filename.substr(htdocsPath.length)] = sum;
-
-                                    transformerCallback(null, result);
-                                });
-                            },
-                            function (err, hashes) {
-                                if (err) {
-                                    return callback(err);
-                                }
-
-                                callback(null, _.defaults.apply(_, hashes));
-                            }
-                        );
-                    }
-                );
-            });
-        };
-
         var getTemplate = function (callback) {
             if (config.isDevelopment) {
                 // always get current template in development
-                fs.readFile(__dirname + "/server/templates/index.html", "utf8", callback);
+                fs.readFile(config.paths.root + "/server/templates/index.html", "utf8", callback);
             } else {
                 callback(null, Template);
             }
         };
 
         parallel.parallel([
-            getAssetHashes,
+            asset.getAssetHashes,
             getTemplate
         ], function (err, hashes, template) {
             if (err) {
