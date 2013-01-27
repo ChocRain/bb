@@ -1,8 +1,3 @@
-// Config
-var port = process.env.PORT || 8080;
-var user = process.env.BASIC_AUTH_USER || null;
-var password = process.env.BASIC_AUTH_PASSWORD || null;
-
 // require.js
 var requirejs = require("requirejs");
 
@@ -28,7 +23,9 @@ requirejs([
     "glob",
     "server/utils/parallel",
     "text!server/templates/index.html",
-    "server/utils/crypto"
+    "server/utils/crypto",
+
+    "server/config"
 ], function (
     _,
     moment,
@@ -40,21 +37,19 @@ requirejs([
     glob,
     parallel,
     Template,
-    crypto
+    crypto,
+
+    config
 ) {
     "use strict";
-
-    // we enable some optimizations for production
-
-    var isProduction = process.env.NODE_ENV === "production";
 
     // setup HTTP server
 
     var app = express();
     var httpServer = http.createServer(app);
 
-    httpServer.listen(port, function () {
-        console.log("Listening at: http://localhost:" + port);
+    httpServer.listen(config.http.port, function () {
+        console.log("Listening at: http://localhost:" + config.http.port);
     });
 
     // basic authentication to keep public out for now
@@ -62,8 +57,8 @@ requirejs([
         next();
     };
 
-    if (user && password) {
-        auth = express.basicAuth(user, password);
+    if (config.http.isBasicAuthEnabled) {
+        auth = express.basicAuth(config.http.user, config.http.password);
     }
 
     app.use(auth);
@@ -72,7 +67,7 @@ requirejs([
 
     var htdocsPath = __dirname + "/htdocs";
 
-    if (!isProduction) {
+    if (config.isDevelopment) {
         app.use("/js", express.static(__dirname + "/client"));
         app.use("/js", express.static(__dirname + "/shared"));
     }
@@ -132,7 +127,7 @@ requirejs([
         };
 
         var getTemplate = function (callback) {
-            if (!isProduction) {
+            if (config.isDevelopment) {
                 // always get current template in development
                 fs.readFile(__dirname + "/server/templates/index.html", "utf8", callback);
             } else {
