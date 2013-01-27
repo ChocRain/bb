@@ -4,7 +4,7 @@ var user = process.env.BASIC_AUTH_USER || null;
 var password = process.env.BASIC_AUTH_PASSWORD || null;
 
 // require.js
-var requirejs = require('requirejs');
+var requirejs = require("requirejs");
 
 requirejs.config({
     nodeRequire: require
@@ -21,7 +21,7 @@ requirejs([
     fs,
     express,
     http,
-    socketio,
+    io,
     clientRegistry
 ) {
     "use strict";
@@ -67,8 +67,25 @@ requirejs([
 
     // setup socket.io
 
-    socketio.listen(httpServer).on("connection", function (socket) {
+    var socket = io.listen(httpServer);
+
+    socket.on("connection", function (socket) {
         clientRegistry.register(socket);
+    });
+
+    socket.configure("production", function () {
+        socket.enable("browser client minification");
+        socket.enable("browser client gzip");
+        socket.enable("browser client etag");
+        socket.set("log level", 1);
+        socket.set("transports", ["htmlfile", "xhr-polling", "jsonp-polling"]);
+
+        console.log("p");
+    });
+
+    socket.configure("development", function () {
+        console.log("d");
+        socket.set("transports", ["websocket"]);
     });
 });
 
