@@ -28,7 +28,7 @@ requirejs([
     "glob",
     "server/utils/parallel",
     "text!server/templates/index.html",
-    "crypto"
+    "server/utils/crypto"
 ], function (
     _,
     moment,
@@ -79,22 +79,6 @@ requirejs([
 
     app.use("/", express.static(htdocsPath, {maxAge: 365 * 24 * 60 * 60 * 1000}));
 
-    var md5FileSum = function (filename, callback) {
-        var md5sum = crypto.createHash("md5");
-
-        var stream = fs.ReadStream(filename);
-
-        stream.on("data", function (data) {
-            md5sum.update(data);
-        });
-
-        stream.on("error", callback);
-
-        stream.on("end", function () {
-            callback(null, md5sum.digest("hex"));
-        });
-    };
-
     app.get("/", function (req, res, next) {
         var getAssetHashes = function (callback) {
             // TODO: Cache for production
@@ -123,7 +107,7 @@ requirejs([
                         parallel.map(
                             filenames,
                             function (filename, transformerCallback) {
-                                md5FileSum(filename, function (err, sum) {
+                                crypto.md5FileSum(filename, function (err, sum) {
                                     if (err) {
                                         return transformerCallback(err);
                                     }

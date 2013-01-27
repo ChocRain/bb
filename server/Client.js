@@ -4,7 +4,7 @@
 // TODO: Refactor this
 define([
     "underscore",
-    "crypto",
+    "server/utils/crypto",
     "node-uuid",
     "moment"
 ], function (
@@ -29,9 +29,7 @@ define([
         randomSecret += moment().valueOf();
 
         // generate the SHA1 hash of the random secret
-        var sha1sum = crypto.createHash("sha1");
-        sha1sum.update(randomSecret);
-        var hash = sha1sum.digest("hex");
+        var hash = crypto.sha1Sum(randomSecret);
 
         // the hash serves as our session id
         return hash;
