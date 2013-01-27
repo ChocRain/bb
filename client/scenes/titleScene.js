@@ -4,13 +4,17 @@
 define([
     "underscore",
     "jquery",
-    "crafty"
+    "crafty",
+    "utils/asset"
 ], function (
     _,
     $,
-    Crafty
+    Crafty,
+    asset
 ) {
     "use strict";
+
+    var candyTileMap = asset.asset("/img/sprites/candy.png");
 
     Crafty.scene("title", function () {
         var spriteSize = 100;
@@ -24,7 +28,7 @@ define([
             bonbon3: [1, 2],
             bonbon4: [1, 3]
         };
-        Crafty.sprite(spriteSize, "/img/sprites/candy.png", map);
+        Crafty.sprite(spriteSize, candyTileMap, map);
 
         var spriteComponents = _.keys(map);
 
@@ -79,7 +83,7 @@ define([
 
     return {
         run: function () {
-            Crafty.load(["/img/sprites/candy.png"], function () {
+            Crafty.load([candyTileMap], function () {
                 Crafty.scene("title");
             });
         }

@@ -3,6 +3,8 @@
  */
 /*global window: true */ // for cleaning up the namespace only
 require.config({
+    baseUrl: "/js",
+
     paths: {
         // require.js plugins
         "json": "libs/json-0.3.0",

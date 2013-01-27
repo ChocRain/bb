@@ -7,24 +7,46 @@ var password = process.env.BASIC_AUTH_PASSWORD || null;
 var requirejs = require("requirejs");
 
 requirejs.config({
-    nodeRequire: require
+    nodeRequire: require,
+    paths: {
+        "text": "shared/libs/text-2.0.3"
+    }
 });
 
 
+// TODO: Clean up this mess!
+
+
 requirejs([
+    "underscore",
+    "moment",
     "fs",
     "express",
     "http",
     "socket.io",
-    "server/clientRegistry"
+    "server/clientRegistry",
+    "glob",
+    "server/utils/parallel",
+    "text!server/templates/index.html",
+    "crypto"
 ], function (
+    _,
+    moment,
     fs,
     express,
     http,
     io,
-    clientRegistry
+    clientRegistry,
+    glob,
+    parallel,
+    Template,
+    crypto
 ) {
     "use strict";
+
+    // we enable some optimizations for production
+
+    var isProduction = process.env.NODE_ENV === "production";
 
     // setup HTTP server
 
@@ -46,21 +68,113 @@ requirejs([
 
     app.use(auth);
 
-    // static content
-    if (process.env.NODE_ENV !== "production") {
+    // asset management / static content
+
+    var htdocsPath = __dirname + "/htdocs";
+
+    if (!isProduction) {
         app.use("/js", express.static(__dirname + "/client"));
         app.use("/js", express.static(__dirname + "/shared"));
     }
-    app.use("/", express.static(__dirname + "/htdocs", { maxAge: 60 * 1000 })); // 1 minute
+
+    app.use("/", express.static(htdocsPath, {maxAge: 365 * 24 * 60 * 60 * 1000}));
+
+    var md5FileSum = function (filename, callback) {
+        var md5sum = crypto.createHash("md5");
+
+        var stream = fs.ReadStream(filename);
+
+        stream.on("data", function (data) {
+            md5sum.update(data);
+        });
+
+        stream.on("error", callback);
+
+        stream.on("end", function () {
+            callback(null, md5sum.digest("hex"));
+        });
+    };
 
     app.get("/", function (req, res, next) {
-        fs.readFile(__dirname + "/htdocs/index.html", "utf8", function (err, body) {
+        var getAssetHashes = function (callback) {
+            // TODO: Cache for production
+            // TODO: Include /shared and /client for development
+            glob(htdocsPath + "/**/*", function (err, paths) {
+                if (err) {
+                    return callback(err);
+                }
+
+                parallel.filter(
+                    paths,
+                    function (path, predicateCallback) {
+                        fs.stat(path, function (err, stats) {
+                            if (err) {
+                                return predicateCallback(err);
+                            }
+
+                            predicateCallback(null, stats.isFile());
+                        });
+                    },
+                    function (err, filenames) {
+                        if (err) {
+                            return callback(err);
+                        }
+
+                        parallel.map(
+                            filenames,
+                            function (filename, transformerCallback) {
+                                md5FileSum(filename, function (err, sum) {
+                                    if (err) {
+                                        return transformerCallback(err);
+                                    }
+
+                                    var result = {};
+                                    result[filename.substr(htdocsPath.length)] = sum;
+
+                                    transformerCallback(null, result);
+                                });
+                            },
+                            function (err, hashes) {
+                                if (err) {
+                                    return callback(err);
+                                }
+
+                                callback(null, _.defaults.apply(_, hashes));
+                            }
+                        );
+                    }
+                );
+            });
+        };
+
+        var getTemplate = function (callback) {
+            if (!isProduction) {
+                // always get current template in development
+                fs.readFile(__dirname + "/server/templates/index.html", "utf8", callback);
+            } else {
+                callback(null, Template);
+            }
+        };
+
+        parallel.parallel([
+            getAssetHashes,
+            getTemplate
+        ], function (err, hashes, template) {
             if (err) {
                 return next(err);
             }
 
-            res.writeHead(200, { "Content-type": "text/html"});
-            res.end(body);
+            res.writeHead(200, {
+                "Content-type": "text/html",
+                "Cache-Control": "no-cache",
+                "Expires": moment(0).toDate().toUTCString() // immediately
+            });
+            res.end(_.template(template, {
+                hashes: hashes,
+                asset: function (filename) {
+                    return filename + "?v=" + this.hashes[filename];
+                }
+            }));
         });
     });
 
@@ -79,12 +193,9 @@ requirejs([
         socket.enable("browser client etag");
         socket.set("log level", 1);
         socket.set("transports", ["htmlfile", "xhr-polling", "jsonp-polling"]);
-
-        console.log("p");
     });
 
     socket.configure("development", function () {
-        console.log("d");
         socket.set("transports", ["websocket"]);
     });
 });

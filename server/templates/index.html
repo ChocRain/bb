@@ -1,0 +1,39 @@
+<html>
+<head>
+    <script>
+        window._asset = function (filename) {
+            "use strict";
+
+            var hashes = <%= JSON.stringify(hashes) %>;
+            var hash = hashes[filename];
+
+            return filename + "?v=" + (hash ? hash : new Date().getTime());
+        };
+    </script>
+
+    <link rel="stylesheet" type="text/css" href="<%= asset('/css/style.css') %>" />
+
+    <script src="<%= asset('/js/libs/es5-shim-2.0.4-min.js') %>"></script>
+    <script src="<%= asset('/js/libs/require-2.1.2-jquery-1.8.3.js') %>"></script>
+
+    <script>
+        // cache busting
+
+        var load = requirejs.load;
+        requirejs.load = function (context, moduleId, url) {
+            "use strict";
+
+            return load(context, moduleId, window._asset(url));
+        };
+
+        // invok main
+        require(["/js/main.js"]);
+    </script>
+</head>
+<body>
+
+<div id="ui"></div>
+
+</body>
+</html>
+
