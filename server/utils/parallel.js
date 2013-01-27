@@ -15,6 +15,11 @@ define([
      */
     var parallel = function (tasks, callback, opt_context) {
         var tasksLeft = tasks.length;
+
+        if (tasksLeft === 0) {
+            return callback.call(opt_context || this, null);
+        }
+
         var results = [];
         var errors = [];
 
