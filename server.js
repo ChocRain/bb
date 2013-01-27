@@ -32,7 +32,7 @@ requirejs([
     "socket.io",
     "server/clientRegistry",
     "server/utils/parallel",
-    "text!server/templates/index.html" ,
+    "text!server/templates/index.html",
 
     "server/config",
     "server/utils/asset"
@@ -92,9 +92,9 @@ requirejs([
         };
 
         parallel.parallel([
-            asset.getAssetHashes,
+            asset.getAssets,
             getTemplate
-        ], function (err, hashes, template) {
+        ], function (err, assets, template) {
             if (err) {
                 return next(err);
             }
@@ -105,10 +105,8 @@ requirejs([
                 "Expires": moment(0).toDate().toUTCString() // immediately
             });
             res.end(_.template(template, {
-                hashes: hashes,
-                asset: function (filename) {
-                    return filename + "?v=" + this.hashes[filename];
-                }
+                hashes: assets.hashes,
+                asset: assets.asset
             }));
         });
     });

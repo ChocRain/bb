@@ -22,7 +22,11 @@ define([
 ) {
     "use strict";
 
-    var getAssetHashes = function (callback) {
+    var asset = function (filename) {
+        return filename + "?v=" + this[filename];
+    };
+
+    var getAssets = function (callback) {
         // TODO: Cache for production
         // TODO: Include /shared and /client for development
         glob(config.paths.htdocs + "/**/*", function (err, paths) {
@@ -65,7 +69,10 @@ define([
                                 return callback(err);
                             }
 
-                            callback(null, _.defaults.apply(_, [{}].concat(hashes)));
+                            callback(null, {
+                                asset: asset,
+                                hashes: _.defaults.apply(_, [{}].concat(hashes))
+                            });
                         }
                     );
                 }
@@ -74,7 +81,7 @@ define([
     };
 
     return {
-        getAssetHashes: getAssetHashes
+        getAssets: getAssets
     };
 });
 
