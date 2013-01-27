@@ -50,5 +50,5 @@ cp -R package.json Procfile server.js server shared htdocs $BUILD_DIR/ || exit 1
 # compile js
 
 mkdir -p $BUILD_DIR/htdocs/js || exit 1
-r.js -o build-client.js || exit 1
+r.js -o etc/build-client.js || exit 1
 

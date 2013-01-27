@@ -1,7 +1,7 @@
 ({
-    baseUrl: "client",
+    baseUrl: "../client",
     name: "main",
-    out: "build/htdocs/js/main.js",
+    out: "../build/htdocs/js/main.js",
 
     paths: {
         definitions: "../shared/definitions",
