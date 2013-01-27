@@ -23,11 +23,19 @@ define([
     "use strict";
 
     var asset = function (filename) {
-        return filename + "?v=" + this[filename];
+        return filename + "?v=" + this.hashes[filename];
     };
 
+    var hashesCache = null;
+
     var getAssets = function (callback) {
-        // TODO: Cache for production
+        if (config.isProduction && hashesCache) {
+            return callback(null, {
+                asset: asset,
+                hashes: hashesCache
+            });
+        }
+
         // TODO: Include /shared and /client for development
         glob(config.paths.htdocs + "/**/*", function (err, paths) {
             if (err) {
@@ -64,14 +72,21 @@ define([
                                 transformerCallback(null, result);
                             });
                         },
-                        function (err, hashes) {
+                        function (err, hashPairs) {
                             if (err) {
                                 return callback(err);
                             }
 
+                            var hashes = _.defaults.apply(_, [{}].concat(hashPairs));
+
+
+                            if (config.isProduction) {
+                                hashesCache = hashes;
+                            }
+
                             callback(null, {
                                 asset: asset,
-                                hashes: _.defaults.apply(_, [{}].concat(hashes))
+                                hashes: hashes
                             });
                         }
                     );
