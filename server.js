@@ -19,99 +19,22 @@ requirejs.define("_nodejs", [
     };
 });
 
-
-// TODO: Clean up this mess!
-
-
 requirejs([
-    "underscore",
-    "moment",
-    "fs",
-    "express",
-    "http",
     "socket.io",
-    "server/clientRegistry",
-    "server/utils/parallel",
-    "text!server/templates/index.html",
 
-    "server/config",
-    "server/utils/asset"
+    "server/clientRegistry",
+    "server/app"
 ], function (
-    _,
-    moment,
-    fs,
-    express,
-    http,
     io,
     clientRegistry,
-    parallel,
-    Template,
-
-    config,
-    asset
+    app
 ) {
     "use strict";
 
-    // setup HTTP server
+    var httpApp = app.create();
+    var httpServer = httpApp.getHttpServer();
 
-    var app = express();
-    var httpServer = http.createServer(app);
-
-    httpServer.listen(config.http.port, function () {
-        console.log("Listening at: http://localhost:" + config.http.port);
-    });
-
-    // basic authentication to keep public out for now
-    var auth = function (req, res, next) {
-        next();
-    };
-
-    if (config.http.isBasicAuthEnabled) {
-        auth = express.basicAuth(config.http.user, config.http.password);
-    }
-
-    app.use(auth);
-
-    // asset management / static content
-
-    if (config.isDevelopment) {
-        app.use("/js", express.static(config.paths.client));
-        app.use("/js", express.static(config.paths.shared));
-    }
-
-    app.use("/", express.static(config.paths.htdocs, {maxAge: 365 * 24 * 60 * 60 * 1000}));
-
-    app.get("/", function (req, res, next) {
-        var getTemplate = function (callback) {
-            if (config.isDevelopment) {
-                // always get current template in development
-                fs.readFile(config.paths.root + "/server/templates/index.html", "utf8", callback);
-            } else {
-                callback(null, Template);
-            }
-        };
-
-        parallel.parallel([
-            asset.getAssets,
-            getTemplate
-        ], function (err, assets, template) {
-            if (err) {
-                return next(err);
-            }
-
-            res.writeHead(200, {
-                "Content-type": "text/html",
-                "Cache-Control": "no-cache",
-                "Expires": moment(0).toDate().toUTCString() // immediately
-            });
-            res.end(_.template(template, {
-                hashes: assets.hashes,
-                asset: assets.asset
-            }));
-        });
-    });
-
-
+    // TODO: Move to own module
     // setup socket.io
 
     var socket = io.listen(httpServer);
