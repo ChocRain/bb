@@ -38,12 +38,13 @@ $JSLINT \
     server.js \
     $(find server -name '*.js') \
     $(find client -name '*.js' | grep -v '^client/libs/') \
+    $(find shared -name '*.js' | grep -v '^shared/libs/') \
 || exit 1
 
 
 # copy static content
 
-cp -R package.json Procfile server.js server htdocs $BUILD_DIR/ || exit 1
+cp -R package.json Procfile server.js server shared htdocs $BUILD_DIR/ || exit 1
  
 
 # compile js
