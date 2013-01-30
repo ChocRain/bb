@@ -53,7 +53,7 @@ define([
 
         if (config.isDevelopment) {
             app.use("/js", express.static(config.paths.client));
-            app.use("/js", express.static(config.paths.shared));
+            app.use("/js/shared", express.static(config.paths.shared));
         }
 
         app.use("/", express.static(config.paths.htdocs, {maxAge: 365 * 24 * 60 * 60 * 1000}));

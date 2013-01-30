@@ -7,8 +7,8 @@ require.config({
 
     paths: {
         // require.js plugins
-        "json": "libs/json-0.3.0",
-        "text": "libs/text-2.0.3",
+        "json": "shared/libs/json-0.3.0",
+        "text": "shared/libs/text-2.0.3",
 
         // Internal modules that will be wrapped. Do never use directly!
         "_socketio": "/socket.io/socket.io",

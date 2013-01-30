@@ -4,7 +4,7 @@
     out: "../build/htdocs/js/main.js",
 
     paths: {
-        definitions: "../shared/definitions",
+        shared: "../shared",
 
         jquery: "empty:",
         json: "../shared/libs/json-0.3.0",

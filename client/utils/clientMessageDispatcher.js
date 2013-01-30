@@ -3,7 +3,7 @@
  */
 define([
     "underscore",
-    "utils/AbstractMessageDispatcher"
+    "shared/utils/AbstractMessageDispatcher"
 ], function (
     _,
     AbstractMessageDispatcher

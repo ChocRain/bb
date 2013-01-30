@@ -3,7 +3,7 @@
  */
 define([
     "underscore",
-    "json!definitions/constraints.json"
+    "json!shared/definitions/constraints.json"
 ], function (
     _,
     constraints
