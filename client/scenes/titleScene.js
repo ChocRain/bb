@@ -20,13 +20,13 @@ define([
         var spriteSize = 100;
         var map = {
             lollipop1: [0, 0],
-            lollipop2: [0, 1],
-            lollipop3: [0, 2],
-            lollipop4: [0, 3],
-            bonbon1: [1, 0],
+            lollipop2: [1, 0],
+            lollipop3: [2, 0],
+            lollipop4: [3, 0],
+            bonbon1: [0, 1],
             bonbon2: [1, 1],
-            bonbon3: [1, 2],
-            bonbon4: [1, 3]
+            bonbon3: [2, 1],
+            bonbon4: [3, 1]
         };
         Crafty.sprite(spriteSize, candyTileMap, map);
 
@@ -56,29 +56,23 @@ define([
         });
 
         var s = 0;
+        var n = 20;
 
         var newCandy = function () {
-            var component = spriteComponents[s];
-            Crafty.e("2D, DOM, Gravity, Falling, " + component).bind("Remove", function () {
-                _.delay(newCandy, _.random(100, 200));
-            });
+            if (n > 0) {
+                var component = spriteComponents[s];
+                Crafty.e("2D, DOM, Gravity, Falling, " + component).bind("Remove", function () {
+                    n += 1;
+                });
 
-            s = (s + 1) % spriteComponents.length;
-        };
-
-        var i = 0;
-
-        var createInitialCandy = function () {
-            if (i >= 24) {
-                return;
+                n -= 1;
+                s = (s + 5) % spriteComponents.length;
             }
-            i += 1;
 
-            newCandy();
-            _.delay(createInitialCandy, _.random(100, 200));
+            _.delay(newCandy, _.random(200, 400));
         };
 
-        createInitialCandy();
+        newCandy();
     });
 
     return {
