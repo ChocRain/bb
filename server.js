@@ -20,39 +20,19 @@ requirejs.define("_nodejs", [
 });
 
 requirejs([
-    "socket.io",
-
-    "server/clientRegistry",
-    "server/app"
+    "server/httpApp",
+    "server/socketServer"
 ], function (
-    io,
-    clientRegistry,
-    app
+    httpApp,
+    socketServer
 ) {
     "use strict";
 
-    var httpApp = app.create();
-    var httpServer = httpApp.getHttpServer();
+    // http
+    var app = httpApp.create();
+    var httpServer = app.getHttpServer();
 
-    // TODO: Move to own module
-    // setup socket.io
-
-    var socket = io.listen(httpServer);
-
-    socket.on("connection", function (socket) {
-        clientRegistry.register(socket);
-    });
-
-    socket.configure("production", function () {
-        socket.enable("browser client minification");
-        socket.enable("browser client gzip");
-        socket.enable("browser client etag");
-        socket.set("log level", 1);
-        socket.set("transports", ["htmlfile", "xhr-polling", "jsonp-polling"]);
-    });
-
-    socket.configure("development", function () {
-        socket.set("transports", ["websocket"]);
-    });
+    // socket.io
+    socketServer.create(httpServer);
 });
 
