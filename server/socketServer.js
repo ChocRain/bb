@@ -3,18 +3,38 @@
  */
 define([
     "socket.io",
-    "server/clientRegistry",
+    "server/session/sessionStore",
+    "server/utils/ServerMessageDispatcher",
+    "server/utils/ServerMessageSink",
+    "server/utils/ServerMessageSource",
+    "server/utils/Socket"
 ], function (
     io,
-    clientRegistry
+    sessionStore,
+    MessageDispatcher,
+    MessageSink,
+    MessageSource,
+    Socket
 ) {
     "use strict";
 
     var SocketServer = function (httpServer) {
         var serverSocket = io.listen(httpServer);
 
-        serverSocket.on("connection", function (socket) {
-            clientRegistry.register(socket);
+        serverSocket.on("connection", function (connectedSocket) {
+            var session = sessionStore.newSession();
+            var socket = new Socket(connectedSocket);
+
+            var messageDispatcher = new MessageDispatcher(session, socket);
+            var messageSink = new MessageSink(messageDispatcher);
+            var messageSource = new MessageSource(session, messageDispatcher, messageSink);
+
+            session.set({
+                messageSource: messageSource,
+                messageSink: messageSink
+            });
+
+            messageSink.sendSessionInitialized(session.getId());
         });
 
         serverSocket.configure("production", function () {

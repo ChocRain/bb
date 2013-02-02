@@ -19,19 +19,23 @@ define([
     "use strict";
 
     var init = function (opts) {
-        if (!opts || !opts.connected) {
-            throw new Error("No connected callback given!");
+        if (!opts || !opts.sessionInitialized) {
+            throw new Error("No callback for session initialization given!");
         }
 
         var handlers = {
-            connected: opts.connected,
+            connected: function () {
+                // Nothin to see here, move along...
+            },
 
             disconnected: function () {
                 new DisconnectedView().show();
             },
 
             messageHandlers: {
-                "server.user.loggedin": function (payload) {
+                "server.session.initialized": opts.sessionInitialized,
+
+                "server.session.loggedIn": function (payload) {
                     userSession.setLoggedIn(true);
                     rootNavigator.redirectAfterLogin();
                 }.bind(this),

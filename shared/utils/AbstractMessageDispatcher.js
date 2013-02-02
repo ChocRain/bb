@@ -3,60 +3,69 @@
  */
 define([
     "underscore",
-    "moment",
-    "utils/Socket"
+    "moment"
 ], function (
     _,
-    moment,
-    Socket
+    moment
 ) {
     "use strict";
 
     var AbstractMessageDispatcher = {
-        _initialize: function () {
-            this._sessionId = null;
+        _initialize: function (timestampRequired, opt_socket) {
+            this._timestampRequired = timestampRequired;
+            this._socket = opt_socket || null;
             this._messageHandlers = null;
-            this._socket = null;
         },
 
-        initSocket: function (handlers) {
-            if (!_.isFunction(handlers.connected)
-                    || !_.isFunction(handlers.disconnected)
-                    || !_.isObject(handlers.messageHandlers)) {
-                throw new Error("Message handlers not initialize properly!");
+        setSocket: function (socket) {
+            if (this._socket) {
+                throw new Error("Already have a socket set.");
             }
 
-            this._messageHandlers = handlers.messageHandlers;
+            this._socket = socket;
+        },
 
-            // initialize socket
-            this._socket = new Socket({
-                connected: _.once(handlers.connected),
-                disconnected: _.once(handlers.disconnected),
-                message: this._handleMessage.bind(this)
-            });
+        getSocket: function () {
+            return this._socket;
+        },
+
+        setMessageHandlers: function (messageHandlers) {
+            if (this._messageHandlers) {
+                throw new Error("Already have message handlers set.");
+            }
+
+            if (!_.isObject(messageHandlers)) {
+                throw new Error("Not an object: messageHandlers.");
+            }
+
+            this._messageHandlers = messageHandlers;
         },
 
         // sending messages
 
-        send: function (type, payload) {
+        send: function (type, payload, opt_sessionId, opt_timestamp) {
             var message = {
                 type: type,
                 payload: payload
             };
 
-            if (this._sessionId) {
-                message.sessionId = this._sessionId;
+            if (opt_sessionId) {
+                message.sessionId = opt_sessionId;
+            }
+
+            if (opt_timestamp) {
+                message.timestamp = opt_timestamp;
             }
 
             this._socket.send(message);
         },
 
         // receiving messages
-        _handleMessage: function (message) {
+        handleMessage: function (message) {
             var type = message.type;
 
             if (!_.isString(type)) {
-                throw new Error("Malformed message type: " + JSON.stringify(message));
+                throw new Error("Malformed message type: type = " + type + ", message = " + JSON.stringify(message));
             }
 
             var payload = message.payload;
@@ -65,20 +74,16 @@ define([
                 throw new Error("Invalid payload: " + JSON.stringify(message));
             }
 
-            var timestamp = message.timestamp;
-            var date = moment(timestamp);
+            var date = null;
 
-            if (!_.isNumber(timestamp) || !date.isValid()) {
-                throw new Error("Invalid timestamp: " + JSON.stringify(message));
+            if (this._timestampRequired) {
+                var timestamp = message.timestamp;
+                date = moment(timestamp);
+
+                if (!_.isNumber(timestamp) || !date.isValid()) {
+                    throw new Error("Invalid timestamp: " + JSON.stringify(message));
+                }
             }
-
-            var sessionId = message.sessionId || null;
-
-            if (!(_.isNull(sessionId) || _.isString(sessionId))) {
-                throw new Error("Invalid sessionId: " + JSON.stringify(message));
-            }
-
-            this._sessionId = sessionId;
 
             if (!_.isObject(this._messageHandlers)) {
                 throw new Error("Add object messageHandlers in concrete message dispatcher!");

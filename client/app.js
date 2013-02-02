@@ -28,7 +28,7 @@ define([
             $("#ui").append(connectingSpinner.el);
 
             messageSource.init({
-                connected: function () {
+                sessionInitialized: function () {
                     connectingSpinner.stop();
 
                     // start navigation
