@@ -6,13 +6,15 @@ define([
     "views/BaseView",
     "text!templates/LoginView.html",
     "utils/validator",
-    "views/Button"
+    "views/Button",
+    "shared/exceptions/ValidationException"
 ], function (
     _,
     BaseView,
     Template,
     validator,
-    Button
+    Button,
+    ValidationException
 ) {
     "use strict";
 
@@ -40,7 +42,7 @@ define([
         render: function (opts) {
             opts = opts || {};
             opts.viewModel = opts.viewModel || {};
-            opts.viewModel.constraints = validator.getConstraints("login");
+            opts.viewModel.constraints = validator.getConstraints("client.user.login");
 
             BaseView.prototype.render.call(this, opts);
             this.$("form").append(this._enterButton.render().el);
@@ -48,14 +50,14 @@ define([
             return this;
         },
 
-        setEnabled: function (enabled) {
-            this._enterButton.setEnabled(enabled);
+        setLoading: function (loading) {
+            this._enterButton.setLoading(loading);
 
             var $nick = this.$("form input[name=nick]");
-            if (enabled) {
-                $nick.removeAttr("disabled");
-            } else {
+            if (loading) {
                 $nick.attr({ disabled: "disabled" });
+            } else {
+                $nick.removeAttr("disabled");
             }
         },
 
@@ -64,40 +66,35 @@ define([
                 e.preventDefault();
             }
 
-            this.setEnabled(false);
+            this.setLoading(true);
 
             // TODO: More general solution.
             var $nick = this.$("form input[name=nick]");
             var nick = $nick.val();
 
-            var attrs = {
-                nick: nick
-            };
-
-            var validationResult = validator.validate("login", attrs);
-
-            if (!validationResult.hasErrors) {
-                this._enterButton.setLoading(true);
+            try {
                 this.model.doLogin(nick);
                 $nick.val("");
-            } else {
-                // TODO: Handle nicely
-                console.log(validationResult);
+            } catch (err) {
+                if (err instanceof ValidationException) {
+                    this.setLoading(false);
 
-                var constraints = validator.getConstraints("login");
+                    var constraints = validator.getConstraints("client.user.login");
 
-                var errorMsg = "Invalild nick. ";
-                errorMsg += "Must be at least ";
-                errorMsg += constraints.nick.minlength;
-                errorMsg += " and at most ";
-                errorMsg += constraints.nick.maxlength;
-                errorMsg += " characters long. ";
-                errorMsg += "Allowed are only letters, numbers and _.";
+                    var errorMsg = "Invalild nick. ";
+                    errorMsg += "Must be at least ";
+                    errorMsg += constraints.nick.minlength;
+                    errorMsg += " and at most ";
+                    errorMsg += constraints.nick.maxlength;
+                    errorMsg += " characters long. ";
+                    errorMsg += "Allowed are only letters, numbers and _.";
 
-                /*global alert: true */ // TODO: Nicer handling
-                alert(errorMsg);
-
-                this.setEnabled(true);
+                    /*global alert: true */ // TODO: Nicer handling
+                    alert(errorMsg);
+                } else {
+                    // re-throw any unhandled exception
+                    throw err;
+                }
             }
         }
     });

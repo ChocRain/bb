@@ -48,7 +48,7 @@ define([
             return this;
         },
 
-        setEnabled: function (enabled) {
+        _setEnabled: function (enabled) {
             this.$el.toggleClass("disabled", !enabled);
 
             if (enabled) {
@@ -61,7 +61,7 @@ define([
         setLoading: function (loading) {
             this.$el.toggleClass("loading", loading);
             if (loading) {
-                this.setEnabled(false);
+                this._setEnabled(false);
 
                 if (!this._spinner) {
                     this._spinner = spinner.createSmall();
@@ -71,6 +71,7 @@ define([
             } else {
                 this.$el.text(this._caption);
                 this._spinner.stop();
+                this._setEnabled(true);
             }
         }
     });

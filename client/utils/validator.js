@@ -4,11 +4,13 @@
 define([
     "underscore",
     "json!shared/definitions/constraints.json",
-    "shared/exceptions/IllegalArgumentException"
+    "shared/exceptions/IllegalArgumentException",
+    "shared/exceptions/ValidationException"
 ], function (
     _,
     constraints,
-    IllegalArgumentException
+    IllegalArgumentException,
+    ValidationException
 ) {
     "use strict";
 
@@ -69,11 +71,17 @@ define([
                 }
             });
 
-            result.missing = missing;
-            result.invalid = invalid;
-            result.unknown = unknown;
+            if (result.hasErrors) {
+                result.missing = missing;
+                result.invalid = invalid;
+                result.unknown = unknown;
 
-            return result;
+                throw new ValidationException(
+                    "Validation error for constraints: " + constraintsName,
+                    constraintsName,
+                    result
+                );
+            }
         },
 
         getConstraints: function (constraintsName) {

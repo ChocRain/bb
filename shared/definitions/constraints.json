@@ -1,12 +1,29 @@
 {
-    "login": {
+    "client.user.login": {
         "nick": {
             "minlength": 3,
             "maxlength": 20,
             "regexp": "^[a-zA-Z0-9_]+$"
         }
     },
-    "chat-message": {
+
+    "client.room.list": {
+    },
+
+    "client.room.join": {
+        "room": {
+            "minlength": 3,
+            "maxlength": 20,
+            "regexp": "^[a-zA-Z0-9_]+$"
+        }
+    },
+
+    "client.room.message": {
+        "room": {
+            "minlength": 3,
+            "maxlength": 20,
+            "regexp": "^[a-zA-Z0-9_]+$"
+        },
         "text": {
             "minlength": 1,
             "maxlength": 200

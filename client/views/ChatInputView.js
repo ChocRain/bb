@@ -5,12 +5,14 @@ define([
     "views/BaseView",
     "text!templates/ChatInputView.html",
     "models/ChatMessageModel",
-    "utils/validator"
+    "utils/validator",
+    "shared/exceptions/ValidationException"
 ], function (
     BaseView,
     Template,
     ChatMessageModel,
-    validator
+    validator,
+    ValidationException
 ) {
     "use strict";
 
@@ -27,7 +29,7 @@ define([
         render: function (opts) {
             opts = opts || {};
             opts.viewModel = opts.viewModel || {};
-            opts.viewModel.constraints = validator.getConstraints("chat-message");
+            opts.viewModel.constraints = validator.getConstraints("client.room.message");
 
             return BaseView.prototype.render.call(this, opts);
         },
@@ -40,32 +42,25 @@ define([
             var $text = this.$("form input[name=text]");
             var text = $text.val();
 
-            // TODO: Nicer validation
-
-            var attrs = {
-                text: text
-            };
-
-            var validationResult = validator.validate("chat-message", attrs);
-
-            if (!validationResult.hasErrors) {
+            try {
                 var model = new ChatMessageModel();
                 model.sendMessage(text);
-
                 $text.val("");
-            } else {
-                // TODO: Handle nicely
-                console.log(validationResult);
+            } catch (err) {
+                if (err instanceof ValidationException) {
+                    var constraints = validator.getConstraints("client.room.message");
 
-                var constraints = validator.getConstraints("chat-message");
+                    var errorMsg = "Please enter a message. ";
+                    errorMsg += "May not be longer than ";
+                    errorMsg += constraints.text.maxlength;
+                    errorMsg += " characters. ";
 
-                var errorMsg = "Please enter a message. ";
-                errorMsg += "May not be longer than ";
-                errorMsg += constraints.text.maxlength;
-                errorMsg += " characters. ";
-
-                /*global alert: true*/ // TODO: Nicer handling
-                alert(errorMsg);
+                    /*global alert: true*/ // TODO: Nicer handling
+                    alert(errorMsg);
+                } else {
+                    // re-throw any unhandled exception
+                    throw err;
+                }
             }
         }
     });

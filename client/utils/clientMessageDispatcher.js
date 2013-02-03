@@ -5,12 +5,14 @@ define([
     "underscore",
     "shared/utils/AbstractMessageDispatcher",
     "utils/Socket",
+    "utils/validator",
     "shared/exceptions/IllegalArgumentException",
     "shared/exceptions/ProtocolException"
 ], function (
     _,
     AbstractMessageDispatcher,
     Socket,
+    validator,
     IllegalArgumentException,
     ProtocolException
 ) {
@@ -54,6 +56,7 @@ define([
         },
 
         send: function (type, payload) {
+            validator.validate(type, payload);
             AbstractMessageDispatcher.send.call(this, type, payload, this._sessionId);
         }
     });
