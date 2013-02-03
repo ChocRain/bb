@@ -2,13 +2,17 @@
  * Source for messaging via a socket. Must be required once to initialize.
  */
 define([
+    "underscore",
     "domain",
     "server/services/authenticationService",
+    "server/services/roomService",
     "shared/exceptions/FeedbackException",
     "shared/exceptions/ProtocolException"
 ], function (
+    _,
     domain,
     authenticationService,
+    roomService,
     FeedbackException,
     ProtocolException
 ) {
@@ -16,43 +20,74 @@ define([
 
     var ServerMessageSource = function (session, messageDispatcher, messageSink) {
         var disconnectHandler = function () {
-            // TODO: get rooms and send "left" notifications
-            console.log("TODO: Handle disconnection...");
-            authenticationService.logout(session);
-        };
-
-        var messageHandlers = {
-            "client.user.login": function (payload) {
-                var nick = payload.nick;
-                console.log("User tries to enter:", nick);
-
-                // TODO: validation
-
-                authenticationService.login(session, nick);
-                messageSink.sendLoggedIn();
-
-                console.log("TODO: Enter a room...");
-/*
-                this._registry.broadcast("server.user.entered", {
-                    nick: nick
-                });
-*/
-            },
-
-            "client.chat.message": function (payload) {
-                console.log("TODO: Broadcast inside room...");
-
-                // TODO: Add message validation constraints
-                // constraints: { ... }
-
-/*
-                this._registry.broadcast("server.chat.message", {
-                    nick: this._getFromSession("nick"),
-                    text: payload.text
-                });
-*/
+            if (session.isLoggedIn()) {
+                roomService.leaveAllRooms(session);
+                authenticationService.logout(session);
             }
         };
+
+        // TODO: validation
+
+        var messageHandlers = {
+            "client.user.login": {
+                loginNotNeeded: true,
+                callback: function (payload) {
+                    var nick = payload.nick;
+
+                    authenticationService.login(session, nick);
+                    messageSink.sendLoggedIn();
+                }
+            },
+
+            "client.room.list": {
+                callback: function (payload) {
+                    var roomNames = roomService.getRoomNames();
+
+                    var rooms = _.map(roomNames, function (roomName) {
+                        return {
+                            name: roomName
+                        };
+                    });
+
+                    messageSink.sendRoomList(rooms);
+                }
+            },
+
+            "client.room.join": {
+                callback: function (payload) {
+                    roomService.join(session, payload.room);
+                }
+            },
+
+            "client.room.message": {
+                callback: function (payload) {
+                    roomService.sendMessage(session, payload.room, payload.text);
+                }
+            }
+        };
+
+        var wrappedMessageHandlers = {};
+
+        _.each(messageHandlers, function (handler, name) {
+            var callback = null;
+
+            var loginRequired = !handler.loginNotNeeded;
+            if (loginRequired) {
+                callback = function (payload) {
+                    if (!session.isLoggedIn()) {
+                        throw new ProtocolException(
+                            "This message is only allowed for logged in users: " + name
+                        );
+                    }
+
+                    handler.callback(payload);
+                };
+            } else {
+                callback = handler.callback;
+            }
+
+            wrappedMessageHandlers[name] = callback;
+        });
 
         var messageDomain = domain.create();
 
@@ -76,7 +111,7 @@ define([
         socket.setDisconnectHandler(messageDomain.bind(disconnectHandler));
         socket.setMessageHandler(messageDomain.bind(messageDispatcher.handleMessage.bind(messageDispatcher)));
 
-        messageDispatcher.setMessageHandlers(messageHandlers);
+        messageDispatcher.setMessageHandlers(wrappedMessageHandlers);
     };
 
     return ServerMessageSource;

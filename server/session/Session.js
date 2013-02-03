@@ -3,10 +3,12 @@
  */
 define([
     "underscore",
-    "shared/exceptions/IllegalArgumentException"
+    "shared/exceptions/IllegalArgumentException",
+    "shared/exceptions/IllegalStateException"
 ], function (
     _,
-    IllegalArgumentException
+    IllegalArgumentException,
+    IllegalStateException
 ) {
     "use strict";
 
@@ -48,6 +50,26 @@ define([
 
     Session.prototype.isLoggedIn = function () {
         return !!this._data.loggedIn;
+    };
+
+    Session.prototype.getNick = function () {
+        var nick = this.get("nick");
+
+        if (!_.isString(nick)) {
+            throw new IllegalStateException("No nick set in current session.");
+        }
+
+        return nick;
+    };
+
+    Session.prototype.getMessageSink = function () {
+        var messageSink = this.get("messageSink");
+
+        if (!_.isObject(messageSink)) {
+            throw new IllegalStateException("No message sink set in current session.");
+        }
+
+        return messageSink;
     };
 
     return Session;

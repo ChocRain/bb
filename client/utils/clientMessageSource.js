@@ -7,6 +7,7 @@ define([
     "routes/rootNavigator",
     "models/userSession",
     "utils/clientMessageDispatcher",
+    "utils/clientMessageSink",
     "collections/chatLogCollection",
     "views/DisconnectedView",
     "shared/exceptions/IllegalArgumentException"
@@ -15,6 +16,7 @@ define([
     rootNavigator,
     userSession,
     messageDispatcher,
+    messageSink,
     chatLogCollection,
     DisconnectedView,
     IllegalArgumentException
@@ -52,26 +54,35 @@ define([
                     rootNavigator.redirectAfterLogin();
                 }.bind(this),
 
-                "server.user.entered": function (payload, date) {
+                "server.room.list": function (payload) {
+                    // TODO: Proper room handling.
+                    var room = payload.rooms[0];
+                    messageSink.sendJoinRoom(room.name);
+                },
+
+                "server.room.joined": function (payload, date) {
                     chatLogCollection.add({
                         type: "entered",
                         date: date,
+                        room: payload.room,
                         nick: payload.nick
                     });
                 },
 
-                "server.user.left": function (payload, date) {
+                "server.room.left": function (payload, date) {
                     chatLogCollection.add({
                         type: "left",
                         date: date,
+                        room: payload.room,
                         nick: payload.nick
                     });
                 },
 
-                "server.chat.message": function (payload, date) {
+                "server.room.message": function (payload, date) {
                     chatLogCollection.add({
                         type: "message",
                         date: date,
+                        room: payload.room,
                         nick: payload.nick,
                         text: payload.text
                     });

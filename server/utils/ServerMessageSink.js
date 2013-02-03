@@ -37,13 +37,45 @@ define([
         this._messageDispatcher.send("server.session.loggedIn", {});
     };
 
-/*
-    ServerMessageSink.prototype.sendChatMessage = function (text) {
-        messageDispatcher.send("client.chat.message", {
+    /**
+     * Sends a list of all currently available rooms.
+     */
+    ServerMessageSink.prototype.sendRoomList = function (rooms) {
+        this._messageDispatcher.send("server.room.list", {
+            rooms: rooms
+        });
+    };
+
+    /**
+     * Send a message to inform about a user having joined a room.
+     */
+    ServerMessageSink.prototype.sendUserJoinedRoom = function (roomName, nick) {
+        this._messageDispatcher.send("server.room.joined", {
+            room: roomName,
+            nick: nick
+        });
+    };
+
+    /**
+     * Send a message to inform about a user having left a room.
+     */
+    ServerMessageSink.prototype.sendUserLeftRoom = function (roomName, nick) {
+        this._messageDispatcher.send("server.room.left", {
+            room: roomName,
+            nick: nick
+        });
+    };
+
+    /**
+     * Send a chat message to a member of the room.
+     */
+    ServerMessageSink.prototype.sendRoomMessage = function (roomName, nick, text) {
+        this._messageDispatcher.send("server.room.message", {
+            room: roomName,
+            nick: nick,
             text: text
         });
     };
-*/
 
     return ServerMessageSink;
 });

@@ -8,7 +8,8 @@ define([
     "models/userSession",
     "views/ChatView",
     "views/LoginView",
-    "routes/rootNavigator"
+    "routes/rootNavigator",
+    "utils/clientMessageSink"
 ], function (
     _,
     $,
@@ -16,7 +17,8 @@ define([
     userSession,
     ChatView,
     LoginView,
-    rootNavigator
+    rootNavigator,
+    messageSink
 ) {
     "use strict";
 
@@ -40,6 +42,8 @@ define([
         },
 
         root: function () {
+            messageSink.sendGetRooms();
+
             // TODO: Nicer handling of views
             $("#ui").html(new ChatView({model: userSession}).render().el);
         },

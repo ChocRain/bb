@@ -72,10 +72,7 @@ define([
     };
 
     SessionStore.prototype.findByNick = function (nick) {
-        // FIXME: This a really poor implementation in terms of performance. O(n) with n being number of sessions.
-        var sessions = _.filter(this._sessionsById, function (session) {
-            return session && session.get("nick") === nick;
-        });
+        var sessions = this.findByNicks([nick]);
 
         if (sessions.length === 0) {
             return null;
@@ -86,6 +83,16 @@ define([
         }
 
         throw new IllegalStateException("There is more than one session for this nick:", nick);
+    };
+
+    SessionStore.prototype.findByNicks = function (nicks) {
+        // FIXME: This a really poor implementation in terms of performance.
+        // O(n * m) with n being number of sessions and m being the number of nicks.
+        var sessions = _.filter(this._sessionsById, function (session) {
+            return session && _.contains(nicks, session.get("nick"));
+        });
+
+        return sessions;
     };
 
     return new SessionStore();
