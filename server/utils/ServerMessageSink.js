@@ -10,6 +10,18 @@ define([
         this._messageDispatcher = messageDispatcher;
     };
 
+    ServerMessageSink.prototype.sendFeedback = function (feedbackMessage) {
+        this._messageDispatcher.send("server.error.feedback", {
+            message: feedbackMessage
+        });
+    };
+
+    ServerMessageSink.prototype.sendProtocolError = function (errorMessage) {
+        this._messageDispatcher.send("server.error.protocol", {
+            message: errorMessage
+        });
+    };
+
     /**
      * Send once after connection is established to give the session id to the
      * client.

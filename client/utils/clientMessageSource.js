@@ -1,6 +1,7 @@
 /**
  * Source for messaging via a socket. Must be required once to initialize.
  */
+/*global alert: true */ // TODO: Nicer feedback handling...
 define([
     "jquery",
     "routes/rootNavigator",
@@ -35,6 +36,15 @@ define([
             },
 
             messageHandlers: {
+                "server.error.feedback": function (payload) {
+                    // TODO: Nicer feedback handling...
+                    alert(payload.message);
+                },
+
+                "server.error.protocol": function (payload) {
+                    console.log("protocol error:", payload.message);
+                },
+
                 "server.session.initialized": opts.sessionInitialized,
 
                 "server.session.loggedIn": function (payload) {

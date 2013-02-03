@@ -2,9 +2,15 @@
  * Source for messaging via a socket. Must be required once to initialize.
  */
 define([
-    "server/services/authenticationService"
+    "domain",
+    "server/services/authenticationService",
+    "shared/exceptions/FeedbackException",
+    "shared/exceptions/ProtocolException"
 ], function (
-    authenticationService
+    domain,
+    authenticationService,
+    FeedbackException,
+    ProtocolException
 ) {
     "use strict";
 
@@ -48,9 +54,27 @@ define([
             }
         };
 
+        var messageDomain = domain.create();
+
+        messageDomain.on("error", function (err) {
+            if (err instanceof FeedbackException) {
+                messageSink.sendFeedback(err.message);
+                return;
+            }
+
+            if (err instanceof ProtocolException) {
+                console.error("protocol exception:", err);
+                messageSink.sendProtocolError(err.message);
+                return;
+            }
+
+            // unhandled errors shall be re-thrown
+            throw err;
+        });
+
         var socket = messageDispatcher.getSocket();
-        socket.setDisconnectHandler(disconnectHandler);
-        socket.setMessageHandler(messageDispatcher.handleMessage.bind(messageDispatcher));
+        socket.setDisconnectHandler(messageDomain.bind(disconnectHandler));
+        socket.setMessageHandler(messageDomain.bind(messageDispatcher.handleMessage.bind(messageDispatcher)));
 
         messageDispatcher.setMessageHandlers(messageHandlers);
     };

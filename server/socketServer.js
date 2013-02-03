@@ -2,6 +2,7 @@
  * Server for socekt.io connections.
  */
 define([
+    "domain",
     "socket.io",
     "server/session/sessionStore",
     "server/utils/ServerMessageDispatcher",
@@ -9,6 +10,7 @@ define([
     "server/utils/ServerMessageSource",
     "server/utils/Socket"
 ], function (
+    domain,
     io,
     sessionStore,
     MessageDispatcher,
@@ -22,19 +24,28 @@ define([
         var serverSocket = io.listen(httpServer);
 
         serverSocket.on("connection", function (connectedSocket) {
-            var session = sessionStore.newSession();
-            var socket = new Socket(connectedSocket);
+            var connectionDomain = domain.create();
 
-            var messageDispatcher = new MessageDispatcher(session, socket);
-            var messageSink = new MessageSink(messageDispatcher);
-            var messageSource = new MessageSource(session, messageDispatcher, messageSink);
-
-            session.set({
-                messageSource: messageSource,
-                messageSink: messageSink
+            connectionDomain.on("error", function (err) {
+                // make sure the server won't crash for errors in connectionDomain
+                console.error("session:", err);
             });
 
-            messageSink.sendSessionInitialized(session.getId());
+            connectionDomain.run(function () {
+                var session = sessionStore.newSession();
+                var socket = new Socket(connectedSocket);
+
+                var messageDispatcher = new MessageDispatcher(session, socket);
+                var messageSink = new MessageSink(messageDispatcher);
+                var messageSource = new MessageSource(session, messageDispatcher, messageSink);
+
+                session.set({
+                    messageSource: messageSource,
+                    messageSink: messageSink
+                });
+
+                messageSink.sendSessionInitialized(session.getId());
+            }.bind(this));
         });
 
         serverSocket.configure("production", function () {
