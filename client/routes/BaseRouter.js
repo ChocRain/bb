@@ -4,11 +4,13 @@
 define([
     "underscore",
     "backbone",
-    "models/userSession"
+    "models/userSession",
+    "shared/exceptions/IllegalArgumentException"
 ], function (
     _,
     Backbone,
-    userSession
+    userSession,
+    IllegalArgumentException
 ) {
     "use strict";
 
@@ -19,14 +21,14 @@ define([
             if (this.loggedInRoutes) {
                 if (!_.isObject(this.loggedInRoutes)
                         || !_.isFunction(this.loginRoute)) {
-                    throw new Error("Router not set up correctly for logged in routes!");
+                    throw new IllegalArgumentException("Router not set up correctly for logged in routes!");
                 }
 
                 _.each(this.loggedInRoutes, function (callbackName, route) {
                     var originalCallback = this[callbackName];
 
                     if (!_.isFunction(originalCallback)) {
-                        throw new Error("Invalid callback for route: " + callbackName);
+                        throw new IllegalArgumentException("Invalid callback for route: " + callbackName);
                     }
 
                     // wrap callback

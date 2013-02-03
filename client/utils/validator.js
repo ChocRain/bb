@@ -3,10 +3,12 @@
  */
 define([
     "underscore",
-    "json!shared/definitions/constraints.json"
+    "json!shared/definitions/constraints.json",
+    "shared/exceptions/IllegalArgumentException"
 ], function (
     _,
-    constraints
+    constraints,
+    IllegalArgumentException
 ) {
     "use strict";
 
@@ -31,7 +33,7 @@ define([
                 return new RegExp(constraint).test(value);
             }
 
-            throw new Error("Unknown constraint type: " + type);
+            throw new IllegalArgumentException("Unknown constraint type: " + type);
         });
     };
 
@@ -40,7 +42,7 @@ define([
             var objectConstraints = constraints[constraintsName];
 
             if (!_.isObject(objectConstraints)) {
-                throw new Error("Cannot find valid constraints: " + constraintsName);
+                throw new IllegalArgumentException("Cannot find valid constraints: " + constraintsName);
             }
 
             var invalid = [];
@@ -78,7 +80,7 @@ define([
             var objectConstraints = constraints[constraintsName];
 
             if (!_.isObject(objectConstraints)) {
-                throw new Error("Cannot find valid constraints: " + constraintsName);
+                throw new IllegalArgumentException("Cannot find valid constraints: " + constraintsName);
             }
 
             return objectConstraints;

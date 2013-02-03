@@ -4,11 +4,13 @@
 define([
     "underscore",
     "views/BaseView",
-    "utils/spinner"
+    "utils/spinner",
+    "shared/exceptions/IllegalArgumentException"
 ], function (
     _,
     BaseView,
-    spinner
+    spinner,
+    IllegalArgumentException
 ) {
     "use strict";
 
@@ -23,13 +25,13 @@ define([
             BaseView.prototype.initialize.call(this, opts);
 
             if (!_.isObject(opts) || !_.isString(opts.caption)) {
-                throw new Error("Button not properly initialized.");
+                throw new IllegalArgumentException("Button not properly initialized.");
             }
 
             this._caption = opts.caption;
 
             if (opts.attrs && !_.isObject(opts.attrs)) {
-                throw new Error("Attributes object must be an object.");
+                throw new IllegalArgumentException("Attributes object must be an object.");
             }
 
             this._attrs = opts.attrs;

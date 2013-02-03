@@ -6,13 +6,15 @@ define([
     "moment",
     "node-uuid",
     "server/utils/crypto",
-    "server/session/Session"
+    "server/session/Session",
+    "shared/exceptions/IllegalStateException"
 ], function (
     _,
     moment,
     uuid,
     crypto,
-    Session
+    Session,
+    IllegalStateException
 ) {
     "use strict";
 
@@ -47,7 +49,9 @@ define([
         var sessionId = this._generateSessionId();
         if (this._sessionsById[sessionId]) {
             // TODO: Graceful error handling
-            throw new Error("The unlikely has happened: We generated a duplicate session id: " + sessionId);
+            throw new IllegalStateException(
+                "The unlikely has happened: We generated a duplicate session id: " + sessionId
+            );
         }
 
         var session = new Session(sessionId, this);
@@ -81,7 +85,7 @@ define([
             return sessions[0];
         }
 
-        throw new Error("There is more than one session for this nick:", nick);
+        throw new IllegalStateException("There is more than one session for this nick:", nick);
     };
 
     return new SessionStore();

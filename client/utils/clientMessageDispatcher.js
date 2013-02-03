@@ -4,11 +4,15 @@
 define([
     "underscore",
     "shared/utils/AbstractMessageDispatcher",
-    "utils/Socket"
+    "utils/Socket",
+    "shared/exceptions/IllegalArgumentException",
+    "shared/exceptions/ProtocolException"
 ], function (
     _,
     AbstractMessageDispatcher,
-    Socket
+    Socket,
+    IllegalArgumentException,
+    ProtocolException
 ) {
     "use strict";
 
@@ -24,7 +28,7 @@ define([
             if (!_.isFunction(handlers.connected)
                     || !_.isFunction(handlers.disconnected)
                     || !_.isObject(handlers.messageHandlers)) {
-                throw new Error("Message handlers not initialize properly!");
+                throw new IllegalArgumentException("Message handlers not initialize properly!");
             }
 
             this.setMessageHandlers(handlers.messageHandlers);
@@ -41,7 +45,7 @@ define([
             var sessionId = message.sessionId || null;
 
             if (!(_.isNull(sessionId) || _.isString(sessionId))) {
-                throw new Error("Invalid sessionId: " + JSON.stringify(message));
+                throw new ProtocolException("Invalid sessionId: " + JSON.stringify(message));
             }
 
             this._sessionId = sessionId || this._sessionId;

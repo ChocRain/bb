@@ -3,10 +3,16 @@
  */
 define([
     "underscore",
-    "moment"
+    "moment",
+    "shared/exceptions/IllegalStateException",
+    "shared/exceptions/IllegalArgumentException",
+    "shared/exceptions/ProtocolException"
 ], function (
     _,
-    moment
+    moment,
+    IllegalStateException,
+    IllegalArgumentException,
+    ProtocolException
 ) {
     "use strict";
 
@@ -19,7 +25,7 @@ define([
 
         setSocket: function (socket) {
             if (this._socket) {
-                throw new Error("Already have a socket set.");
+                throw new IllegalStateException("Already have a socket set.");
             }
 
             this._socket = socket;
@@ -31,11 +37,11 @@ define([
 
         setMessageHandlers: function (messageHandlers) {
             if (this._messageHandlers) {
-                throw new Error("Already have message handlers set.");
+                throw new IllegalStateException("Already have message handlers set.");
             }
 
             if (!_.isObject(messageHandlers)) {
-                throw new Error("Not an object: messageHandlers.");
+                throw new IllegalArgumentException("Not an object: messageHandlers.");
             }
 
             this._messageHandlers = messageHandlers;
@@ -65,13 +71,15 @@ define([
             var type = message.type;
 
             if (!_.isString(type)) {
-                throw new Error("Malformed message type: type = " + type + ", message = " + JSON.stringify(message));
+                throw new ProtocolException(
+                    "Malformed message type: type = " + type + ", message = " + JSON.stringify(message)
+                );
             }
 
             var payload = message.payload;
 
             if (!_.isObject(payload)) {
-                throw new Error("Invalid payload: " + JSON.stringify(message));
+                throw new ProtocolException("Invalid payload: " + JSON.stringify(message));
             }
 
             var date = null;
@@ -81,18 +89,22 @@ define([
                 date = moment(timestamp);
 
                 if (!_.isNumber(timestamp) || !date.isValid()) {
-                    throw new Error("Invalid timestamp: " + JSON.stringify(message));
+                    throw new ProtocolException("Invalid timestamp: " + JSON.stringify(message));
                 }
             }
 
             if (!_.isObject(this._messageHandlers)) {
-                throw new Error("Add object messageHandlers in concrete message dispatcher!");
+                throw new IllegalStateException("No message handlers set.");
             }
 
             var handler = this._messageHandlers[type];
 
+            if (!handler) {
+                throw new ProtocolException("No handler for message of type: " + type);
+            }
+
             if (!_.isFunction(handler)) {
-                throw new Error("No or invalid handler for message type: " + type);
+                throw new IllegalStateException("Invalid handler for message type: " + type);
             }
 
             handler(payload, date);

@@ -2,9 +2,13 @@
  * Service for user authentication.
  */
 define([
-    "server/session/sessionStore"
+    "server/session/sessionStore",
+    "shared/exceptions/FeedbackException",
+    "shared/exceptions/ProtocolException"
 ], function (
-    sessionStore
+    sessionStore,
+    FeedbackException,
+    ProtocolException
 ) {
     "use strict";
 
@@ -15,11 +19,11 @@ define([
         // TODO: Check credentials.
 
         if (this.isLoggedIn(nick)) {
-            throw new Error("A user with that name is already logged in.");
+            throw new FeedbackException("A user with that name is already logged in.");
         }
 
         if (session.isLoggedIn()) {
-            throw new Error("Cannot login twice.");
+            throw new ProtocolException("Cannot login twice.");
         }
 
         session.set({

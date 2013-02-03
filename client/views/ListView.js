@@ -3,10 +3,14 @@
  */
 define([
     "underscore",
-    "views/BaseView"
+    "views/BaseView",
+    "shared/exceptions/IllegalArgumentException",
+    "shared/exceptions/UnsupportedOperationException"
 ], function (
     _,
-    BaseView
+    BaseView,
+    IllegalArgumentException,
+    UnsupportedOperationException
 ) {
     "use strict";
 
@@ -15,7 +19,7 @@ define([
             BaseView.prototype.initialize.call(this, opts);
 
             if (!_.isFunction(this.createItemView)) {
-                throw new Error("List view is missing createItemView().");
+                throw new IllegalArgumentException("List view is missing createItemView().");
             }
 
             this.collection.on("add", this.add.bind(this));
@@ -35,11 +39,11 @@ define([
         },
 
         remove: function () {
-            throw new Error("Unsupported opertation: remove");
+            throw new UnsupportedOperationException("Unsupported opertation: remove");
         },
 
         reset: function () {
-            throw new Error("Unsupported opertation: reset");
+            throw new UnsupportedOperationException("Unsupported opertation: reset");
         }
     });
 

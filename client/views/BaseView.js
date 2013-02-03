@@ -5,12 +5,14 @@ define([
     "underscore",
     "backbone",
     "moment",
-    "crafty"
+    "crafty",
+    "shared/exceptions/IllegalArgumentException"
 ], function (
     _,
     Backbone,
     moment,
-    Crafty
+    Crafty,
+    IllegalArgumentException
 ) {
     "use strict";
 
@@ -19,7 +21,7 @@ define([
             Backbone.View.prototype.render.call(this, opts);
 
             if (!_.isString(this.template)) {
-                throw new Error("Cannot render view without template!");
+                throw new IllegalArgumentException("Cannot render view without template!");
             }
 
             var viewModel = opts && opts.viewModel ? opts.viewModel : {};
@@ -34,7 +36,7 @@ define([
                     var m = moment(date);
 
                     if (!m.isValid()) {
-                        throw new Error("Invalid arguemnt for renderer time:" + date);
+                        throw new IllegalArgumentException("Invalid arguemnt for renderer time:" + date);
                     }
 
                     return m.format("HH:mm");

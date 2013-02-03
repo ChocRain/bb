@@ -4,11 +4,13 @@
 define([
     "underscore",
     "moment",
-    "shared/utils/AbstractMessageDispatcher"
+    "shared/utils/AbstractMessageDispatcher",
+    "shared/exceptions/ProtocolException"
 ], function (
     _,
     moment,
-    AbstractMessageDispatcher
+    AbstractMessageDispatcher,
+    ProtocolException
 ) {
     "use strict";
 
@@ -35,7 +37,7 @@ define([
             var expectedSessionId = this._session.getId();
 
             if (actualSessionId !== expectedSessionId) {
-                throw new Error(
+                throw new ProtocolException(
                     "Invalid session id: actual = " + actualSessionId + ", expected = " + expectedSessionId
                 );
             }

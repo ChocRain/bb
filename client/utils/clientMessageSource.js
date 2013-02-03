@@ -7,20 +7,22 @@ define([
     "models/userSession",
     "utils/clientMessageDispatcher",
     "collections/chatLogCollection",
-    "views/DisconnectedView"
+    "views/DisconnectedView",
+    "shared/exceptions/IllegalArgumentException"
 ], function (
     $,
     rootNavigator,
     userSession,
     messageDispatcher,
     chatLogCollection,
-    DisconnectedView
+    DisconnectedView,
+    IllegalArgumentException
 ) {
     "use strict";
 
     var init = function (opts) {
         if (!opts || !opts.sessionInitialized) {
-            throw new Error("No callback for session initialization given!");
+            throw new IllegalArgumentException("No callback for session initialization given!");
         }
 
         var handlers = {

@@ -3,16 +3,20 @@
  */
 define([
     "underscore",
-    "socketio"
+    "socketio",
+    "shared/exceptions/IllegalArgumentException",
+    "shared/exceptions/ProtocolException"
 ], function (
     _,
-    io
+    io,
+    IllegalArgumentException,
+    ProtocolException
 ) {
     "use strict";
 
     var Socket = function (opts) {
         if (!opts || !opts.connected || !opts.disconnected || !opts.message) {
-            throw new Error("Please configure the socket.");
+            throw new IllegalArgumentException("Please configure the socket.");
         }
 
         this._socket = io.connect();
@@ -24,7 +28,7 @@ define([
             var message = JSON.parse(messageStr);
 
             if (!_.isObject(message)) {
-                throw new Error("Malformed message received: " + messageStr);
+                throw new ProtocolException("Malformed message received: " + messageStr);
             }
 
             opts.message(message);

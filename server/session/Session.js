@@ -2,9 +2,11 @@
  * A session.
  */
 define([
-    "underscore"
+    "underscore",
+    "shared/exceptions/IllegalArgumentException"
 ], function (
-    _
+    _,
+    IllegalArgumentException
 ) {
     "use strict";
 
@@ -27,7 +29,9 @@ define([
                 this._data[k] = v;
             }, this);
         } else {
-            throw new Error("Invalid arguments for method 'set': key = " + key + ", value = " + value);
+            throw new IllegalArgumentException(
+                "Invalid arguments for method 'set': key = " + key + ", value = " + value
+            );
         }
     };
 
