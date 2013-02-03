@@ -5,7 +5,7 @@ define([
     "underscore",
     "shared/utils/AbstractMessageDispatcher",
     "utils/Socket",
-    "utils/validator",
+    "shared/utils/validator",
     "shared/exceptions/IllegalArgumentException",
     "shared/exceptions/ProtocolException"
 ], function (

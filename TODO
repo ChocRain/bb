@@ -1,6 +1,6 @@
 * Caching is not yet perfect.
 * TODOs in code.
-* Validation in server. (also ensure _every_ input is checked)
+* Ensure _every_ input is checked on server.
 * Nicer validation / form handling on client.
 * Real login.
 * Moderation.

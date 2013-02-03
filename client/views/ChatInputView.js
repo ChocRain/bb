@@ -5,7 +5,7 @@ define([
     "views/BaseView",
     "text!templates/ChatInputView.html",
     "models/ChatMessageModel",
-    "utils/validator",
+    "shared/utils/validator",
     "shared/exceptions/ValidationException"
 ], function (
     BaseView,

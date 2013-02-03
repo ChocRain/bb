@@ -6,15 +6,19 @@ define([
     "domain",
     "server/services/authenticationService",
     "server/services/roomService",
+    "shared/utils/validator",
     "shared/exceptions/FeedbackException",
-    "shared/exceptions/ProtocolException"
+    "shared/exceptions/ProtocolException",
+    "shared/exceptions/ValidationException"
 ], function (
     _,
     domain,
     authenticationService,
     roomService,
+    validator,
     FeedbackException,
-    ProtocolException
+    ProtocolException,
+    ValidationException
 ) {
     "use strict";
 
@@ -25,8 +29,6 @@ define([
                 authenticationService.logout(session);
             }
         };
-
-        // TODO: validation
 
         var messageHandlers = {
             "client.user.login": {
@@ -40,7 +42,7 @@ define([
             },
 
             "client.room.list": {
-                callback: function (payload) {
+                callback: function () {
                     var roomNames = roomService.getRoomNames();
 
                     var rooms = _.map(roomNames, function (roomName) {
@@ -69,7 +71,7 @@ define([
         var wrappedMessageHandlers = {};
 
         _.each(messageHandlers, function (handler, name) {
-            var callback = null;
+            var callback;
 
             var loginRequired = !handler.loginNotNeeded;
             if (loginRequired) {
@@ -86,7 +88,12 @@ define([
                 callback = handler.callback;
             }
 
-            wrappedMessageHandlers[name] = callback;
+            var validatingdCallback = function (payload) {
+                validator.validate(name, payload);
+                callback(payload);
+            };
+
+            wrappedMessageHandlers[name] = validatingdCallback;
         });
 
         var messageDomain = domain.create();
@@ -100,6 +107,15 @@ define([
             if (err instanceof ProtocolException) {
                 console.error("protocol exception:", err);
                 messageSink.sendProtocolError(err.message);
+                return;
+            }
+
+            if (err instanceof ValidationException) {
+                messageSink.sendValidationError(
+                    err.message,
+                    err.getConstraintsName(),
+                    err.getValidationResult()
+                );
                 return;
             }
 

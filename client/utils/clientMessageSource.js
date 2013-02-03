@@ -44,7 +44,12 @@ define([
                 },
 
                 "server.error.protocol": function (payload) {
-                    console.log("protocol error:", payload.message);
+                    console.error("protocol error:", payload.message);
+                },
+
+                "server.error.validation": function (payload) {
+                    // should not happen since validation already happens on the client
+                    console.error("unexpected server validation error:", payload);
                 },
 
                 "server.session.initialized": opts.sessionInitialized,

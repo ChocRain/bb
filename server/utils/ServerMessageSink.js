@@ -10,15 +10,36 @@ define([
         this._messageDispatcher = messageDispatcher;
     };
 
+    /**
+     * Sends a general feedback in case of an error.
+     */
     ServerMessageSink.prototype.sendFeedback = function (feedbackMessage) {
         this._messageDispatcher.send("server.error.feedback", {
             message: feedbackMessage
         });
     };
 
+    /**
+     * Sends a message notifying about a protocol error.
+     */
     ServerMessageSink.prototype.sendProtocolError = function (errorMessage) {
         this._messageDispatcher.send("server.error.protocol", {
             message: errorMessage
+        });
+    };
+
+    /**
+     * Sends a message notifying about a validation error.
+     */
+    ServerMessageSink.prototype.sendValidationError = function (
+        errorMessage,
+        constraintsName,
+        validationResult
+    ) {
+        this._messageDispatcher.send("server.error.validation", {
+            message: errorMessage,
+            constraintsName: constraintsName,
+            validationResult: validationResult
         });
     };
 

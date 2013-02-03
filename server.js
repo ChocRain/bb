@@ -4,6 +4,7 @@ var requirejs = require("requirejs");
 requirejs.config({
     nodeRequire: require,
     paths: {
+        "json": "shared/libs/json-0.3.0",
         "text": "shared/libs/text-2.0.3"
     }
 });

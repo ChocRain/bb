@@ -5,7 +5,7 @@ define([
     "underscore",
     "views/BaseView",
     "text!templates/LoginView.html",
-    "utils/validator",
+    "shared/utils/validator",
     "views/Button",
     "shared/exceptions/ValidationException"
 ], function (
