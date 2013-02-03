@@ -1,4 +1,7 @@
 * Caching is not yet perfect.
 * TODOs in code.
-* Refactor server.
+* Validation in server. (also ensure _every_ input is checked)
+* Real login.
+* Moderation.
+* SSL
 * jasmine tests?
