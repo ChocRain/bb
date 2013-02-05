@@ -41,11 +41,13 @@ define([
             rootNavigator.root().go();
         },
 
+        _showView: function (view) {
+            $("#ui").html(view.render().el);
+        },
+
         root: function () {
             messageSink.sendGetRooms();
-
-            // TODO: Nicer handling of views
-            $("#ui").html(new ChatView({model: userSession}).render().el);
+            this._showView(new ChatView({model: userSession}));
         },
 
         login: function (redirect) {
@@ -53,14 +55,14 @@ define([
             if (userSession.isLoggedIn()) {
                 rootNavigator.redirectAfterLogin();
             } else {
-                // TODO: Nicer handling of views
-                $("#ui").html(new LoginView({
+                this._showView(new LoginView({
                     model: userSession,
                     redirect: redirect
-                }).render().el);
+                }));
             }
         }
     });
 
     return RootRouter;
 });
+

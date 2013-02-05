@@ -7,6 +7,7 @@ define([
     "node-uuid",
     "server/utils/crypto",
     "server/session/Session",
+    "shared/exceptions/FeedbackException",
     "shared/exceptions/IllegalStateException"
 ], function (
     _,
@@ -14,6 +15,7 @@ define([
     uuid,
     crypto,
     Session,
+    FeedbackException,
     IllegalStateException
 ) {
     "use strict";
@@ -30,30 +32,31 @@ define([
      * The session id is valid as long as the client is connected via socket.io.
      */
     SessionStore.prototype._generateSessionId = function () {
-        // random secret to base the session id on
-        // in this case we use a random uuid
-        var randomSecret = uuid.v4();
+        var i;
 
-        // to ensure we always get a new session id we append the current timestamp
-        // in millis (a little paranoid about the uuid I guess...)
-        randomSecret += moment().valueOf();
+        for (i = 0; i < 10; i += 1) {
+            // random secret to base the session id on
+            // in this case we use a random uuid
+            var randomSecret = uuid.v4();
 
-        // generate the SHA1 hash of the random secret
-        var hash = crypto.sha1Sum(randomSecret);
+            // to ensure we always get a new session id we append the current timestamp
+            // in millis (a little paranoid about the uuid I guess...)
+            randomSecret += moment().valueOf();
 
-        // the hash serves as our session id
-        return hash;
+            // generate the SHA1 hash of the random secret
+            var hash = crypto.sha1Sum(randomSecret);
+
+            // the hash serves as our session id
+            if (!this._sessionsById[hash]) {
+                return hash;
+            }
+        }
+
+        throw new FeedbackException("Unexpected error. Please try again.");
     };
 
     SessionStore.prototype.newSession = function () {
         var sessionId = this._generateSessionId();
-        if (this._sessionsById[sessionId]) {
-            // TODO: Graceful error handling
-            throw new IllegalStateException(
-                "The unlikely has happened: We generated a duplicate session id: " + sessionId
-            );
-        }
-
         var session = new Session(sessionId, this);
         this._sessionsById[sessionId] = session;
 
