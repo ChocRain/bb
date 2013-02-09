@@ -19,7 +19,7 @@ define([
     // not giving away too many information to the client
     var generalErrorMessage = "Persona login failed. Please try again later.";
 
-    var audience = config.http.protocol + "://" + config.http.hostname + ":" + config.http.port;
+    var audience = config.http.publicBaseUrl;
 
     var verify = function (assertion, callback) {
         var opts = {

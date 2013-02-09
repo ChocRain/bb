@@ -35,9 +35,8 @@ define([
         this._httpServer = http.createServer(app);
 
         this._httpServer.listen(config.http.port, function () {
-            console.log(
-                "Listening at: " + config.http.protocol + "://" + config.http.hostname + ":" + config.http.port
-            );
+            console.log("Listening on port:", config.http.port);
+            console.log("Public URL is:", config.http.publicBaseUrl);
         });
 
         // basic authentication to keep public out for now
