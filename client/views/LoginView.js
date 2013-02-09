@@ -7,53 +7,54 @@ define([
     "text!templates/LoginView.html",
     "shared/utils/validator",
     "views/Button",
-    "shared/exceptions/ValidationException"
+    "shared/exceptions/ValidationException",
+    "utils/persona"
 ], function (
     _,
     BaseView,
     Template,
     validator,
     Button,
-    ValidationException
+    ValidationException,
+    persona
 ) {
     "use strict";
+
+    var registrationConstraintsName = "client.user.register";
+    var registrationConstraints = validator.getConstraints(registrationConstraintsName);
+
+    var nickSelector = "input[name=nick]";
 
     var LoginView = BaseView.extend({
         className: "login-view view",
         template: Template,
 
-        initialFocus: "input[name=nick]",
+        initialFocus: nickSelector,
 
         events: {
-            "submit form": "handleLogin"
+            "click .login": "login",
+            "click .register": "register"
         },
 
         initialize: function (opts) {
             BaseView.prototype.initialize.call(this, opts);
-
-            this._enterButton = new Button({
-                caption: "Enter",
-                attrs: {
-                    type: "submit"
-                }
-            });
         },
 
         render: function (opts) {
             opts = opts || {};
             opts.viewModel = opts.viewModel || {};
-            opts.viewModel.constraints = validator.getConstraints("client.user.login");
+            opts.viewModel.constraints = registrationConstraints;
 
             BaseView.prototype.render.call(this, opts);
-            this.$("form").append(this._enterButton.render().el);
+
+            var $nick = this.$(nickSelector);
+            $nick.keydown(this.registerOnEnter.bind(this));
 
             return this;
         },
 
         setLoading: function (loading) {
-            this._enterButton.setLoading(loading);
-
-            var $nick = this.$("form input[name=nick]");
+            var $nick = this.$(nickSelector);
             if (loading) {
                 $nick.attr({ disabled: "disabled" });
             } else {
@@ -61,7 +62,30 @@ define([
             }
         },
 
-        handleLogin: function (e) {
+        login: function (e) {
+            if (e) {
+                e.preventDefault();
+            }
+
+            this.setLoading(true);
+
+            persona.login(function (assertion) {
+                try {
+                    this.model.doLogin(assertion);
+                } catch (err) {
+                    console.error(err);
+                }
+                this.setLoading(false);
+            }.bind(this));
+        },
+
+        registerOnEnter: function (e) {
+            if (e && e.keyCode === 13) {
+                this.register(e);
+            }
+        },
+
+        register: function (e) {
             if (e) {
                 e.preventDefault();
             }
@@ -69,33 +93,36 @@ define([
             this.setLoading(true);
 
             // TODO: More general solution.
-            var $nick = this.$("form input[name=nick]");
+            var $nick = this.$(nickSelector);
             var nick = $nick.val();
 
-            try {
-                this.model.doLogin(nick);
-                $nick.val("");
-            } catch (err) {
-                if (err instanceof ValidationException) {
-                    this.setLoading(false);
+            if (!validator.isValid(registrationConstraints.nick, nick)) {
+                this.setLoading(false);
 
-                    var constraints = validator.getConstraints("client.user.login");
+                var errorMsg = "Invalild nick. ";
+                errorMsg += "Must be at least ";
+                errorMsg += registrationConstraints.nick.minlength;
+                errorMsg += " and at most ";
+                errorMsg += registrationConstraints.nick.maxlength;
+                errorMsg += " characters long. ";
+                errorMsg += "Allowed are only letters, numbers and _.";
 
-                    var errorMsg = "Invalild nick. ";
-                    errorMsg += "Must be at least ";
-                    errorMsg += constraints.nick.minlength;
-                    errorMsg += " and at most ";
-                    errorMsg += constraints.nick.maxlength;
-                    errorMsg += " characters long. ";
-                    errorMsg += "Allowed are only letters, numbers and _.";
+                /*global alert: true */ // TODO: Nicer handling
+                alert(errorMsg);
 
-                    /*global alert: true */ // TODO: Nicer handling
-                    alert(errorMsg);
-                } else {
-                    // re-throw any unhandled exception
-                    throw err;
-                }
+                return;
             }
+
+            persona.login(function (assertion) {
+                try {
+                    this.model.doRegister(nick, assertion);
+                    $nick.val("");
+                } catch (err) {
+                    console.error(err);
+                }
+
+                this.setLoading(false);
+            }.bind(this));
         }
     });
 

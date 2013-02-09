@@ -12,9 +12,19 @@ define([
         /**
          * Send a message to request being logged in.
          */
-        sendLogin: function (nick) {
+        sendLogin: function (assertion) {
             messageDispatcher.send("client.user.login", {
-                nick: nick
+                assertion: assertion
+            });
+        },
+
+        /**
+         * Send a message to request being registered.
+         */
+        sendRegister: function (nick, assertion) {
+            messageDispatcher.send("client.user.register", {
+                nick: nick,
+                assertion: assertion
             });
         },
 

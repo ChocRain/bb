@@ -1,5 +1,16 @@
 {
     "client.user.login": {
+        "assertion": {
+            "maxlength": 3000,
+            "regexp": "^.+$"
+        }
+    },
+
+    "client.user.register": {
+        "assertion": {
+            "maxlength": 3000,
+            "regexp": "^.+$"
+        },
         "nick": {
             "minlength": 3,
             "maxlength": 20,

@@ -92,7 +92,9 @@ define([
             }
 
             return objectConstraints;
-        }
+        },
+
+        isValid: isValid
     };
 });
 

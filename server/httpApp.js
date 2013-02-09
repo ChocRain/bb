@@ -35,7 +35,9 @@ define([
         this._httpServer = http.createServer(app);
 
         this._httpServer.listen(config.http.port, function () {
-            console.log("Listening at: http://localhost:" + config.http.port);
+            console.log(
+                "Listening at: " + config.http.protocol + "://" + config.http.hostname + ":" + config.http.port
+            );
         });
 
         // basic authentication to keep public out for now

@@ -19,6 +19,8 @@ define([
     var password = process.env.BASIC_AUTH_PASSWORD || null;
     var isBasicAuthEnabled = user && password;
 
+    console.log(process.env);
+
     return {
         isProduction: isProduction,
         isDevelopment: !isProduction,
@@ -32,6 +34,8 @@ define([
         },
 
         http: {
+            protocol: process.env.PROTOCOL || "http",
+            hostname: process.env.HOSTNAME || "localhost",
             port: process.env.PORT || 8080,
             user: isBasicAuthEnabled ? user : null,
             password: isBasicAuthEnabled ? password : null,

@@ -26,8 +26,12 @@ define([
             return this.get("loggedIn");
         },
 
-        doLogin: function (nick) {
-            messageSink.sendLogin(nick);
+        doLogin: function (assertion) {
+            messageSink.sendLogin(assertion);
+        },
+
+        doRegister: function (nick, assertion) {
+            messageSink.sendRegister(nick, assertion);
         }
     });
 

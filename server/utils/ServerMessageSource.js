@@ -34,10 +34,23 @@ define([
             "client.user.login": {
                 loginNotNeeded: true,
                 callback: function (payload) {
-                    var nick = payload.nick;
+                    var assertion = payload.assertion;
 
-                    authenticationService.login(session, nick);
-                    messageSink.sendLoggedIn();
+                    authenticationService.login(session, assertion, function () {
+                        messageSink.sendLoggedIn();
+                    });
+                }
+            },
+
+            "client.user.register": {
+                loginNotNeeded: true,
+                callback: function (payload) {
+                    var nick = payload.nick;
+                    var assertion = payload.assertion;
+
+                    authenticationService.register(session, assertion, nick, function () {
+                        messageSink.sendLoggedIn();
+                    });
                 }
             },
 
