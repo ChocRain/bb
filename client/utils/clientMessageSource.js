@@ -28,6 +28,8 @@ define([
             throw new IllegalArgumentException("No callback for session initialization given!");
         }
 
+        var _sessionAlreadyInitialized = false;
+
         var handlers = {
             connected: function () {
                 // Nothin to see here, move along...
@@ -52,7 +54,14 @@ define([
                     console.error("unexpected server validation error:", payload);
                 },
 
-                "server.session.initialized": opts.sessionInitialized,
+                "server.session.initialized": function () {
+                    if (_sessionAlreadyInitialized) {
+                        console.warn("Session initialized already.");
+                    } else {
+                        _sessionAlreadyInitialized = true;
+                        opts.sessionInitialized();
+                    }
+                },
 
                 "server.session.loggedIn": function (payload) {
                     userSession.setLoggedIn(true);

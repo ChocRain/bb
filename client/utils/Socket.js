@@ -19,7 +19,7 @@ define([
             throw new IllegalArgumentException("Please configure the socket.");
         }
 
-        this._socket = io.connect();
+        this._socket = io.connect("", {reconnect: false});
 
         this._socket.on('connect', opts.connected);
         this._socket.on('disconnect', opts.disconnected);
