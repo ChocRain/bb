@@ -3,45 +3,48 @@
  */
 define([
     "server/models/User",
+    "server/daos/userDao",
     "shared/exceptions/IllegalArgumentException"
 ], function (
     User,
+    userDao,
     IllegalArgumentException
 ) {
     "use strict";
 
-    // TODO: Add persistant storage
-
     var UserService = function () {
-        this._byEmail = {};
-        this._byNick = {};
     };
 
-    UserService.prototype.findByEmail = function (email) {
-        var user = this._byEmail[email];
-        return user || null;
+    UserService.prototype.findByEmail = function (email, callback) {
+        userDao.findByEmail(email, callback);
     };
 
-    UserService.prototype.findByNick = function (nick) {
-        var user = this._byNick[nick];
-        return user || null;
+    UserService.prototype.findByNick = function (nick, callback) {
+        userDao.findByNick(nick, callback);
     };
 
-    UserService.prototype.create = function (email, nick) {
-        if (this.findByEmail(email)) {
-            throw new IllegalArgumentException("User with email address already exists:", email);
-        }
+    UserService.prototype.create = function (email, nick, callback) {
+        this.findByEmail(email, function (err, userByEmail) {
+            if (err) {
+                return callback(err);
+            }
 
-        if (this.findByNick(nick)) {
-            throw new IllegalArgumentException("User with nick already exists:", nick);
-        }
+            if (userByEmail) {
+                throw new IllegalArgumentException("User with email address already exists:", email);
+            }
 
-        var user = new User(nick);
+            this.findByNick(nick, function (err, userByNick) {
+                if (err) {
+                    return callback(err);
+                }
 
-        this._byEmail[email] = user;
-        this._byNick[nick] = user;
+                if (userByNick) {
+                    throw new IllegalArgumentException("User with nick already exists:", nick);
+                }
 
-        return user;
+                userDao.create(email, nick, callback);
+            }.bind(this));
+        }.bind(this));
     };
 
     return new UserService();

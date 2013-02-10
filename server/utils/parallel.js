@@ -34,7 +34,7 @@ define([
                 }
 
                 if (tasksLeft === 0) {
-                    callback.apply(
+                    return callback.apply(
                         opt_context || this,
                         [errors.length === 0 ? null : errors].concat(results)
                     );
@@ -70,7 +70,7 @@ define([
 
             var results = Array.prototype.slice.call(arguments, 1);
 
-            callback(null, results);
+            return callback(null, results);
         };
 
         parallel(tasks, mapCallback);
@@ -99,7 +99,7 @@ define([
                 }
             });
 
-            callback(null, results);
+            return callback(null, results);
         };
 
         map(list, predicate, filterCallback, opt_context);

@@ -2,14 +2,32 @@
  * A user.
  */
 define([
-    "shared/exceptions/UnsupportedOperationException"
+    "underscore",
+    "shared/exceptions/UnsupportedOperationException",
+    "shared/exceptions/IllegalArgumentException"
 ], function (
-    UnsupportedOperationException
+    _,
+    UnsupportedOperationException,
+    IllegalArgumentException
 ) {
     "use strict";
 
     var User = function (nick) {
         this._nick = nick;
+    };
+
+    User.fromJson = function (json) {
+        if (!_.isObject(json)) {
+            throw new IllegalArgumentException("JSON object expected.");
+        }
+
+        var nick = json.nick;
+
+        if (!_.isString(nick)) {
+            throw new IllegalArgumentException("Invalid or missing filed nick: " + json);
+        }
+
+        return new User(nick);
     };
 
     User.prototype.toJson = function () {

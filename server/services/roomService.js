@@ -30,32 +30,32 @@ define([
         this._rooms[name] = new Room(name);
     };
 
-    RoomService.prototype.getRoomNames = function () {
-        return _.keys(this._rooms);
+    RoomService.prototype.getRoomNames = function (callback) {
+        return callback(null, _.keys(this._rooms));
     };
 
-    RoomService.prototype.getByName = function (roomName) {
+    RoomService.prototype.getByName = function (roomName, callback) {
         var room = this._rooms[roomName];
 
         if (!room) {
-            throw new FeedbackException("No such room: " + roomName);
+            return callback(new FeedbackException("No such room: " + roomName));
         }
 
         if (!(room instanceof Room)) {
-            throw new IllegalStateException("A room must be instance of Room: " + roomName);
+            return callback(new IllegalStateException("A room must be instance of Room: " + roomName));
         }
 
-        return room;
+        return callback(null, room);
     };
 
-    RoomService.prototype.findByNick = function (nick) {
+    RoomService.prototype.findByNick = function (nick, callback) {
         // FIXME: This a really poor implementation in terms of performance.
         // O(n * m) with n being number of rooms and m the numbers of users.
         var rooms = _.filter(this._rooms, function (room) {
             return room.isMember(nick);
-        });
+        }, this);
 
-        return rooms;
+        return callback(null, rooms);
     };
 
     RoomService.prototype._withEachMembersMessageSink = function (room, callback) {
@@ -64,50 +64,70 @@ define([
 
         _.each(sessionStore.findByNicks(nicks), function (memberSession) {
             var messageSink = memberSession.getMessageSink();
-            callback(messageSink);
-        });
-    };
-
-    RoomService.prototype.join = function (session, roomName) {
-        if (!_.isString(roomName)) {
-            throw new IllegalArgumentException("Room name must be a string: " + roomName);
-        }
-
-        var room = this.getByName(roomName);
-        var nick = session.getNick();
-
-        if (room.isMember(nick)) {
-            throw new FeedbackException("You are already in that room: " + roomName);
-        }
-
-        room.join(nick);
-
-        this._withEachMembersMessageSink(room, function (messageSink) {
-            messageSink.sendUserJoinedRoom(roomName, nick);
-        });
-    };
-
-    RoomService.prototype.leaveAllRooms = function (session) {
-        var nick = session.getNick();
-
-        _.each(this.findByNick(nick), function (room) {
-            room.leave(nick);
-
-            var roomName = room.getName();
-
-            this._withEachMembersMessageSink(room, function (messageSink) {
-                messageSink.sendUserLeftRoom(roomName, nick);
-            });
+            return callback(messageSink);
         }, this);
     };
 
-    RoomService.prototype.sendMessage = function (session, roomName, text) {
-        var nick = session.getNick();
-        var room = this.getByName(roomName);
+    RoomService.prototype.join = function (session, roomName, callback) {
+        if (!_.isString(roomName)) {
+            return callback(new IllegalArgumentException("Room name must be a string: " + roomName));
+        }
 
-        this._withEachMembersMessageSink(room, function (messageSink) {
-            messageSink.sendRoomMessage(roomName, nick, text);
-        });
+        this.getByName(roomName, function (err, room) {
+            if (err) {
+                return callback(err);
+            }
+            var nick = session.getNick();
+
+            if (room.isMember(nick)) {
+                return callback(new FeedbackException("You are already in that room: " + roomName));
+            }
+
+            room.join(nick);
+
+            this._withEachMembersMessageSink(room, function (messageSink) {
+                messageSink.sendUserJoinedRoom(roomName, nick);
+            }.bind(this));
+
+            return callback(null);
+        }.bind(this));
+    };
+
+    RoomService.prototype.leaveAllRooms = function (session, callback) {
+        var nick = session.getNick();
+
+        this.findByNick(nick, function (err, rooms) {
+            if (err) {
+                return callback(err);
+            }
+            _.each(rooms, function (room) {
+                room.leave(nick);
+
+                var roomName = room.getName();
+
+                this._withEachMembersMessageSink(room, function (messageSink) {
+                    messageSink.sendUserLeftRoom(roomName, nick);
+                }.bind(this));
+            }, this);
+
+            return callback(null);
+        }.bind(this));
+    };
+
+    RoomService.prototype.sendMessage = function (session, roomName, text, callback) {
+        this.getByName(roomName, function (err, room) {
+            if (err) {
+                return callback(err);
+            }
+
+            var nick = session.getNick();
+
+            this._withEachMembersMessageSink(room, function (messageSink) {
+                messageSink.sendRoomMessage(roomName, nick, text);
+            }.bind(this));
+
+            return callback(null);
+        }.bind(this));
     };
 
     return new RoomService();

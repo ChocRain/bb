@@ -20,64 +20,102 @@ define([
     };
 
     AuthenticationService.prototype.login = function (session, assertion, callback) {
-        persona.verify(assertion, function (email) {
-            var user = userService.findByEmail(email);
-
-            if (!user) {
-                throw new FeedbackException("There is no user for your account. Please register one.");
+        persona.verify(assertion, function (err, email) {
+            if (err) {
+                return callback(err);
             }
 
-            this._doLogin(session, user, callback);
+            userService.findByEmail(email, function (err, user) {
+                if (err) {
+                    return callback(err);
+                }
+
+                if (!user) {
+                    return callback(new FeedbackException(
+                        "There is no user for your account. Please register one."
+                    ));
+                }
+
+                this._doLogin(session, user, callback);
+            }.bind(this));
         }.bind(this));
     };
 
     AuthenticationService.prototype.register = function (session, assertion, nick, callback) {
-        persona.verify(assertion, function (email) {
-            if (userService.findByEmail(email)) {
-                throw new FeedbackException("You already have registered an account.");
+        persona.verify(assertion, function (err, email) {
+            if (err) {
+                return callback(err);
             }
 
-            if (userService.findByNick(nick)) {
-                throw new FeedbackException("A user with that name already exists.");
-            }
+            userService.findByEmail(email, function (err, userByEmail) {
+                if (err) {
+                    return callback(err);
+                }
 
-            var user = userService.create(email, nick);
+                if (userByEmail) {
+                    return callback(new FeedbackException("You already have registered an account."));
+                }
 
-            this._doLogin(session, user, callback);
+                userService.findByNick(nick, function (err, userByNick) {
+                    if (err) {
+                        return callback(err);
+                    }
+
+                    if (userByNick) {
+                        console.log(userByNick);
+                        return callback(new FeedbackException("A user with that name already exists: " + nick));
+                    }
+
+                    userService.create(email, nick, function (err, user) {
+                        if (err) {
+                            return callback(err);
+                        }
+
+                        this._doLogin(session, user, callback);
+                    }.bind(this));
+                }.bind(this));
+            }.bind(this));
         }.bind(this));
     };
 
     AuthenticationService.prototype._doLogin = function (session, user, callback) {
         var nick = user.getNick();
 
-        if (this.isLoggedIn(nick)) {
-            throw new FeedbackException("A user with that name is already logged in.");
-        }
+        this.isLoggedIn(nick, function (err, nickIsLoggedIn) {
+            if (err) {
+                return callback(err);
+            }
 
-        if (session.isLoggedIn()) {
-            throw new ProtocolException("Cannot login twice.");
-        }
+            if (nickIsLoggedIn) {
+                return callback(new FeedbackException("A user with that name is already logged in: " + nick));
+            }
 
-        session.set({
-            nick: nick,
-            loggedIn: true
-        });
+            if (session.isLoggedIn()) {
+                return callback(new ProtocolException("Cannot login twice."));
+            }
 
-        callback();
+            session.set({
+                nick: nick,
+                loggedIn: true
+            });
+
+            return callback(null);
+        }.bind(this));
     };
 
-    AuthenticationService.prototype.logout = function (session) {
+    AuthenticationService.prototype.logout = function (session, callback) {
         session.invalidate();
+        return callback(null);
     };
 
-    AuthenticationService.prototype.isLoggedIn = function (nick) {
+    AuthenticationService.prototype.isLoggedIn = function (nick, callback) {
         var session = sessionStore.findByNick(nick);
 
         if (!session) {
-            return false;
+            return callback(null, false);
         }
 
-        return session.isLoggedIn();
+        return callback(null, session.isLoggedIn());
     };
 
     return new AuthenticationService();

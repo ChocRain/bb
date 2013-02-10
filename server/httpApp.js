@@ -65,7 +65,7 @@ define([
                     // always get current template in development
                     fs.readFile(config.paths.root + "/server/templates/index.html", "utf8", callback);
                 } else {
-                    callback(null, Template);
+                    return callback(null, Template);
                 }
             };
 

@@ -33,6 +33,19 @@ define([
         publicBaseUrl += ":" + publicPort;
     }
 
+    // db
+    var dbHost = process.env.DB_HOST || "localhost";
+    var dbPort = process.env.DB_PORT || 27017;
+    var dbUser = process.env.DB_USER || null;
+    var dbPassword = process.env.DB_PASSWORD || null;
+    var dbName = process.env.DB_NAME || "ponyverse";
+
+    var dbUrl = "mongodb://";
+    if (dbUser && dbPassword) {
+        dbUrl += dbUser + ":" + dbPassword + "@";
+    }
+    dbUrl += dbHost + ":" + dbPort + "/" + dbName;
+
     return {
         isProduction: isProduction,
         isDevelopment: !isProduction,
@@ -54,6 +67,15 @@ define([
             user: isBasicAuthEnabled ? user : null,
             password: isBasicAuthEnabled ? password : null,
             isBasicAuthEnabled: isBasicAuthEnabled
+        },
+
+        db: {
+            host: dbHost,
+            port: dbPort,
+            user: dbUser,
+            password: dbPassword,
+            name: dbName,
+            url: dbUrl
         }
     };
 });

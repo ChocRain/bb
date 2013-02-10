@@ -32,7 +32,7 @@ define([
 
         var req = https.request(opts, function (res) {
             if (res.statusCode !== 200) {
-                throw new FeedbackException(generalErrorMessage);
+                return callback(new FeedbackException(generalErrorMessage));
             }
 
             var body = "";
@@ -45,26 +45,26 @@ define([
                     response = JSON.parse(body);
                 } catch (err) {
                     console.error("Cannot parse response body:", body);
-                    throw new FeedbackException(generalErrorMessage);
+                    return callback(new FeedbackException(generalErrorMessage));
                 }
 
                 if (!_.isObject(response)) {
                     console.error("Invalid response:", response);
-                    throw new FeedbackException(generalErrorMessage);
+                    return callback(new FeedbackException(generalErrorMessage));
                 }
 
                 if (response.status !== "okay") {
-                    throw new FeedbackException("Persona login failed. Please try again.");
+                    return callback(new FeedbackException("Persona login failed. Please try again."));
                 }
 
                 var email = response.email;
 
                 if (!_.isString(email)) {
                     console.error("Got no email in response:", response);
-                    throw new FeedbackException(generalErrorMessage);
+                    return callback(new FeedbackException(generalErrorMessage));
                 }
 
-                callback(email);
+                return callback(null, email);
             });
         });
 

@@ -25,7 +25,7 @@ define([
         stream.on("error", callback);
 
         stream.on("end", function () {
-            callback(null, md5HashObject.digest("hex"));
+            return callback(null, md5HashObject.digest("hex"));
         });
     };
 

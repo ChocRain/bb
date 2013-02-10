@@ -21,19 +21,26 @@ requirejs.define("_nodejs", [
 });
 
 requirejs([
+    "server/utils/db",
     "server/httpApp",
     "server/socketServer"
 ], function (
+    db,
     httpApp,
     socketServer
 ) {
     "use strict";
 
-    // http
-    var app = httpApp.create();
-    var httpServer = app.getHttpServer();
+    // database
+    db.init(function () {
+        // db may now be used
 
-    // socket.io
-    socketServer.create(httpServer);
+        // http
+        var app = httpApp.create();
+        var httpServer = app.getHttpServer();
+
+        // socket.io
+        socketServer.create(httpServer);
+    });
 });
 

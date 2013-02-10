@@ -37,7 +37,7 @@ define([
             var expectedSessionId = this._session.getId();
 
             if (actualSessionId !== expectedSessionId) {
-                throw new ProtocolException(
+                throw new ProtocolException( // within message domain
                     "Invalid session id: actual = " + actualSessionId + ", expected = " + expectedSessionId
                 );
             }

@@ -84,7 +84,7 @@ define([
                                 hashesCache = hashes;
                             }
 
-                            callback(null, {
+                            return callback(null, {
                                 asset: asset,
                                 hashes: hashes
                             });
