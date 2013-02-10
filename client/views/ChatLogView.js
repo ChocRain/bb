@@ -4,11 +4,13 @@
 define([
     "views/ListView",
     "views/ChatLogEntryView",
-    "collections/chatLogCollection"
+    "collections/chatLogCollection",
+    "utils/windowHelper"
 ], function (
     ListView,
     ChatLogEntryView,
-    chatLogCollection
+    chatLogCollection,
+    windowHelper
 ) {
     "use strict";
 
@@ -35,10 +37,19 @@ define([
 
         render: function (opts) {
             ListView.prototype.render.call(this, opts);
-
             this._hasBeenRendered = true;
 
+            windowHelper.onBlur(this.updateLastRead.bind(this));
+
             return this;
+        },
+
+        updateLastRead: function () {
+            var entryClass = "chat-log-entry-view";
+            var lastReadClass = "last-read";
+
+            this.$("." + entryClass + "." + lastReadClass).toggleClass(lastReadClass, false);
+            this.$("." + entryClass).filter(":last").toggleClass(lastReadClass, true);
         }
     });
 

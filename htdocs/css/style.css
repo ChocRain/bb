@@ -152,6 +152,10 @@ li.chat-log-entry-view {
     list-style: none;
 }
 
+li.chat-log-entry-view.last-read {
+    border-bottom: 1px solid #EE3F96;
+}
+
 .chat-log-entry-type-entered,
 .chat-log-entry-type-left {
     font-style: italic;    
