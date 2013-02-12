@@ -16,7 +16,6 @@ define([
 
     var isValid = function (valueConstraints, value) {
         if (!_.isString(value)) {
-            // TODO: Add support for other types.
             return false;
         }
 
