@@ -1,3 +1,4 @@
+* Nicer db migration.
 * Caching is not yet perfect.
 * TODOs in code.
 * Ensure _every_ input is checked on server.
