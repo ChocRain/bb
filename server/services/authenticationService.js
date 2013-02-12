@@ -95,7 +95,7 @@ define([
             }
 
             session.set({
-                nick: nick,
+                user: user,
                 loggedIn: true
             });
 

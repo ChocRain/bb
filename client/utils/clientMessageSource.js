@@ -10,6 +10,7 @@ define([
     "utils/clientMessageSink",
     "collections/chatLogCollection",
     "views/DisconnectedView",
+    "shared/models/PublicUser",
     "shared/exceptions/IllegalArgumentException"
 ], function (
     $,
@@ -19,6 +20,7 @@ define([
     messageSink,
     chatLogCollection,
     DisconnectedView,
+    PublicUser,
     IllegalArgumentException
 ) {
     "use strict";
@@ -79,7 +81,7 @@ define([
                         type: "entered",
                         date: date,
                         room: payload.room,
-                        nick: payload.nick
+                        user: PublicUser.fromJSON(payload.user)
                     });
                 },
 

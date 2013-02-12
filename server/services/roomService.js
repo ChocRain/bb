@@ -77,7 +77,8 @@ define([
             if (err) {
                 return callback(err);
             }
-            var nick = session.getNick();
+            var user = session.getUser();
+            var nick = user.getNick();
 
             if (room.isMember(nick)) {
                 return callback(new FeedbackException("You are already in that room: " + roomName));
@@ -86,7 +87,7 @@ define([
             room.join(nick);
 
             this._withEachMembersMessageSink(room, function (messageSink) {
-                messageSink.sendUserJoinedRoom(roomName, nick);
+                messageSink.sendUserJoinedRoom(roomName, user.toPublicUser());
             }.bind(this));
 
             return callback(null);
@@ -94,7 +95,7 @@ define([
     };
 
     RoomService.prototype.leaveAllRooms = function (session, callback) {
-        var nick = session.getNick();
+        var nick = session.getUser().getNick();
 
         this.findByNick(nick, function (err, rooms) {
             if (err) {
@@ -120,7 +121,7 @@ define([
                 return callback(err);
             }
 
-            var nick = session.getNick();
+            var nick = session.getUser().getNick();
 
             this._withEachMembersMessageSink(room, function (messageSink) {
                 messageSink.sendRoomMessage(roomName, nick, text);

@@ -3,10 +3,12 @@
  */
 define([
     "underscore",
+    "server/models/User",
     "shared/exceptions/IllegalArgumentException",
     "shared/exceptions/IllegalStateException"
 ], function (
     _,
+    User,
     IllegalArgumentException,
     IllegalStateException
 ) {
@@ -52,14 +54,14 @@ define([
         return !!this._data.loggedIn;
     };
 
-    Session.prototype.getNick = function () {
-        var nick = this.get("nick");
+    Session.prototype.getUser = function () {
+        var user = this.get("user");
 
-        if (!_.isString(nick)) {
-            throw new IllegalStateException("No nick set in current session.");
+        if (!(user instanceof User)) {
+            throw new IllegalStateException("No user set in current session.");
         }
 
-        return nick;
+        return user;
     };
 
     Session.prototype.getMessageSink = function () {

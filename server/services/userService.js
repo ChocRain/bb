@@ -4,10 +4,12 @@
 define([
     "server/models/User",
     "server/daos/userDao",
+    "shared/models/roles",
     "shared/exceptions/IllegalArgumentException"
 ], function (
     User,
     userDao,
+    roles,
     IllegalArgumentException
 ) {
     "use strict";
@@ -42,7 +44,7 @@ define([
                     throw new IllegalArgumentException("User with nick already exists:", nick);
                 }
 
-                userDao.create(email, nick, callback);
+                userDao.create(email, nick, roles.USER, callback);
             }.bind(this));
         }.bind(this));
     };

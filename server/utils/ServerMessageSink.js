@@ -70,10 +70,10 @@ define([
     /**
      * Send a message to inform about a user having joined a room.
      */
-    ServerMessageSink.prototype.sendUserJoinedRoom = function (roomName, nick) {
+    ServerMessageSink.prototype.sendUserJoinedRoom = function (roomName, publicUser) {
         this._messageDispatcher.send("server.room.joined", {
             room: roomName,
-            nick: nick
+            user: publicUser
         });
     };
 

@@ -2,17 +2,20 @@
  * Base class for DAOs.
  */
 define([
+    "underscore",
     "server/utils/db",
     "shared/exceptions/IllegalStateException"
 ], function (
+    _,
     db,
     IllegalStateException
 ) {
     "use strict";
 
-    var BaseDao = function (collectionName, EntityClass) {
+    var BaseDao = function (collectionName, EntityClass, version) {
         this._collectionName = collectionName;
         this._EntityClass = EntityClass;
+        this._version = version;
     };
 
     BaseDao.prototype._withCollection = function (callback) {
@@ -37,12 +40,24 @@ define([
 
     BaseDao.prototype._insert = function (json, callback) {
         this._withCollection(function (collection) {
-            collection.insert(json, function (err, result) {
+            collection.insert(_.defaults({_version: this._version}, json), function (err, result) {
                 if (err) {
                     return callback(err);
                 }
 
-                return callback(null, this._EntityClass.fromJson(json));
+                return callback(null, this._EntityClass.fromJSON(json));
+            }.bind(this));
+        }.bind(this));
+    };
+
+    BaseDao.prototype._updateAll = function (query, update, callback) {
+        this._withCollection(function (collection) {
+            collection.update(query, update, {multi: true}, function (err, result) {
+                if (err) {
+                    return callback(err);
+                }
+
+                return callback(null);
             }.bind(this));
         }.bind(this));
     };
@@ -65,7 +80,7 @@ define([
                             return callback(err);
                         }
 
-                        return callback(null, this._EntityClass.fromJson(obj));
+                        return callback(null, this._EntityClass.fromJSON(obj));
                     }.bind(this));
                 }
 

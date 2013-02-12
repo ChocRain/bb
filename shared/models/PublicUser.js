@@ -1,27 +1,23 @@
 /**
- * A user.
+ * A public user that may be shared with the client.
  */
 define([
     "underscore",
     "shared/models/roles",
-    "shared/models/PublicUser",
-    "shared/exceptions/UnsupportedOperationException",
     "shared/exceptions/IllegalArgumentException"
 ], function (
     _,
     roles,
-    PublicUser,
-    UnsupportedOperationException,
     IllegalArgumentException
 ) {
     "use strict";
 
-    var User = function (nick, role) {
+    var PublicUser = function (nick, role) {
         this._nick = nick;
         this._role = role;
     };
 
-    User.fromJSON = function (json) {
+    PublicUser.fromJSON = function (json) {
         if (!_.isObject(json)) {
             throw new IllegalArgumentException("JSON object expected: " + json);
         }
@@ -34,28 +30,24 @@ define([
 
         var role = roles.fromString(json.role);
 
-        return new User(nick, role);
+        return new PublicUser(nick, role);
     };
 
-    User.prototype.toJSON = function () {
-        throw new UnsupportedOperationException("Preventing to leak data. Use PublicUser instead.");
-    };
-
-    User.prototype.toPublicUser = function () {
-        return PublicUser.fromJSON({
+    PublicUser.prototype.toJSON = function () {
+        return {
             nick: this._nick,
             role: this._role.toJSON()
-        });
+        };
     };
 
-    User.prototype.getNick = function () {
+    PublicUser.prototype.getNick = function () {
         return this._nick;
     };
 
-    User.prototype.getRole = function () {
+    PublicUser.prototype.getRole = function () {
         return this._role;
     };
 
-    return User;
+    return PublicUser;
 });
 

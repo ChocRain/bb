@@ -3,28 +3,47 @@
  */
 define([
     "server/daos/BaseDao",
-    "server/models/User"
+    "server/models/User",
+    "shared/models/roles"
 ], function (
     BaseDao,
-    User
+    User,
+    roles
 ) {
     "use strict";
 
     var UserDao = function () {
+        // FIXME: Proper sequence of migration functions handling multiple collections.
+
         // email addresses must be unique
         this._ensureIndex({"email": 1}, {unique: true});
 
         // nicks must be unique
         this._ensureIndex({"canonicalNick": 1}, {unique: true});
+
+        // add default roles
+        this._updateAll({_version: {$exists: false}}, {$set: {role: roles.USER.toJSON()}}, function (err) {
+            if (err) {
+                throw err;
+            }
+
+            // increase version
+            this._updateAll({_version: {$exists: false}}, {$set: {_version: 1}}, function (err) {
+                if (err) {
+                    throw err;
+                }
+            }.bind(this));
+        }.bind(this));
     };
 
-    UserDao.prototype = new BaseDao("user", User);
+    UserDao.prototype = new BaseDao("user", User, 1);
 
-    UserDao.prototype.create = function (email, nick, callback) {
+    UserDao.prototype.create = function (email, nick, role, callback) {
         this._insert({
             email: email.toLowerCase(),
             nick: nick,
-            canonicalNick: nick.toLowerCase()
+            canonicalNick: nick.toLowerCase(),
+            role: role.toJSON()
         }, callback);
     };
 

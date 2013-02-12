@@ -92,7 +92,16 @@ define([
         // FIXME: This a really poor implementation in terms of performance.
         // O(n * m) with n being number of sessions and m being the number of nicks.
         var sessions = _.filter(this._sessionsById, function (session) {
-            return session && _.contains(nicks, session.get("nick"));
+            if (!session) {
+                return false;
+            }
+
+            var user = session.get("user");
+            if (!user) {
+                return false;
+            }
+
+            return _.contains(nicks, user.getNick());
         });
 
         return sessions;
