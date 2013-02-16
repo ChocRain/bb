@@ -5,12 +5,14 @@ define([
     "views/BaseView",
     "text!templates/ChatInputView.html",
     "models/ChatMessageModel",
+    "utils/commands",
     "shared/utils/validator",
     "shared/exceptions/ValidationException"
 ], function (
     BaseView,
     Template,
     ChatMessageModel,
+    commands,
     validator,
     ValidationException
 ) {
@@ -41,6 +43,12 @@ define([
 
             var $text = this.$("form input[name=text]");
             var text = $text.val();
+
+            if (commands.isCommand(text)) {
+                commands.exec(text);
+                $text.val("");
+                return;
+            }
 
             try {
                 var model = new ChatMessageModel();

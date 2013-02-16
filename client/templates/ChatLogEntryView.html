@@ -14,6 +14,14 @@
         <% case "message": %>
             <span class="chat-log-entry-nick"><%- model.nick %>:</span>
             <span class="chat-log-entry-text"><%- model.text %></span>
+        <% break; %>
+
+        <% case "system-out": %>
+            <span class="chat-log-entry-message"><%- model.lines %></span>
+        <% break; %>
+
+        <% case "system-error": %>
+            <span class="chat-log-entry-message"><%- model.lines %></span>
         <% break;
     } %>
 </span>

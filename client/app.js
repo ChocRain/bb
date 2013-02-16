@@ -9,7 +9,8 @@ define([
     "routes/RootRouter",
     "crafty",
     "utils/spinner",
-    "scenes/titleScene"
+    "scenes/titleScene",
+    "utils/commands"
 ], function (
     _,
     $,

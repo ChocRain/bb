@@ -160,6 +160,10 @@ li.chat-log-entry-view.highlight {
     color: #EE3F96;
 }
 
+.chat-log-entry-date {
+    vertical-align: top;
+}
+
 .chat-log-entry-type-entered,
 .chat-log-entry-type-left {
     font-style: italic;    
@@ -169,5 +173,21 @@ li.chat-log-entry-view.highlight {
 .chat-log-entry-type-left .chat-log-entry-nick,
 .chat-log-entry-type-message .chat-log-entry-nick {
     font-weight: bold;
+}
+
+.chat-log-entry-type-system-out .chat-log-entry-message,
+.chat-log-entry-type-system-error .chat-log-entry-message {
+    display: inline-block;
+
+    white-space: pre;
+    font-family: monospace;
+}
+
+.chat-log-entry-type-system-out {
+    color: green;
+}
+
+.chat-log-entry-type-system-error {
+    color: red;
 }
 
