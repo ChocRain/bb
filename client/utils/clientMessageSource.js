@@ -6,21 +6,21 @@ define([
     "jquery",
     "routes/rootNavigator",
     "models/userSession",
+    "shared/models/PublicUser",
     "utils/clientMessageDispatcher",
     "utils/clientMessageSink",
     "collections/chatLogCollection",
     "views/DisconnectedView",
-    "shared/models/PublicUser",
     "shared/exceptions/IllegalArgumentException"
 ], function (
     $,
     rootNavigator,
     userSession,
+    PublicUser,
     messageDispatcher,
     messageSink,
     chatLogCollection,
     DisconnectedView,
-    PublicUser,
     IllegalArgumentException
 ) {
     "use strict";
@@ -67,6 +67,7 @@ define([
 
                 "server.session.loggedIn": function (payload) {
                     userSession.setLoggedIn(true);
+                    userSession.setUser(PublicUser.fromJSON(payload.user));
                     rootNavigator.redirectAfterLogin();
                 }.bind(this),
 

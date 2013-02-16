@@ -99,7 +99,7 @@ define([
                 loggedIn: true
             });
 
-            return callback(null);
+            return callback(null, user);
         }.bind(this));
     };
 

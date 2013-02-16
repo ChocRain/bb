@@ -54,8 +54,10 @@ define([
     /**
      * Send to acknowledge successfull login.
      */
-    ServerMessageSink.prototype.sendLoggedIn = function () {
-        this._messageDispatcher.send("server.session.loggedIn", {});
+    ServerMessageSink.prototype.sendLoggedIn = function (publicUser) {
+        this._messageDispatcher.send("server.session.loggedIn", {
+            user: publicUser
+        });
     };
 
     /**

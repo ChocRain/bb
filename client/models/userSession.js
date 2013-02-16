@@ -3,10 +3,16 @@
  */
 define([
     "models/BaseModel",
-    "utils/clientMessageSink"
+    "utils/clientMessageSink",
+    "shared/models/PublicUser",
+    "shared/exceptions/IllegalArgumentException",
+    "shared/exceptions/IllegalStateException"
 ], function (
     BaseModel,
-    messageSink
+    messageSink,
+    PublicUser,
+    IllegalArgumentException,
+    IllegalStateException
 ) {
     "use strict";
 
@@ -14,6 +20,10 @@ define([
         initalize: function (attrs, opts) {
             attrs = attrs || {};
             attrs.loggedIn = !!attrs.loggedIn || false;
+
+            if (attrs.user && !(attrs.user instanceof PublicUser)) {
+                throw new IllegalArgumentException("User attribute is no PublicUser.");
+            }
 
             BaseModel.prototype.call(this, attrs, opts);
         },
@@ -24,6 +34,28 @@ define([
 
         isLoggedIn: function () {
             return this.get("loggedIn");
+        },
+
+        setUser: function (user) {
+            if (!(user instanceof PublicUser)) {
+                throw new IllegalArgumentException("User is no PublicUser.");
+            }
+
+            this.set("user", user);
+        },
+
+        getUser: function () {
+            var user = this.get("user");
+
+            if (!user) {
+                throw new IllegalStateException("User is not set in session.");
+            }
+
+            if (!(user instanceof PublicUser)) {
+                throw new IllegalStateException("Invalid user in session.");
+            }
+
+            return user;
         },
 
         doLogin: function (assertion) {

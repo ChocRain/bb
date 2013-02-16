@@ -74,12 +74,12 @@ define([
                 callback: function (payload) {
                     var assertion = payload.assertion;
 
-                    authenticationService.login(session, assertion, function (err) {
+                    authenticationService.login(session, assertion, function (err, user) {
                         if (err) {
                             return handleError(err);
                         }
 
-                        messageSink.sendLoggedIn();
+                        messageSink.sendLoggedIn(user.toPublicUser());
                     });
                 }
             },
@@ -90,11 +90,11 @@ define([
                     var nick = payload.nick;
                     var assertion = payload.assertion;
 
-                    authenticationService.register(session, assertion, nick, function (err) {
+                    authenticationService.register(session, assertion, nick, function (err, user) {
                         if (err) {
                             return handleError(err);
                         }
-                        messageSink.sendLoggedIn();
+                        messageSink.sendLoggedIn(user.toPublicUser());
                     });
                 }
             },
