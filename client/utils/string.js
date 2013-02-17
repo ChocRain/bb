@@ -41,7 +41,7 @@ define([
                 throw new IllegalArgumentException("clean: First parameter must be a string.");
             }
 
-            return str.trim().replace(/[ \t\n\r]+/g, " ");
+            return str.trim().replace(/[\s]+/g, " ");
         },
 
         /**
