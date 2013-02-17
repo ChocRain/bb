@@ -4,6 +4,5 @@
 * Ensure _every_ input is checked on server.
 * Nicer validation / form handling on client.
 * Messages.
-* Moderation.
 * SSL
 * jasmine tests?
