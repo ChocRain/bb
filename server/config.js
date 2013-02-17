@@ -76,6 +76,10 @@ define([
             password: dbPassword,
             name: dbName,
             url: dbUrl
+        },
+
+        session: {
+            replaceSessionOnRelogin: true
         }
     };
 });

@@ -4,6 +4,7 @@
 define([
     "underscore",
     "server/session/sessionStore",
+    "server/services/authenticationService",
     "server/daos/userDao",
     "shared/models/roles",
     "shared/exceptions/CommandException",
@@ -12,6 +13,7 @@ define([
 ], function (
     _,
     sessionStore,
+    authenticationService,
     userDao,
     roles,
     CommandException,
@@ -55,13 +57,14 @@ define([
 
             // TODO: Notify user.
 
-            // crude way to kick the user. leaving rooms, etc. is done in
-            // disconnect handler
-            socket.disconnect();
+            authenticationService.logout(userSession, function (err) {
+                if (err) {
+                    return callback(err);
+                }
 
-            this._logModAction(session, {kicked: kickedNick});
-
-            callback(null, kickedNick);
+                this._logModAction(session, {kicked: kickedNick});
+                return callback(null, kickedNick);
+            }.bind(this));
         }.bind(this));
     };
 
@@ -86,7 +89,7 @@ define([
 
                 var userSession = sessionStore.findByNick(nick);
                 if (!userSession) {
-                    return callback(null, bannedNick); // no user to disconnect
+                    return callback(null, bannedNick); // no user to logout
                 }
 
                 var socket = userSession.get("socket");
@@ -96,11 +99,13 @@ define([
 
                 // TODO: Notify user.
 
-                // crude way to kick the user. leaving rooms, etc. is done in
-                // disconnect handler
-                socket.disconnect();
+                authenticationService.logout(userSession, function (err) {
+                    if (err) {
+                        return callback(err);
+                    }
 
-                callback(null, bannedNick);
+                    return callback(null, bannedNick);
+                }.bind(this));
             }.bind(this));
         }.bind(this));
     };

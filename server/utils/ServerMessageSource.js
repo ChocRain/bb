@@ -64,19 +64,7 @@ define([
         };
 
         var disconnectHandler = function () {
-            if (session.isLoggedIn()) {
-                roomService.leaveAllRooms(session, function (err) {
-                    authenticationService.logout(session, function (err) {
-                        if (err) {
-                            return handleError(err);
-                        }
-                    });
-
-                    if (err) { // afterwards to allow logout even in case of error
-                        return handleError(err);
-                    }
-                });
-            }
+            authenticationService.logout(session, handleError);
         };
 
         var messageHandlers = {

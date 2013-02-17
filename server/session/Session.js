@@ -46,7 +46,6 @@ define([
     Session.prototype.invalidate = function () {
         this._data = {};
         this._store.remove(this._id);
-        this._store = undefined;
         this._id = undefined;
     };
 

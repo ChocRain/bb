@@ -4,15 +4,19 @@
 define([
     "server/session/sessionStore",
     "server/services/userService",
+    "server/services/roomService",
     "server/utils/persona",
     "shared/exceptions/FeedbackException",
-    "shared/exceptions/ProtocolException"
+    "shared/exceptions/ProtocolException",
+    "server/config"
 ], function (
     sessionStore,
     userService,
+    roomService,
     persona,
     FeedbackException,
-    ProtocolException
+    ProtocolException,
+    config
 ) {
     "use strict";
 
@@ -36,7 +40,7 @@ define([
                     ));
                 }
 
-                this._doLogin(session, user, callback);
+                this._login(session, user, callback);
             }.bind(this));
         }.bind(this));
     };
@@ -71,45 +75,74 @@ define([
                             return callback(err);
                         }
 
-                        this._doLogin(session, user, callback);
+                        this._login(session, user, callback);
                     }.bind(this));
                 }.bind(this));
             }.bind(this));
         }.bind(this));
     };
 
-    AuthenticationService.prototype._doLogin = function (session, user, callback) {
+    AuthenticationService.prototype._login = function (session, user, callback) {
         if (user.isBanned()) {
             return callback(new FeedbackException("You cannot login, because you have been banned."));
         }
 
         var nick = user.getNick();
 
-        this.isLoggedIn(nick, function (err, nickIsLoggedIn) {
+        this.isLoggedIn(nick, function (err, nickIsLoggedIn, loggedInSession) {
             if (err) {
                 return callback(err);
             }
 
+            var doLogin = function () {
+                if (session.isLoggedIn()) {
+                    return callback(new ProtocolException("Cannot login twice."));
+                }
+
+                session.set({
+                    user: user,
+                    loggedIn: true
+                });
+
+                return callback(null, user);
+            }.bind(this);
+
             if (nickIsLoggedIn) {
+                if (config.session.replaceSessionOnRelogin) {
+                    return this.logout(loggedInSession, function (err) {
+                        if (err) {
+                            return callback(err);
+                        }
+
+                        doLogin();
+                    }.bind(this));
+                }
                 return callback(new FeedbackException("A user with that name is already logged in: " + nick));
             }
 
-            if (session.isLoggedIn()) {
-                return callback(new ProtocolException("Cannot login twice."));
-            }
-
-            session.set({
-                user: user,
-                loggedIn: true
-            });
-
-            return callback(null, user);
+            return doLogin(null);
         }.bind(this));
     };
 
     AuthenticationService.prototype.logout = function (session, callback) {
-        session.invalidate();
-        return callback(null);
+        var socket = session.get("socket");
+
+        var doLogout = function (err) {
+            // always invalidate the session, even in case of an error
+            session.invalidate();
+
+            if (socket) {
+                socket.disconnect();
+            }
+
+            return callback(err);
+        }.bind(this);
+
+        if (session.isLoggedIn()) {
+            roomService.leaveAllRooms(session, doLogout);
+        } else {
+            doLogout(null);
+        }
     };
 
     AuthenticationService.prototype.isLoggedIn = function (nick, callback) {
@@ -119,7 +152,9 @@ define([
             return callback(null, false);
         }
 
-        return callback(null, session.isLoggedIn());
+        var isLoggedIn = session.isLoggedIn();
+
+        return callback(null, isLoggedIn, isLoggedIn ? session : null);
     };
 
     return new AuthenticationService();
