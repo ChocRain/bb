@@ -10,6 +10,33 @@ define([
 
     var clientMessageSink = {
         /**
+         * Send a message to kick the specified user.
+         */
+        sendKick: function (nick) {
+            messageDispatcher.send("client.moderation.kick", {
+                nick: nick
+            });
+        },
+
+        /**
+         * Send a message to ban the specified user.
+         */
+        sendBan: function (nick) {
+            messageDispatcher.send("client.moderation.ban", {
+                nick: nick
+            });
+        },
+
+        /**
+         * Send a message to unban the specified user.
+         */
+        sendUnban: function (nick) {
+            messageDispatcher.send("client.moderation.unban", {
+                nick: nick
+            });
+        },
+
+        /**
          * Send a message to request being logged in.
          */
         sendLogin: function (assertion) {

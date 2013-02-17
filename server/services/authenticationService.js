@@ -79,6 +79,10 @@ define([
     };
 
     AuthenticationService.prototype._doLogin = function (session, user, callback) {
+        if (user.isBanned()) {
+            return callback(new FeedbackException("You cannot login, because you have been banned."));
+        }
+
         var nick = user.getNick();
 
         this.isLoggedIn(nick, function (err, nickIsLoggedIn) {

@@ -47,6 +47,13 @@ define([
                     alert(payload.message);
                 },
 
+                "server.error.command": function (payload) {
+                    chatLogCollection.add({
+                        type: "system-error",
+                        lines: payload.message
+                    });
+                 },
+
                 "server.error.protocol": function (payload) {
                     console.error("protocol error:", payload.message);
                 },
@@ -54,6 +61,27 @@ define([
                 "server.error.validation": function (payload) {
                     // should not happen since validation already happens on the client
                     console.error("unexpected server validation error:", payload);
+                },
+
+                "server.moderation.kicked": function (payload) {
+                    chatLogCollection.add({
+                        type: "system-out",
+                        lines: "You kicked: " + payload.nick
+                    });
+                },
+
+                "server.moderation.banned": function (payload) {
+                    chatLogCollection.add({
+                        type: "system-out",
+                        lines: "You banned: " + payload.nick
+                    });
+                },
+
+                "server.moderation.unbanned": function (payload) {
+                    chatLogCollection.add({
+                        type: "system-out",
+                        lines: "You unbanned: " + payload.nick
+                    });
                 },
 
                 "server.session.initialized": function () {

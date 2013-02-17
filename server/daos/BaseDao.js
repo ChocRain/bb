@@ -89,6 +89,21 @@ define([
         }.bind(this));
     };
 
+    BaseDao.prototype._findAndModify = function (query, update, callback) {
+        this._withCollection(function (collection) {
+            var opts = {
+                new: true
+            };
+            collection.findAndModify(query, {}, update, opts, function (err, obj) {
+                if (err) {
+                    return callback(err);
+                }
+
+                return callback(null, obj ? this._EntityClass.fromJSON(obj) : null);
+            }.bind(this));
+        }.bind(this));
+    };
+
     return BaseDao;
 });
 

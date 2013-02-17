@@ -20,6 +20,15 @@ define([
     };
 
     /**
+     * Sends a message notifying about a command error.
+     */
+    ServerMessageSink.prototype.sendCommandError = function (errorMessage) {
+        this._messageDispatcher.send("server.error.command", {
+            message: errorMessage
+        });
+    };
+
+    /**
      * Sends a message notifying about a protocol error.
      */
     ServerMessageSink.prototype.sendProtocolError = function (errorMessage) {
@@ -40,6 +49,33 @@ define([
             message: errorMessage,
             constraintsName: constraintsName,
             validationResult: validationResult
+        });
+    };
+
+    /**
+     * Send once a user has been kicked.
+     */
+    ServerMessageSink.prototype.sendKicked = function (nick) {
+        this._messageDispatcher.send("server.moderation.kicked", {
+            nick: nick
+        });
+    };
+
+    /**
+     * Send once a user has been banned.
+     */
+    ServerMessageSink.prototype.sendBanned = function (nick) {
+        this._messageDispatcher.send("server.moderation.banned", {
+            nick: nick
+        });
+    };
+
+    /**
+     * Send once a user has been unbanned.
+     */
+    ServerMessageSink.prototype.sendUnbanned = function (nick) {
+        this._messageDispatcher.send("server.moderation.unbanned", {
+            nick: nick
         });
     };
 

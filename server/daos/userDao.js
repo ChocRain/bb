@@ -55,6 +55,11 @@ define([
         this._findUnique({email: email.toLowerCase()}, callback);
     };
 
+    UserDao.prototype.updateBanned = function (nick, isBanned, callback) {
+        this._findAndModify({canonicalNick: nick.toLowerCase()}, {$set: {isBanned: isBanned}}, callback);
+    };
+
+
     return new UserDao();
 });
 

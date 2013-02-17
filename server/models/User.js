@@ -16,14 +16,22 @@ define([
 ) {
     "use strict";
 
-    var User = function (nick, role) {
+    var User = function (id, nick, role, isBanned) {
+        this._id = id;
         this._nick = nick;
         this._role = role;
+        this._isBanned = !!isBanned;
     };
 
     User.fromJSON = function (json) {
         if (!_.isObject(json)) {
             throw new IllegalArgumentException("JSON object expected: " + json);
+        }
+
+        var id = json._id;
+
+        if (!id) {
+            throw new IllegalArgumentException("Invalid or missing user id: " + json);
         }
 
         var nick = json.nick;
@@ -33,8 +41,9 @@ define([
         }
 
         var role = roles.fromString(json.role);
+        var isBanned = json.isBanned;
 
-        return new User(nick, role);
+        return new User(id, nick, role, isBanned);
     };
 
     User.prototype.toJSON = function () {
@@ -54,6 +63,10 @@ define([
 
     User.prototype.getRole = function () {
         return this._role;
+    };
+
+    User.prototype.isBanned = function () {
+        return this._isBanned;
     };
 
     return User;

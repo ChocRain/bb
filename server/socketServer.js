@@ -40,6 +40,7 @@ define([
                 var messageSource = new MessageSource(session, messageDispatcher, messageSink);
 
                 session.set({
+                    socket: socket,
                     messageSource: messageSource,
                     messageSink: messageSink
                 });

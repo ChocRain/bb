@@ -7,14 +7,18 @@ define([
     "shared/models/roles",
     "utils/string",
     "collections/chatLogCollection",
-    "shared/exceptions/IllegalArgumentException"
+    "utils/clientMessageSink",
+    "shared/exceptions/IllegalArgumentException",
+    "shared/exceptions/ValidationException"
 ], function (
     _,
     userSession,
     roles,
     stringUtil,
     chatLogCollection,
-    IllegalArgumentException
+    clientMessageSink,
+    IllegalArgumentException,
+    ValidationException
 ) {
     "use strict";
 
@@ -112,6 +116,18 @@ define([
 
     // command definitions    
 
+    var handleInvalidNick = function (nick, sendFunction) {
+        try {
+            sendFunction(nick);
+        } catch (err) {
+            if (err instanceof ValidationException) {
+                error("Invalid nick: " + nick);
+            } else {
+                throw err;
+            }
+        }
+    };
+
     commands.push({
         name: "help",
         args: [],
@@ -124,7 +140,7 @@ define([
         name: "kick",
         args: [tNick],
         callback: function (nick) {
-            console.warn("(NOT YET IMPLEMENTED) Kicking user:", nick);
+            handleInvalidNick(nick, clientMessageSink.sendKick);
         },
         description: "Kick the user with the specified nick.",
         roles: [roles.MODERATOR]
@@ -134,7 +150,7 @@ define([
         name: "ban",
         args: [tNick],
         callback: function (nick) {
-            console.warn("(NOT YET IMPLEMENTED) Banning user forever:", nick);
+            handleInvalidNick(nick, clientMessageSink.sendBan);
         },
         description: "Ban the user with the specified nick forever.",
         roles: [roles.MODERATOR]
@@ -144,7 +160,7 @@ define([
         name: "unban",
         args: [tNick],
         callback: function (nick) {
-            console.warn("(NOT YET IMPLEMENTED) Unbanning user:", nick);
+            handleInvalidNick(nick, clientMessageSink.sendUnban);
         },
         description: "Unban the user with the specified nick.",
         roles: [roles.MODERATOR]
@@ -191,7 +207,6 @@ define([
                 return error("Unknown command /" + commandName + ". Try /help.");
             }
 
-            // TODO: Validate args
             if (args.length !== command.args.length) {
                 return error("Wrong number of parameters. Usage: " + usage(command));
             }

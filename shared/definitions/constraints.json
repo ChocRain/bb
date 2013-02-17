@@ -1,4 +1,28 @@
 {
+    "client.moderation.kick": {
+        "nick": {
+            "minlength": 3,
+            "maxlength": 20,
+            "regexp": "^[a-zA-Z0-9_]+$"
+        }
+    },
+
+    "client.moderation.ban": {
+        "nick": {
+            "minlength": 3,
+            "maxlength": 20,
+            "regexp": "^[a-zA-Z0-9_]+$"
+        }
+    },
+
+    "client.moderation.unban": {
+        "nick": {
+            "minlength": 3,
+            "maxlength": 20,
+            "regexp": "^[a-zA-Z0-9_]+$"
+        }
+    },
+
     "client.user.login": {
         "assertion": {
             "maxlength": 3000,

@@ -23,6 +23,10 @@ define([
         socket.on("message", this._handleMessage.bind(this));
     };
 
+    Socket.prototype.disconnect = function () {
+        this._socket.disconnect();
+    };
+
     Socket.prototype.send = function (message) {
         this._socket.emit("message", JSON.stringify(message));
     };
