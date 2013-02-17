@@ -52,7 +52,7 @@ define([
                         type: "system-error",
                         lines: payload.message
                     });
-                 },
+                },
 
                 "server.error.protocol": function (payload) {
                     console.error("protocol error:", payload.message);
