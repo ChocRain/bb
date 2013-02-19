@@ -126,6 +126,16 @@ define([
     };
 
     /**
+     * Send information about a room.
+     */
+    ServerMessageSink.prototype.sendRoomInfo = function (roomName, publicUsers) {
+        this._messageDispatcher.send("server.room.info", {
+            room: roomName,
+            users: publicUsers
+        });
+    };
+
+    /**
      * Send a chat message to a member of the room.
      */
     ServerMessageSink.prototype.sendRoomMessage = function (roomName, nick, text) {

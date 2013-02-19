@@ -86,6 +86,14 @@ define([
 
             room.join(nick);
 
+            var publicUsers = [];
+            _.each(sessionStore.findByNicks(room.getMembers()), function (memberSession) {
+                if (memberSession.isLoggedIn()) {
+                    publicUsers.push(memberSession.getUser().toPublicUser());
+                }
+            });
+            session.get("messageSink").sendRoomInfo(roomName, publicUsers);
+
             this._withEachMembersMessageSink(room, function (messageSink) {
                 messageSink.sendUserJoinedRoom(roomName, user.toPublicUser());
             }.bind(this));

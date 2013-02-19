@@ -10,6 +10,7 @@ define([
     "utils/clientMessageDispatcher",
     "utils/clientMessageSink",
     "collections/chatLogCollection",
+    "collections/chatRoomUsersCollection",
     "views/DisconnectedView",
     "shared/exceptions/IllegalArgumentException"
 ], function (
@@ -20,6 +21,7 @@ define([
     messageDispatcher,
     messageSink,
     chatLogCollection,
+    chatRoomUsersCollection,
     DisconnectedView,
     IllegalArgumentException
 ) {
@@ -106,6 +108,7 @@ define([
                 },
 
                 "server.room.joined": function (payload, date) {
+                    chatRoomUsersCollection.add(payload.user);
                     chatLogCollection.add({
                         type: "entered",
                         date: date,
@@ -115,12 +118,19 @@ define([
                 },
 
                 "server.room.left": function (payload, date) {
+                    // TODO: Proper room handling.
+                    chatRoomUsersCollection.remove({nick: payload.nick});
                     chatLogCollection.add({
                         type: "left",
                         date: date,
                         room: payload.room,
                         nick: payload.nick
                     });
+                },
+
+                "server.room.info": function (payload, date) {
+                    // TODO: Proper room handling.
+                    chatRoomUsersCollection.reset(payload.users);
                 },
 
                 "server.room.message": function (payload, date) {

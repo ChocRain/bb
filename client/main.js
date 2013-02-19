@@ -18,12 +18,15 @@ require.config({
 
 // wrapper modules for keeping the global namespace clean
 
-define("backbone", ["_underscore", "libs/backbone-amd-0.9.10-min"], function () {
+define("backbone", ["_underscore", "libs/backbone-amd-0.9.10-min", "libs/jquery.caret.1.02.min"], function () {
     "use strict";
 
     // this is dirty, but doesn't seem to work otherwise...
     // we enforce to always load backbone at least once to ensure
     // cleanup of the global namepsace also for jQuery
+    //
+    // also loading jquery.caret here is a dirty hack too, but I somehow
+    // cannot get that module loading right otherwise
     window.jQuery.noConflict(true);
 
     return window.Backbone.noConflict(); // clear global namepsace

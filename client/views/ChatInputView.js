@@ -2,19 +2,27 @@
  * View for the input box for the chat.
  */
 define([
+    "underscore",
     "views/BaseView",
     "text!templates/ChatInputView.html",
     "models/ChatMessageModel",
     "utils/commands",
     "shared/utils/validator",
-    "shared/exceptions/ValidationException"
+    "shared/exceptions/ValidationException",
+    "utils/InputCompletor",
+    "collections/chatRoomUsersCollection",
+    "models/userSession"
 ], function (
+    _,
     BaseView,
     Template,
     ChatMessageModel,
     commands,
     validator,
-    ValidationException
+    ValidationException,
+    InputCompletor,
+    chatRoomUsersCollection,
+    userSession
 ) {
     "use strict";
 
@@ -33,7 +41,23 @@ define([
             opts.viewModel = opts.viewModel || {};
             opts.viewModel.constraints = validator.getConstraints("client.room.message");
 
-            return BaseView.prototype.render.call(this, opts);
+            BaseView.prototype.render.call(this, opts);
+
+            this._inputCompletor = new InputCompletor(
+                this.$("input[name=text]"),
+                function (prefix) {
+                    // Always complete nicks for now.
+                    var nicksInRoom = chatRoomUsersCollection.map(function (userModel) {
+                        return userModel.getNick();
+                    });
+                    var myNick = userSession.getUser().getNick();
+                    return _.filter(nicksInRoom, function (nick) {
+                        return nick !== myNick;
+                    });
+                }
+            );
+
+            return this;
         },
 
         sendChatMessage: function (e) {
