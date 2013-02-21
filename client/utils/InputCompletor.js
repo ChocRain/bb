@@ -2,11 +2,9 @@
  * Class for tab completing input fields
  */
 define([
-    "underscore",
-    "utils/Trie"
+    "underscore"
 ], function (
-    _,
-    Trie
+    _
 ) {
     "use strict";
 
@@ -51,37 +49,36 @@ define([
         var textBeforeCompletion = text.substring(0, completionStartPos);
         var textAfterCompletion = text.substring(this._shallCycle ? caretPos : completionStartPos);
 
-        // get trie for completion
-        var trie = new Trie(true, this._getDictionary(textBeforeCompletion));
-
         // get completion
+        var dictionary = this._getDictionary(textBeforeCompletion);
         var wordToComplete = textBeforeCompletion.match(/[a-zA-Z0-9_]*$/)[0];
-        var subTrie = trie.findSubTrie(wordToComplete);
-
-        if (!subTrie) {
-            this._shallCycle = false;
-            return; // nothing to complete
-        }
-
-        var completions = _.sortBy(subTrie.getCompleteWords(), function (completion) {
-            return completion.toLowerCase();
+        var prefixLength = wordToComplete.length;
+        var wordToCompleteLowerCase = wordToComplete.toLowerCase();
+        var words = _.filter(dictionary, function (word) {
+            return word.substring(0, prefixLength).toLowerCase() === wordToCompleteLowerCase;
         });
-        var numCompletions = _.size(completions);
 
-        if (numCompletions <= 0) {
+        if (words.length <= 0) {
             this._shallCycle = false;
             return; // nothing to complete
         }
 
-        var completionIndex = this._shallCycle ? (this._prevCompletionIndex + 1) % completions.length : 0;
-        var completion = completions[completionIndex];
+        var numWords = _.size(words);
+
+        if (numWords <= 0) {
+            this._shallCycle = false;
+            return; // nothing to complete
+        }
+
+        var completionIndex = this._shallCycle ? (this._prevCompletionIndex + 1) % numWords : 0;
+        var word = words[completionIndex];
 
         // new text and new caret position
-        var wordStartPos = textBeforeCompletion.length - wordToComplete.length;
-        var newText = textBeforeCompletion.substring(0, wordStartPos) + completion;
-        var newCaretPos = wordStartPos + completion.length;
+        var wordStartPos = textBeforeCompletion.length - prefixLength;
+        var newText = textBeforeCompletion.substring(0, wordStartPos) + word;
+        var newCaretPos = wordStartPos + word.length;
 
-        if (numCompletions === 1) {
+        if (numWords === 1) {
             // only set caret one off if exactly know what to complete
             newCaretPos += 1;
 

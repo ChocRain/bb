@@ -11,7 +11,8 @@ define([
     "shared/exceptions/ValidationException",
     "utils/InputCompletor",
     "collections/chatRoomUsersCollection",
-    "models/userSession"
+    "models/userSession",
+    "utils/string"
 ], function (
     _,
     BaseView,
@@ -22,7 +23,8 @@ define([
     ValidationException,
     InputCompletor,
     chatRoomUsersCollection,
-    userSession
+    userSession,
+    stringUtil
 ) {
     "use strict";
 
@@ -46,14 +48,52 @@ define([
             this._inputCompletor = new InputCompletor(
                 this.$("input[name=text]"),
                 function (prefix) {
-                    // Always complete nicks for now.
-                    var nicksInRoom = chatRoomUsersCollection.map(function (userModel) {
-                        return userModel.getNick();
-                    });
-                    var myNick = userSession.getUser().getNick();
-                    return _.filter(nicksInRoom, function (nick) {
-                        return nick !== myNick;
-                    });
+                    console.log(JSON.stringify(prefix));
+
+                    var completionType = "";
+
+                    if (commands.isCommand(prefix)) {
+                        var endsWithSpace = stringUtil.isWhitespaceString(prefix.charAt(prefix.length - 1));
+                        var numArgs = stringUtil.words(prefix).length - 1;
+
+                        if (!endsWithSpace && numArgs === 0) {
+                            // we are completing the command name
+                            return commands.getCommandNames();
+                        }
+
+                        var argTypes = commands.findArgTypes(prefix);
+                        if (argTypes === null) {
+                            // command is complete
+                            return [];
+                        }
+
+                        var argIndexToComplete = numArgs - 1;
+                        if (endsWithSpace) {
+                            // we need to complete the next argument, as we have
+                            // a space in before
+                            argIndexToComplete += 1;
+                        }
+                        completionType = argTypes[argIndexToComplete];
+                    } else {
+                        // complete nick always if not completing a command
+                        completionType = "nick";
+                    }
+
+                    switch (completionType) {
+                    case "nick":
+                        // Always complete nicks for now.
+                        var nicksInRoom = chatRoomUsersCollection.map(function (userModel) {
+                            return userModel.getNick();
+                        });
+                        var myNick = userSession.getUser().getNick();
+                        return _.sortBy(_.filter(nicksInRoom, function (nick) {
+                            return nick !== myNick;
+                        }), function (nick) {
+                            return nick.toLowerCase();
+                        });
+                    }
+
+                    return [];
                 }
             );
 

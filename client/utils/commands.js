@@ -59,7 +59,7 @@ define([
     var getCommandOutput = function (command) {
         var commandOutput = "/" + command.name;
 
-        _.each(command.args, function (arg) {
+        _.each(command.argTypes, function (arg) {
             commandOutput += " <" + arg + ">";
         });
 
@@ -130,7 +130,7 @@ define([
 
     commands.push({
         name: "help",
-        args: [],
+        argTypes: [],
         callback: help,
         description: "Show this help.",
         roles: [roles.USER, roles.MODERATOR]
@@ -138,7 +138,7 @@ define([
 
     commands.push({
         name: "kick",
-        args: [tNick],
+        argTypes: [tNick],
         callback: function (nick) {
             handleInvalidNick(nick, clientMessageSink.sendKick);
         },
@@ -148,7 +148,7 @@ define([
 
     commands.push({
         name: "ban",
-        args: [tNick],
+        argTypes: [tNick],
         callback: function (nick) {
             handleInvalidNick(nick, clientMessageSink.sendBan);
         },
@@ -158,7 +158,7 @@ define([
 
     commands.push({
         name: "unban",
-        args: [tNick],
+        argTypes: [tNick],
         callback: function (nick) {
             handleInvalidNick(nick, clientMessageSink.sendUnban);
         },
@@ -186,28 +186,55 @@ define([
         return null;
     };
 
+    var parse = function (commandStr) {
+        var components = stringUtil.words(commandStr);
+        var commandNameWithSlash = components[0];
+        var args = components.slice(1);
+
+        if (commandNameWithSlash.charAt(0) !== "/") {
+            throw new IllegalArgumentException("Command name must start with a '/'.");
+        }
+
+        var commandName = commandNameWithSlash.substr(1);
+        var command = findCommand(commandName);
+
+        return {
+            commandName: commandName,
+            args: args,
+            command: command
+        };
+    };
+
     return {
         isCommand: function (commandStr) {
             return commandStr.trim().charAt(0) === "/";
         },
 
+        getCommandNames: function () {
+            var userRole = userSession.getUser().getRole();
+            return _.map(_.filter(commands, function (command) {
+                return hasRequiredRole(command, userRole);
+            }), function (command) {
+                return command.name;
+            });
+        },
+
+        findArgTypes: function (commandStr) {
+            var command = parse(commandStr).command;
+            return command ? command.argTypes : null;
+        },
+
         exec: function (commandStr) {
-            var components = stringUtil.words(commandStr);
-            var commandNameWithSlash = components[0];
-            var args = components.slice(1);
-
-            if (commandNameWithSlash.charAt(0) !== "/") {
-                throw new IllegalArgumentException("Command name must start with a '/'.");
-            }
-
-            var commandName = commandNameWithSlash.substr(1);
-            var command = findCommand(commandName);
+            var parseResult = parse(commandStr);
+            var commandName = parseResult.commandName;
+            var args = parseResult.args;
+            var command = parseResult.command;
 
             if (!command) {
                 return error("Unknown command /" + commandName + ". Try /help.");
             }
 
-            if (args.length !== command.args.length) {
+            if (args.length !== command.argTypes.length) {
                 return error("Wrong number of parameters. Usage: " + usage(command));
             }
 

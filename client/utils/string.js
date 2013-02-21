@@ -54,6 +54,18 @@ define([
             }
 
             return this.clean(str).split(" ");
+        },
+
+        /**
+         * Returns true if the string isn't empty and contains only whitespace
+         * characters. Returns false otherwise.
+         */
+        isWhitespaceString: function (str) {
+            if (!_.isString(str)) {
+                throw new IllegalArgumentException("isWhitespaceOnly: First parameter must be a string.");
+            }
+
+            return !!str.match(/^[\s]+/);
         }
     };
 });
