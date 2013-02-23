@@ -14,9 +14,14 @@ define([
 ) {
     "use strict";
 
+    var running = false;
+
     var candyTileMap = asset.asset("/img/sprites/candy.png");
 
-    Crafty.scene("title", function () {
+    var sceneName = "title";
+    var initScene = function () {
+        running = true;
+
         var spriteSize = 100;
         var map = {
             lollipop1: [0, 0],
@@ -59,6 +64,10 @@ define([
         var n = 20;
 
         var newCandy = function () {
+            if (!running) {
+                return;
+            }
+
             if (n > 0) {
                 var component = spriteComponents[s];
                 Crafty.e("2D, DOM, Gravity, Falling, " + component).bind("Remove", function () {
@@ -73,12 +82,17 @@ define([
         };
 
         newCandy();
-    });
+    };
+    var destroyScene = function () {
+        running = false;
+    };
+
+    Crafty.scene(sceneName, initScene, destroyScene);
 
     return {
         run: function () {
             Crafty.load([candyTileMap], function () {
-                Crafty.scene("title");
+                Crafty.scene(sceneName);
             });
         }
     };

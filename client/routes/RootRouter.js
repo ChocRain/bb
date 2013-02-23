@@ -9,7 +9,8 @@ define([
     "views/ChatView",
     "views/LoginView",
     "routes/rootNavigator",
-    "utils/clientMessageSink"
+    "utils/clientMessageSink",
+    "scenes/roomScene"
 ], function (
     _,
     $,
@@ -18,7 +19,8 @@ define([
     ChatView,
     LoginView,
     rootNavigator,
-    messageSink
+    messageSink,
+    roomScene
 ) {
     "use strict";
 
@@ -37,7 +39,6 @@ define([
 
         fallback: function (path) {
             console.log("fallback route:", path);
-
             rootNavigator.root().go();
         },
 
@@ -47,6 +48,7 @@ define([
 
         root: function () {
             messageSink.sendGetRooms();
+            roomScene.run();
             this._showView(new ChatView({model: userSession}));
         },
 

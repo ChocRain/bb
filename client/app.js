@@ -25,8 +25,10 @@ define([
 
     var App = Backbone.View.extend({
         initialize: function () {
+            var $ui = $("#ui");
+
             var connectingSpinner = spinner.create();
-            $("#ui").append(connectingSpinner.el);
+            $ui.append(connectingSpinner.el);
 
             messageSource.init({
                 sessionInitialized: function () {
