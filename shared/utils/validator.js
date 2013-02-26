@@ -14,15 +14,25 @@ define([
 ) {
     "use strict";
 
-    var isValid = function (valueConstraints, value) {
-        if (!_.isString(value)) {
-            return false;
-        }
-
-        var valid = true;
-
+    var doValidate = null;
+    var isValid = function (constraintsName, valueConstraints, value) {
         return _.every(valueConstraints, function (constraint, type) {
             switch (type) {
+
+            case "type":
+                return constraint === typeof value;
+
+            case "object":
+                try {
+                    doValidate(constraintsName, constraint, value);
+                    return true;
+                } catch (err) {
+                    if (err instanceof ValidationException) {
+                        return false;
+                    }
+                    throw err;
+                }
+                break;
 
             case "minlength":
                 return value.length >= constraint;
@@ -38,6 +48,44 @@ define([
         });
     };
 
+    doValidate = function (constraintsName, objectConstraints, object) {
+        var invalid = [];
+        var unknown = [];
+        var missing = [];
+        var result = {
+            hasErrors: false
+        };
+
+        _.each(objectConstraints, function (valueConstraints, key) {
+            if (object[key] === null || object[key] === undefined) {
+                missing.push(key);
+                result.hasErrors = true;
+            }
+        });
+
+        _.each(object, function (value, key) {
+            if (!objectConstraints[key]) {
+                unknown.push(key);
+                result.hasErrors = true;
+            } else if (!isValid(constraintsName, objectConstraints[key], value)) {
+                invalid.push(key);
+                result.hasErrors = true;
+            }
+        });
+
+        if (result.hasErrors) {
+            result.missing = missing;
+            result.invalid = invalid;
+            result.unknown = unknown;
+
+            throw new ValidationException(
+                "Validation error for constraints: " + constraintsName,
+                constraintsName,
+                result
+            );
+        }
+    };
+
     return {
         validate: function (constraintsName, object) {
             var objectConstraints = constraints[constraintsName];
@@ -46,41 +94,7 @@ define([
                 throw new IllegalArgumentException("Cannot find valid constraints: " + constraintsName);
             }
 
-            var invalid = [];
-            var unknown = [];
-            var missing = [];
-            var result = {
-                hasErrors: false
-            };
-
-            _.each(objectConstraints, function (valueConstraints, key) {
-                if (object[key] === null || object[key] === undefined) {
-                    missing.push(key);
-                    result.hasErrors = true;
-                }
-            });
-
-            _.each(object, function (value, key) {
-                if (!objectConstraints[key]) {
-                    unknown.push(key);
-                    result.hasErrors = true;
-                } else if (!isValid(objectConstraints[key], value)) {
-                    invalid.push(key);
-                    result.hasErrors = true;
-                }
-            });
-
-            if (result.hasErrors) {
-                result.missing = missing;
-                result.invalid = invalid;
-                result.unknown = unknown;
-
-                throw new ValidationException(
-                    "Validation error for constraints: " + constraintsName,
-                    constraintsName,
-                    result
-                );
-            }
+            doValidate(constraintsName, objectConstraints, object);
         },
 
         getConstraints: function (constraintsName) {
@@ -93,7 +107,9 @@ define([
             return objectConstraints;
         },
 
-        isValid: isValid
+        isValid: function (valueConstraints, value) {
+            return isValid("<unknown>", valueConstraints, value);
+        }
     };
 });
 

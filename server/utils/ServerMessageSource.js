@@ -173,6 +173,13 @@ define([
                 callback: function (payload) {
                     roomService.sendMessage(session, payload.room, payload.text, handleError);
                 }
+            },
+
+            "client.room.move": {
+                roles: [roles.USER, roles.MODERATOR],
+                callback: function (payload) {
+                    roomService.moveMember(session, payload.room, payload.position, handleError);
+                }
             }
         };
 

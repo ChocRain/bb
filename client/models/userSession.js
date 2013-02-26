@@ -64,6 +64,11 @@ define([
 
         doRegister: function (nick, assertion) {
             messageSink.sendRegister(nick, assertion);
+        },
+
+        setPosition: function (position) {
+            this.getUser().setPosition(position);
+            messageSink.sendMoved(position);
         }
     });
 

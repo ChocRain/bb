@@ -131,8 +131,34 @@ define([
 
             var nick = session.getUser().getNick();
 
+            if (!room.isMember(nick)) {
+                throw new FeedbackException("You are not a member of that room: " + roomName);
+            }
+
             this._withEachMembersMessageSink(room, function (messageSink) {
                 messageSink.sendRoomMessage(roomName, nick, text);
+            }.bind(this));
+
+            return callback(null);
+        }.bind(this));
+    };
+
+    RoomService.prototype.moveMember = function (session, roomName, position, callback) {
+        this.getByName(roomName, function (err, room) {
+            if (err) {
+                return callback(err);
+            }
+
+            var nick = session.getUser().getNick();
+
+            if (!room.isMember(nick)) {
+                throw new FeedbackException("You are not a member of that room: " + roomName);
+            }
+
+            // TODO: Check if position allowed in that room.
+
+            this._withEachMembersMessageSink(room, function (messageSink) {
+                messageSink.sendMoved(roomName, nick, position);
             }.bind(this));
 
             return callback(null);

@@ -1,6 +1,7 @@
 {
     "client.moderation.kick": {
         "nick": {
+            "type": "string",
             "minlength": 3,
             "maxlength": 20,
             "regexp": "^[a-zA-Z0-9_]+$"
@@ -9,6 +10,7 @@
 
     "client.moderation.ban": {
         "nick": {
+            "type": "string",
             "minlength": 3,
             "maxlength": 20,
             "regexp": "^[a-zA-Z0-9_]+$"
@@ -17,6 +19,7 @@
 
     "client.moderation.unban": {
         "nick": {
+            "type": "string",
             "minlength": 3,
             "maxlength": 20,
             "regexp": "^[a-zA-Z0-9_]+$"
@@ -25,6 +28,7 @@
 
     "client.user.login": {
         "assertion": {
+            "type": "string",
             "maxlength": 3000,
             "regexp": "^.+$"
         }
@@ -32,10 +36,12 @@
 
     "client.user.register": {
         "assertion": {
+            "type": "string",
             "maxlength": 3000,
             "regexp": "^.+$"
         },
         "nick": {
+            "type": "string",
             "minlength": 3,
             "maxlength": 20,
             "regexp": "^[a-zA-Z0-9_]+$"
@@ -47,6 +53,7 @@
 
     "client.room.join": {
         "room": {
+            "type": "string",
             "minlength": 3,
             "maxlength": 20,
             "regexp": "^[a-zA-Z0-9_]+$"
@@ -55,13 +62,37 @@
 
     "client.room.message": {
         "room": {
+            "type": "string",
             "minlength": 3,
             "maxlength": 20,
             "regexp": "^[a-zA-Z0-9_]+$"
         },
         "text": {
+            "type": "string",
             "minlength": 1,
             "maxlength": 200
         }
-    }
+    },
+
+    "client.room.move": {
+        "room": {
+            "type": "string",
+            "minlength": 3,
+            "maxlength": 20,
+            "regexp": "^[a-zA-Z0-9_]+$"
+        },
+        "position": {
+            "object": {
+                "x": {
+                    "type": "number"
+                },
+                "y": {
+                    "type": "number"
+                },
+                "direction": {
+                    "regexp": "^(left|right)$"
+                }
+            }
+        }
+     }
 }

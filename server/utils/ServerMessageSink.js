@@ -146,6 +146,17 @@ define([
         });
     };
 
+    /**
+     * Send a new position of a member in a room.
+     */
+    ServerMessageSink.prototype.sendMoved = function (roomName, nick, position) {
+        this._messageDispatcher.send("server.room.moved", {
+            room: roomName,
+            nick: nick,
+            position: position
+        });
+    };
+
     return ServerMessageSink;
 });
 

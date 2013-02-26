@@ -191,3 +191,17 @@ li.chat-log-entry-view.highlight {
     color: red;
 }
 
+.avatar-nick {
+    color: white;
+    background-color: #EE3F96;
+    padding: 3px 5px;
+
+    -webkit-border-radius: 4px;
+    -moz-border-radius: 4px;
+    border-radius: 4px;
+
+    font-weight: bold;
+    position: relative;
+    left: -50%;
+}
+

@@ -79,6 +79,16 @@ define([
                 room: "ponyverse", // TODO: Proper room handling...
                 text: text
             });
+        },
+
+        /**
+         * Send a message to notify the server about movement of the user.
+         */
+        sendMoved: function (position) {
+            messageDispatcher.send("client.room.move", {
+                room: "ponyverse", // TODO: Proper room handling...
+                position: position
+            });
         }
     };
 

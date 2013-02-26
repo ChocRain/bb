@@ -63,6 +63,13 @@ define([
                 }.bind(this));
             }
 
+            // Prevent crafty from handling click events on views
+            this.$el.click(function (e) {
+                if (e) {
+                    e.stopPropagation();
+                }
+            });
+
             return this;
         }
     });

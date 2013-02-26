@@ -16,12 +16,21 @@ define([
         parse: function (json) {
             return {
                 nick: json.nick,
-                role: roles.fromString(json.role)
+                role: roles.fromString(json.role),
+                position: json.position
             };
         },
 
         getNick: function () {
             return this.get("nick");
+        },
+
+        setPosition: function (position) {
+            this.set("position", position);
+        },
+
+        getPosition: function () {
+            return this.get("position");
         }
     });
 

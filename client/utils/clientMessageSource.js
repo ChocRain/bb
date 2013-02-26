@@ -12,7 +12,8 @@ define([
     "collections/chatLogCollection",
     "collections/chatRoomUsersCollection",
     "views/DisconnectedView",
-    "shared/exceptions/IllegalArgumentException"
+    "shared/exceptions/IllegalArgumentException",
+    "shared/exceptions/IllegalStateException"
 ], function (
     $,
     rootNavigator,
@@ -23,7 +24,8 @@ define([
     chatLogCollection,
     chatRoomUsersCollection,
     DisconnectedView,
-    IllegalArgumentException
+    IllegalArgumentException,
+    IllegalStateException
 ) {
     "use strict";
 
@@ -141,6 +143,17 @@ define([
                         nick: payload.nick,
                         text: payload.text
                     });
+                },
+
+                "server.room.moved": function (payload, date) {
+                    var userModel = chatRoomUsersCollection.get(payload.nick);
+                    if (!userModel) {
+                        throw new IllegalStateException(
+                            "Don't have a user in the collection for that nick: " + payload.nick
+                        );
+                    }
+
+                    userModel.setPosition(payload.position);
                 }
             }
         };
