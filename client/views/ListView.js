@@ -18,6 +18,8 @@ define([
         initialize: function (opts) {
             BaseView.prototype.initialize.call(this, opts);
 
+            this._itemViewsByClientId = {};
+
             if (!_.isFunction(this.createItemView)) {
                 throw new IllegalArgumentException("List view is missing createItemView().");
             }
@@ -28,22 +30,28 @@ define([
         },
 
         render: function (opts) {
-            this.$el.empty();
-            this.collection.each(this.add.bind(this));
+            // Not calling BaseView.prototype.render on purpose.
 
+            this.reset();
             return this;
         },
 
         add: function (model) {
-            this.$el.append(this.createItemView(model).render().el);
+            var view = this.createItemView(model);
+            this.$el.append(view.render().el);
+            this._itemViewsByClientId[model.cid] = view;
         },
 
-        remove: function () {
-            throw new UnsupportedOperationException("Unsupported opertation: remove");
+        remove: function (model) {
+            var view = this._itemViewsByClientId[model.cid];
+            view.remove();
+            this._itemViewsByClientId[model.cid] = undefined;
         },
 
-        reset: function () {
-            throw new UnsupportedOperationException("Unsupported opertation: reset");
+        reset: function (models) {
+            this._itemViewsByClientId = {};
+            this.$el.empty();
+            this.collection.each(this.add.bind(this));
         }
     });
 

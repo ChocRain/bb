@@ -134,11 +134,10 @@ input[type=text]:disabled {
     width: 80%;
 }
 
-.chat-log-view {
+.chat-log-view,
+.chat-room-users-list-view {
     position: absolute;
     top: 20px;
-    left: 20px;
-    width: 500px;
     height: 300px;
     overflow-y: scroll;
 
@@ -146,6 +145,16 @@ input[type=text]:disabled {
     background-color: white;
 
     padding: 2px;
+}
+
+.chat-log-view {
+    left: 20px;
+    width: 500px;
+}
+
+.chat-room-users-list-view {
+    right: 20px;
+    width: 200px;
 }
 
 li.chat-log-entry-view {
@@ -189,6 +198,10 @@ li.chat-log-entry-view.highlight {
 
 .chat-log-entry-type-system-error {
     color: red;
+}
+
+li.chat-room-user-list-item-view {
+    list-style: none;
 }
 
 .avatar-nick {

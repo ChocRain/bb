@@ -5,12 +5,14 @@ define([
     "views/BaseView",
     "text!templates/ChatView.html",
     "views/ChatLogView",
-    "views/ChatInputView"
+    "views/ChatInputView",
+    "views/ChatRoomUsersListView"
 ], function (
     BaseView,
     Template,
     ChatLogView,
-    ChatInputView
+    ChatInputView,
+    ChatRoomUsersListView
 ) {
     "use strict";
 
@@ -23,6 +25,7 @@ define([
 
             this._chatLogView = new ChatLogView();
             this._chatInputView = new ChatInputView();
+            this._chatRoomUsersView = new ChatRoomUsersListView();
         },
 
         render: function (opts) {
@@ -30,6 +33,7 @@ define([
 
             this.$(".chat-log").html(this._chatLogView.render().el);
             this.$(".chat-input").html(this._chatInputView.render().el);
+            this.$(".chat-room-users").html(this._chatRoomUsersView.render().el);
 
             return this;
         }
