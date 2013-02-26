@@ -127,6 +127,13 @@ define([
                 }
             },
 
+            "client.user.logout": {
+                roles: [roles.USER, roles.MODERATOR],
+                callback: function () {
+                    authenticationService.logout(session, handleError);
+                }
+            },
+
             "client.user.register": {
                 loginNotNeeded: true,
                 callback: function (payload) {

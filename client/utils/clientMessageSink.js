@@ -46,6 +46,13 @@ define([
         },
 
         /**
+         * Send a message to request being logged out.
+         */
+        sendLogout: function () {
+            messageDispatcher.send("client.user.logout", {});
+        },
+
+        /**
          * Send a message to request being registered.
          */
         sendRegister: function (nick, assertion) {

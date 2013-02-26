@@ -218,3 +218,9 @@ li.chat-room-user-list-item-view {
     left: -50%;
 }
 
+.chat-actions {
+    position: absolute;
+    bottom: 20px;
+    right: 20px;    
+}
+

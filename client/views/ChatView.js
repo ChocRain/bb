@@ -6,19 +6,27 @@ define([
     "text!templates/ChatView.html",
     "views/ChatLogView",
     "views/ChatInputView",
-    "views/ChatRoomUsersListView"
+    "views/ChatRoomUsersListView",
+    "utils/persona",
+    "models/userSession"
 ], function (
     BaseView,
     Template,
     ChatLogView,
     ChatInputView,
-    ChatRoomUsersListView
+    ChatRoomUsersListView,
+    persona,
+    userSession
 ) {
     "use strict";
 
     var ChatView = BaseView.extend({
         className: "chat-view view",
         template: Template,
+
+        events: {
+            "click .chat-actions .logout-btn": "logout"
+        },
 
         initialize: function (opts) {
             BaseView.prototype.initialize.call(this, opts);
@@ -36,6 +44,11 @@ define([
             this.$(".chat-room-users").html(this._chatRoomUsersView.render().el);
 
             return this;
+        },
+
+        logout: function () {
+            persona.logout(function () {}); // do nothing after logout
+            userSession.doLogout();
         }
     });
 

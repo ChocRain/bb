@@ -62,6 +62,10 @@ define([
             messageSink.sendLogin(assertion);
         },
 
+        doLogout: function () {
+            messageSink.sendLogout();
+        },
+
         doRegister: function (nick, assertion) {
             messageSink.sendRegister(nick, assertion);
         },
