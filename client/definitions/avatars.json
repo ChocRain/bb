@@ -1,0 +1,13 @@
+{
+    "tileWidth": 122,
+    "tileHeight": 126,
+    "sprites": {
+        "pinkie_pie_dancing": {
+            "row": 0,
+            "width": 122,
+            "height": 126,
+            "frames": 40,
+            "frameDelay": 80
+        }
+    }
+}

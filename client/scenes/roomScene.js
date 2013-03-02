@@ -7,39 +7,49 @@ define([
     "crafty",
     "utils/asset",
     "collections/chatRoomUsersCollection",
-    "models/userSession"
+    "models/userSession",
+    "json!definitions/avatars.json"
 ], function (
     _,
     $,
     Crafty,
     asset,
     chatRoomUsersCollection,
-    userSession
+    userSession,
+    avatars
 ) {
     "use strict";
 
     // TODO: Clean up this mess...
 
-    var roomBg = asset.asset("/img/backgrounds/ponyverse_pre_alpha.png");
-    var candyTileMap = asset.asset("/img/sprites/chocolaterain.png");
+    var roomBgImage = asset.asset("/img/backgrounds/madam_pinkies_tent.png");
+    var avatarsImage = asset.asset("/img/sprites/avatars.png");
 
     var sceneName = "room";
     var running = false;
     var initScene = function () {
         running = true;
-        Crafty.background("url(" + roomBg + ") no-repeat");
+        Crafty.background("url(" + roomBgImage + ") no-repeat");
 
-        var spriteSize = 100;
-        var map = {
-            chocolaterain: [0, 0]
-        };
-        Crafty.sprite(spriteSize, candyTileMap, map);
+        var spriteMap = {};
+        _.each(avatars.sprites, function (sprite, name) {
+            spriteMap[name] = [0, sprite.row];
+        }.bind(this));
+
+        Crafty.sprite(avatars.tileWidth, avatars.tileHeight, avatarsImage, spriteMap);
 
         Crafty.c("Avatar", {
             init: function () {
-                this.requires("2D, HTML, DOM, Tween, chocolaterain");
+                var spriteName = "pinkie_pie_dancing";
+                var sprite = avatars.sprites[spriteName];
+
+                this.requires("2D, HTML, DOM, Tween, SpriteAnimation, " + spriteName);
                 this.bind("Moved", this._moved.bind(this));
                 this.direction = "right";
+
+                this.animate("anim", 0, sprite.row, sprite.frames - 1);
+                this.animate("anim", Crafty.timer.getFPS() * sprite.frames * sprite.frameDelay / 1000 * 0.8, -1);
+                this.crop(0, 0, sprite.width, sprite.height);
             },
 
             _moved: function (e) {
@@ -183,7 +193,7 @@ define([
     Crafty.scene(sceneName, initScene, destroyScene);
     return {
         run: function () {
-            Crafty.load([roomBg], function () {
+            Crafty.load([roomBgImage, avatarsImage], function () {
                 Crafty.scene(sceneName);
             });
         }
