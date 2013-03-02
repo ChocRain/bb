@@ -22,7 +22,7 @@ define([
 
     // TODO: Clean up this mess...
 
-    var roomBgImage = asset.asset("/img/backgrounds/madam_pinkies_tent.png");
+    var roomBgImage = asset.asset("/img/backgrounds/madam_pinkies_tent.jpg");
     var avatarsImage = asset.asset("/img/sprites/avatars.png");
 
     var sceneName = "room";
