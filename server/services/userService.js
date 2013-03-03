@@ -32,7 +32,9 @@ define([
             }
 
             if (userByEmail) {
-                throw new IllegalArgumentException("User with email address already exists:", email);
+                return callback(new IllegalArgumentException(
+                    "User with email address already exists:" + email
+                ));
             }
 
             this.findByNick(nick, function (err, userByNick) {
@@ -41,7 +43,9 @@ define([
                 }
 
                 if (userByNick) {
-                    throw new IllegalArgumentException("User with nick already exists:", nick);
+                    return callback(new IllegalArgumentException(
+                        "User with nick already exists:" + nick
+                    ));
                 }
 
                 userDao.create(email, nick, roles.USER, callback);

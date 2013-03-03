@@ -61,7 +61,7 @@ define([
                 }
 
                 if (numDocs > 1) {
-                    throw new IllegalStateException("Entry is not unique.");
+                    return callback(new IllegalStateException("Entry is not unique."));
                 }
 
                 if (numDocs === 1) {

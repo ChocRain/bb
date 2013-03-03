@@ -43,26 +43,35 @@ define([
                 return callback(err);
             }
 
-            var userSession = sessionStore.findByNick(nick);
-            if (!userSession) {
-                return callback(new CommandException("Cannot kick user. User is gone or doesn't exist: " + nick));
-            }
-
-            var messageSink = userSession.get("messageSink");
-            if (!messageSink) {
-                throw new IllegalStateException("Couldn't get message sink from session.");
-            }
-
-            var kickedNick = userSession.getUser().getNick();
-            messageSink.sendKicked(kickedNick);
-
-            authenticationService.logout(userSession, function (err) {
+            sessionStore.findByNick(nick, function (err, userSession) {
                 if (err) {
                     return callback(err);
                 }
 
-                this._logModAction(session, {kicked: kickedNick});
-                return callback(null, kickedNick);
+                if (!userSession) {
+                    return callback(new CommandException(
+                        "Cannot kick user. User is gone or doesn't exist: " + nick
+                    ));
+                }
+
+                var messageSink = userSession.get("messageSink");
+                if (!messageSink) {
+                    return callback(new IllegalStateException(
+                        "Couldn't get message sink from session."
+                    ));
+                }
+
+                var kickedNick = userSession.getUser().getNick();
+                messageSink.sendKicked(kickedNick);
+
+                authenticationService.logout(userSession, function (err) {
+                    if (err) {
+                        return callback(err);
+                    }
+
+                    this._logModAction(session, {kicked: kickedNick});
+                    return callback(null, kickedNick);
+                }.bind(this));
             }.bind(this));
         }.bind(this));
     };
@@ -86,24 +95,31 @@ define([
 
                 this._logModAction(session, {banned: bannedNick});
 
-                var userSession = sessionStore.findByNick(nick);
-                if (!userSession) {
-                    return callback(null, bannedNick); // no user to logout
-                }
-
-                var messageSink = userSession.get("messageSink");
-                if (!messageSink) {
-                    throw new IllegalStateException("Couldn't get message sink from session.");
-                }
-
-                messageSink.sendBanned(bannedNick);
-
-                authenticationService.logout(userSession, function (err) {
+                sessionStore.findByNick(nick, function (err, userSession) {
                     if (err) {
                         return callback(err);
                     }
 
-                    return callback(null, bannedNick);
+                    if (!userSession) {
+                        return callback(null, bannedNick); // no user to logout
+                    }
+
+                    var messageSink = userSession.get("messageSink");
+                    if (!messageSink) {
+                        return callback(new IllegalStateException(
+                            "Couldn't get message sink from session."
+                        ));
+                    }
+
+                    messageSink.sendBanned(bannedNick);
+
+                    authenticationService.logout(userSession, function (err) {
+                        if (err) {
+                            return callback(err);
+                        }
+
+                        return callback(null, bannedNick);
+                    }.bind(this));
                 }.bind(this));
             }.bind(this));
         }.bind(this));

@@ -79,47 +79,56 @@ define([
         this._sessionsById[sessionId] = undefined;
     };
 
-    SessionStore.prototype.findByNick = function (nick) {
-        var sessions = this.findByNicks([nick]);
+    SessionStore.prototype.findByNick = function (nick, callback) {
+        this.findByNicks([nick], function (err, sessions) {
+            if (err) {
+                return callback(err);
+            }
 
-        if (sessions.length === 0) {
-            return null;
-        }
+            if (sessions.length === 0) {
+                return callback(null, null);
+            }
 
-        if (sessions.length === 1) {
-            return sessions[0];
-        }
+            if (sessions.length === 1) {
+                return callback(null, sessions[0]);
+            }
 
-        throw new IllegalStateException("There is more than one session for this nick:", nick);
+            return callback(new IllegalStateException(
+                "There is more than one session for this nick: " + nick
+            ));
+        });
     };
 
-    SessionStore.prototype.findByNicks = function (nicks) {
+    SessionStore.prototype.findByNicks = function (nicks, callback) {
         var sessionsByLowerCaseNick = {};
-
-        _.each(this._sessionsById, function (session) {
-            if (!session) {
-                return false;
-            }
-
-            var user = session.get("user");
-            if (!user) {
-                return false;
-            }
-
-            sessionsByLowerCaseNick[user.getNick().toLowerCase()] = session;
-        });
-
         var sessions = [];
 
-        _.each(nicks, function (nick) {
-            var session = sessionsByLowerCaseNick[nick.toLowerCase()];
+        try {
+            _.each(this._sessionsById, function (session) {
+                if (!session) {
+                    return false;
+                }
 
-            if (session) {
-                sessions.push(session);
-            }
-        });
+                var user = session.get("user");
+                if (!user) {
+                    return false;
+                }
 
-        return sessions;
+                sessionsByLowerCaseNick[user.getNick().toLowerCase()] = session;
+            });
+
+            _.each(nicks, function (nick) {
+                var session = sessionsByLowerCaseNick[nick.toLowerCase()];
+
+                if (session) {
+                    sessions.push(session);
+                }
+            });
+        } catch (err) {
+            return callback(err);
+        }
+
+        return callback(null, sessions);
     };
 
     return new SessionStore();

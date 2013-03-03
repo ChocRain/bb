@@ -5,6 +5,7 @@ define([
     "underscore",
     "server/models/Room",
     "server/session/sessionStore",
+    "server/utils/parallel",
     "shared/exceptions/FeedbackException",
     "shared/exceptions/IllegalArgumentException",
     "shared/exceptions/IllegalStateException",
@@ -13,6 +14,7 @@ define([
     _,
     Room,
     sessionStore,
+    parallel,
     FeedbackException,
     IllegalArgumentException,
     IllegalStateException,
@@ -56,14 +58,20 @@ define([
         return callback(null, rooms);
     };
 
-    RoomService.prototype._withEachMembersMessageSink = function (room, callback) {
+    RoomService.prototype._withEachMembersMessageSink = function (room, memberCallback, callback) {
         var members = room.getMembers();
         var nicks = members; // currently a room only holds the nicks of the members
 
-        _.each(sessionStore.findByNicks(nicks), function (memberSession) {
-            var messageSink = memberSession.getMessageSink();
-            return callback(messageSink);
-        }, this);
+        sessionStore.findByNicks(nicks, function (err, sessions) {
+            if (err) {
+                return callback(err);
+            }
+
+            parallel.each(sessions, function (memberSession, next) {
+                var messageSink = memberSession.getMessageSink();
+                memberCallback(messageSink, next);
+            }.bind(this), callback);
+        }.bind(this));
     };
 
     RoomService.prototype.join = function (session, roomName, callback) {
@@ -84,19 +92,30 @@ define([
 
             room.join(nick);
 
-            var publicUsers = [];
-            _.each(sessionStore.findByNicks(room.getMembers()), function (memberSession) {
-                if (memberSession.isLoggedIn()) {
-                    publicUsers.push(memberSession.getUser().toPublicUser());
+            sessionStore.findByNicks(room.getMembers(), function (err, memberSessions) {
+                if (err) {
+                    return callback(err);
                 }
-            });
-            session.get("messageSink").sendRoomInfo(roomName, publicUsers);
 
-            this._withEachMembersMessageSink(room, function (messageSink) {
-                messageSink.sendUserJoinedRoom(roomName, user.toPublicUser());
+                parallel.mapFilter(memberSessions, function (memberSession, next) {
+                    if (memberSession.isLoggedIn()) {
+                        return next(null, memberSession.getUser().toPublicUser());
+                    }
+
+                    return next(null, null); // do not include
+                }, function (err, publicUsers) {
+                    if (err) {
+                        return callback(err);
+                    }
+
+                    session.get("messageSink").sendRoomInfo(roomName, publicUsers);
+
+                    this._withEachMembersMessageSink(room, function (messageSink, next) {
+                        messageSink.sendUserJoinedRoom(roomName, user.toPublicUser());
+                        next(null);
+                    }.bind(this), callback);
+                }.bind(this));
             }.bind(this));
-
-            return callback(null);
         }.bind(this));
     };
 
@@ -112,12 +131,11 @@ define([
 
                 var roomName = room.getName();
 
-                this._withEachMembersMessageSink(room, function (messageSink) {
+                this._withEachMembersMessageSink(room, function (messageSink, next) {
                     messageSink.sendUserLeftRoom(roomName, nick);
-                }.bind(this));
-            }, this);
-
-            return callback(null);
+                    next(null);
+                }.bind(this), callback);
+            }.bind(this));
         }.bind(this));
     };
 
@@ -130,14 +148,13 @@ define([
             var nick = session.getUser().getNick();
 
             if (!room.isMember(nick)) {
-                throw new FeedbackException("You are not a member of that room: " + roomName);
+                return callback(new FeedbackException("You are not a member of that room: " + roomName));
             }
 
-            this._withEachMembersMessageSink(room, function (messageSink) {
+            this._withEachMembersMessageSink(room, function (messageSink, next) {
                 messageSink.sendRoomMessage(roomName, nick, text);
-            }.bind(this));
-
-            return callback(null);
+                next(null);
+            }.bind(this), callback);
         }.bind(this));
     };
 
@@ -150,16 +167,15 @@ define([
             var nick = session.getUser().getNick();
 
             if (!room.isMember(nick)) {
-                throw new FeedbackException("You are not a member of that room: " + roomName);
+                return callback(new FeedbackException("You are not a member of that room: " + roomName));
             }
 
             // TODO: Check if position allowed in that room.
 
-            this._withEachMembersMessageSink(room, function (messageSink) {
+            this._withEachMembersMessageSink(room, function (messageSink, next) {
                 messageSink.sendMoved(roomName, nick, position);
-            }.bind(this));
-
-            return callback(null);
+                next(null);
+            }.bind(this), callback);
         }.bind(this));
     };
 

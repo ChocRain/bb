@@ -146,15 +146,19 @@ define([
     };
 
     AuthenticationService.prototype.isLoggedIn = function (nick, callback) {
-        var session = sessionStore.findByNick(nick);
+        sessionStore.findByNick(nick, function (err, session) {
+            if (err) {
+                return callback(err);
+            }
 
-        if (!session) {
-            return callback(null, false);
-        }
+            if (!session) {
+                return callback(null, false);
+            }
 
-        var isLoggedIn = session.isLoggedIn();
+            var isLoggedIn = session.isLoggedIn();
 
-        return callback(null, isLoggedIn, isLoggedIn ? session : null);
+            return callback(null, isLoggedIn, isLoggedIn ? session : null);
+        }.bind(this));
     };
 
     return new AuthenticationService();
