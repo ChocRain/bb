@@ -39,6 +39,10 @@ define([
 
             location.hash = "#" + fragment;
             location.reload();
+        },
+
+        loadUrl: function (url) {
+            location.href = url;
         }
     });
 

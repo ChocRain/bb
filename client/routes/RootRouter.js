@@ -60,8 +60,7 @@ define([
         },
 
         rules: function () {
-            // TODO: Show rules
-            this.login();
+            rootNavigator.loadUrl("/rules");            
         }
     });
 

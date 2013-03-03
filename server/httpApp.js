@@ -10,7 +10,11 @@ define([
     "fs",
 
     "server/config",
+
     "text!server/templates/index.html",
+    "text!server/templates/rules.html",
+    "text!server/templates/commonHeaders.html",
+
     "server/utils/parallel",
     "server/utils/asset"
 ], function (
@@ -22,7 +26,11 @@ define([
     fs,
 
     config,
-    Template,
+
+    IndexTemplate,
+    RulesTemplate,
+    CommonHeadersTemplate,
+
     parallel,
     asset
 ) {
@@ -59,20 +67,21 @@ define([
 
         app.use("/", express.static(config.paths.htdocs, {maxAge: 365 * 24 * 60 * 60 * 1000}));
 
-        app.get("/", function (req, res, next) {
-            var getTemplate = function (callback) {
-                if (config.isDevelopment) {
-                    // always get current template in development
-                    fs.readFile(config.paths.root + "/server/templates/index.html", "utf8", callback);
-                } else {
-                    return callback(null, Template);
-                }
-            };
+        var getTemplate = function (filename, requiredTemplate, callback) {
+            if (config.isDevelopment) {
+                // always get current template in development
+                fs.readFile(config.paths.root + "/server/templates/" + filename, "utf8", callback);
+            } else {
+                return callback(null, requiredTemplate);
+            }
+        };
 
+        var servePage = function (filename, requiredTemplate, req, res, next) {
             parallel.parallel([
                 asset.getAssets,
-                getTemplate
-            ], function (err, assets, template) {
+                _.partial(getTemplate, filename, requiredTemplate),
+                _.partial(getTemplate, "commonHeaders.html", CommonHeadersTemplate),
+            ], function (err, assets, indexTemplate, commonHeadersTemplate) {
                 if (err) {
                     return next(err);
                 }
@@ -82,12 +91,19 @@ define([
                     "Cache-Control": "no-cache",
                     "Expires": moment(0).toDate().toUTCString() // immediately
                 });
-                res.end(_.template(template, {
+
+                var opts = {
                     hashes: assets.hashes,
                     asset: assets.asset
-                }));
+                };
+                opts.commonHeaders = _.template(commonHeadersTemplate, opts);
+
+                res.end(_.template(indexTemplate, opts));
             });
-        });
+        };
+
+        app.get("/", _.partial(servePage, "index.html", IndexTemplate));
+        app.get("/rules", _.partial(servePage, "rules.html", RulesTemplate));
     };
 
     App.prototype.getHttpServer = function () {

@@ -1,0 +1,22 @@
+<title>Ponyverse</title>
+
+<script>
+    window._asset = function (filename) {
+        "use strict";
+
+        var hashes = <%= JSON.stringify(hashes) %>;
+        var hash = hashes[filename];
+
+        return filename + "?v=" + (hash ? hash : new Date().getTime());
+    };
+</script>
+
+<style>
+    @font-face {
+        font-family: CelestiaMediumRedux;
+        src: url("<%= asset('/fonts/CelestiaMediumRedux1.55.ttf') %>");
+    }
+</style>
+
+<link rel="stylesheet" type="text/css" href="<%= asset('/css/style.css') %>" />
+

@@ -102,7 +102,7 @@ define([
                     if (payload.nick === userSession.getUser().getNick()) {
                         return dialog.showMessage(
                             "You have been banned.",
-                            "Please consider your behavior. For further information have a look at the rules.",
+                            "Please reconsider your behavior. For further information have a look at the rules.",
                             "Show the rules",
                             function () {
                                 rootNavigator.rules().reload();
