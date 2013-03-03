@@ -11,6 +11,8 @@ define([
     "utils/clientMessageSink",
     "collections/chatLogCollection",
     "collections/chatRoomUsersCollection",
+    "views/ChatView",
+    "scenes/roomScene",
     "views/DisconnectedView",
     "shared/exceptions/IllegalArgumentException",
     "shared/exceptions/IllegalStateException"
@@ -23,6 +25,8 @@ define([
     messageSink,
     chatLogCollection,
     chatRoomUsersCollection,
+    ChatView,
+    roomScene,
     DisconnectedView,
     IllegalArgumentException,
     IllegalStateException
@@ -117,6 +121,13 @@ define([
                         room: payload.room,
                         user: PublicUser.fromJSON(payload.user)
                     });
+
+                    if (payload.user.nick === userSession.getUser().getNick()) {
+                        // current user has joined a room, thus run the room
+                        // scene and attach the ChatView.
+                        roomScene.run(payload.room);
+                        $("#ui").html(new ChatView({model: userSession}).render().el);
+                    }
                 },
 
                 "server.room.left": function (payload, date) {

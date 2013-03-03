@@ -192,7 +192,7 @@ define([
 
     Crafty.scene(sceneName, initScene, destroyScene);
     return {
-        run: function () {
+        run: function (roomName) {
             Crafty.load([roomBgImage, avatarsImage], function () {
                 Crafty.scene(sceneName);
             });
