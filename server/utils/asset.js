@@ -36,7 +36,6 @@ define([
             });
         }
 
-        // TODO: Include /shared and /client for development
         glob(config.paths.htdocs + "/**/*", function (err, paths) {
             if (err) {
                 return callback(err);
