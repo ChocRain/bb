@@ -102,8 +102,8 @@ define([
             });
         };
 
-        app.get("/", _.partial(servePage, "index.html", IndexTemplate));
         app.get("/rules", _.partial(servePage, "rules.html", RulesTemplate));
+        app.get("/*", _.partial(servePage, "index.html", IndexTemplate));
     };
 
     App.prototype.getHttpServer = function () {

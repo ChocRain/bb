@@ -36,7 +36,7 @@ define([
 
                     // start navigation
                     var rootRouter = new RootRouter();
-                    Backbone.history.start();
+                    Backbone.history.start({pushState: true});
 
                     // init crafty for full window usage
                     Crafty.init();
