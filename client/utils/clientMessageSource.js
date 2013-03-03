@@ -72,23 +72,33 @@ define([
                 },
 
                 "server.moderation.kicked": function (payload) {
+                    if (payload.nick === userSession.getUser().getNick()) {
+                        dialog.showMessage("You have been kicked.");
+                        return;
+                    }
+
                     chatLogCollection.add({
                         type: "system-out",
-                        lines: "You kicked: " + payload.nick
+                        lines: payload.nick + " has been kicked."
                     });
                 },
 
                 "server.moderation.banned": function (payload) {
+                    if (payload.nick === userSession.getUser().getNick()) {
+                        dialog.showMessage("You have been banned.");
+                        return;
+                    }
+
                     chatLogCollection.add({
                         type: "system-out",
-                        lines: "You banned: " + payload.nick
+                        lines: payload.nick + " has been banned."
                     });
                 },
 
                 "server.moderation.unbanned": function (payload) {
                     chatLogCollection.add({
                         type: "system-out",
-                        lines: "You unbanned: " + payload.nick
+                        lines: payload.nick + " has been unbanned."
                     });
                 },
 

@@ -48,14 +48,13 @@ define([
                 return callback(new CommandException("Cannot kick user. User is gone or doesn't exist: " + nick));
             }
 
-            var socket = userSession.get("socket");
-            if (!socket) {
-                throw new IllegalStateException("Couldn't get socket from session.");
+            var messageSink = userSession.get("messageSink");
+            if (!messageSink) {
+                throw new IllegalStateException("Couldn't get message sink from session.");
             }
 
             var kickedNick = userSession.getUser().getNick();
-
-            // TODO: Notify user.
+            messageSink.sendKicked(kickedNick);
 
             authenticationService.logout(userSession, function (err) {
                 if (err) {
@@ -92,12 +91,12 @@ define([
                     return callback(null, bannedNick); // no user to logout
                 }
 
-                var socket = userSession.get("socket");
-                if (!socket) {
-                    throw new IllegalStateException("Couldn't get socket from session.");
+                var messageSink = userSession.get("messageSink");
+                if (!messageSink) {
+                    throw new IllegalStateException("Couldn't get message sink from session.");
                 }
 
-                // TODO: Notify user.
+                messageSink.sendBanned(bannedNick);
 
                 authenticationService.logout(userSession, function (err) {
                     if (err) {
