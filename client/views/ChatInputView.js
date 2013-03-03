@@ -108,7 +108,7 @@ define([
             }
 
             var $text = this.$("form input[name=text]");
-            var text = $text.val();
+            var text = $text.val().trim();
 
             if (commands.isCommand(text)) {
                 commands.exec(text);
@@ -124,12 +124,18 @@ define([
                 if (err instanceof ValidationException) {
                     var constraints = validator.getConstraints("client.room.message");
 
-                    var errorMsg = "Please enter a message. ";
-                    errorMsg += "May not be longer than ";
+                    var errorMsg = "The message may not be longer than ";
                     errorMsg += constraints.text.maxlength;
                     errorMsg += " characters. ";
 
-                    dialog.showMessage(errorMsg);
+                    dialog.showMessage(
+                        "Please enter a message",
+                        errorMsg,
+                        "OK",
+                        function () {
+                            $text.focus();
+                        }
+                    );
                 } else {
                     // re-throw any unhandled exception
                     throw err;

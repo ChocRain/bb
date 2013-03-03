@@ -15,6 +15,10 @@ define([
             return this.createRoute("");
         },
 
+        rules: function () {
+            return this.createRoute("rules");
+        },
+
         login: function (redirect) {
             var suffix = redirect ? "/" + redirect : "";
             return this.createRoute("login" + suffix);

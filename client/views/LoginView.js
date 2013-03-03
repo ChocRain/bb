@@ -98,17 +98,21 @@ define([
             if (!validator.isValid(registrationConstraints.nick, nick)) {
                 this.setLoading(false);
 
-                var errorMsg = "Invalild nick. ";
-                errorMsg += "Must be at least ";
+                var errorMsg = "Nicknames have to be at least ";
                 errorMsg += registrationConstraints.nick.minlength;
                 errorMsg += " and at most ";
                 errorMsg += registrationConstraints.nick.maxlength;
                 errorMsg += " characters long. ";
                 errorMsg += "Allowed are only letters, numbers and _.";
 
-                dialog.showMessage(errorMsg);
-
-                return;
+                return dialog.showMessage(
+                    "Your nick is invalid",
+                    errorMsg,
+                    "OK",
+                    function () {
+                        $nick.focus();
+                    }
+                );
             }
 
             persona.login(function (assertion) {

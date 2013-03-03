@@ -13,7 +13,6 @@ define([
     "views/ChatView",
     "utils/dialog",
     "scenes/roomScene",
-    "views/DisconnectedView",
     "shared/exceptions/IllegalArgumentException",
     "shared/exceptions/IllegalStateException"
 ], function (
@@ -28,7 +27,6 @@ define([
     ChatView,
     dialog,
     roomScene,
-    DisconnectedView,
     IllegalArgumentException,
     IllegalStateException
 ) {
@@ -47,12 +45,23 @@ define([
             },
 
             disconnected: function () {
-                new DisconnectedView().show();
+                dialog.showMessage(
+                    "Connection lost",
+                    "The connection to the server has been closed. Would you like to reconnect?",
+                    "Eeyup",
+                    function () {
+                        rootNavigator.reload();
+                    }
+                );
             },
 
             messageHandlers: {
                 "server.error.feedback": function (payload) {
-                    dialog.showMessage(payload.message);
+                    dialog.showMessage(
+                        "Sorry",
+                        payload.message,
+                        "OK"
+                    );
                 },
 
                 "server.error.command": function (payload) {
@@ -73,8 +82,14 @@ define([
 
                 "server.moderation.kicked": function (payload) {
                     if (payload.nick === userSession.getUser().getNick()) {
-                        dialog.showMessage("You have been kicked.");
-                        return;
+                        return dialog.showMessage(
+                            "You have been kicked",
+                            "Please have a look at the rules before logging in again.",
+                            "Show the rules",
+                            function () {
+                                rootNavigator.rules().reload();
+                            }
+                        );
                     }
 
                     chatLogCollection.add({
@@ -85,8 +100,14 @@ define([
 
                 "server.moderation.banned": function (payload) {
                     if (payload.nick === userSession.getUser().getNick()) {
-                        dialog.showMessage("You have been banned.");
-                        return;
+                        return dialog.showMessage(
+                            "You have been banned.",
+                            "Please consider your behavior. For further information have a look at the rules.",
+                            "Show the rules",
+                            function () {
+                                rootNavigator.rules().reload();
+                            }
+                        );
                     }
 
                     chatLogCollection.add({

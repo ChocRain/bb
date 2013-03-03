@@ -30,6 +30,18 @@ h1 {
 
 #ui {
     z-index: 2; /* above stage */
+}
+
+#modal .modal-overlay {
+    z-index: 3; /* above ui */
+}
+
+#modal .dialog-view {
+    z-index: 4; /* above overlay */
+}
+
+#ui,
+#modal .modal-overlay {
     position: absolute;
     width: 100%;
     height: 100%;
@@ -74,15 +86,17 @@ input[type=text]:disabled {
 .view {
 }
 
-.login-view,
-.disconnected-view {
+/* TODO: Generalize login dialog. */
+
+.dialog-view,
+.login-view {
     position: fixed;
     top: 40%;
     width: 100%;
 }
 
-.login-view .modal,
-.disconnected-view .modal {
+.dialog-view .modal,
+.login-view .modal {
     margin: 0px auto;
     width: 400px;
     padding: 20px;
@@ -100,14 +114,6 @@ input[type=text]:disabled {
 
 .login-view form label {
     font-weight: bold;
-}
-
-.disconnected-view {
-    z-index: 101; /* above modal-overlay */
-}
-
-.disconnected-view .modal {
-    width: 450px;
 }
 
 .modal-overlay {

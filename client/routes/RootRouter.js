@@ -24,6 +24,7 @@ define([
         routes: {
             "login": "login",
             "login/*redirect": "login",
+            "rules": "rules",
             "*path": "fallback"
         },
 
@@ -56,6 +57,11 @@ define([
                     redirect: redirect
                 }));
             }
+        },
+
+        rules: function () {
+            // TODO: Show rules
+            this.login();
         }
     });
 
