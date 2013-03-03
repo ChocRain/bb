@@ -60,7 +60,7 @@ define([
         },
 
         rules: function () {
-            rootNavigator.loadUrl("/rules");            
+            rootNavigator.loadUrl("/rules");
         }
     });
 

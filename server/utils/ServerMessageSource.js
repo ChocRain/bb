@@ -68,6 +68,20 @@ define([
         };
 
         var messageHandlers = {
+            "client.moderation.rules": {
+                roles: [roles.MODERATOR],
+                callback: function (payload) {
+                    var nick = payload.nick;
+                    moderationService.remindOfRules(session, nick, function (err, nick) {
+                        if (err) {
+                            return handleError(err);
+                        }
+
+                        messageSink.sendRemindedOfRules(nick);
+                    });
+                }
+            },
+
             "client.moderation.kick": {
                 roles: [roles.MODERATOR],
                 callback: function (payload) {

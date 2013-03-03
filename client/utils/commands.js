@@ -82,6 +82,7 @@ define([
     };
 
     var help = function () {
+        var allowedLineLength = 55;
         var maxCommandOutputLength = 0;
 
         var userRole = userSession.getUser().getRole();
@@ -100,12 +101,16 @@ define([
             return commandOutput;
         });
 
+        var allowedDescriptionLength = allowedLineLength - maxCommandOutputLength - 2;
+
         var lines = _.map(commandOutputs, function (commandOutput) {
             var len = commandOutput.command.length;
 
             var output = commandOutput.command;
             output += stringUtil.repeat(" ", maxCommandOutputLength - len + 2);
-            output += commandOutput.description;
+
+            var descriptionLines = stringUtil.toWrappedLines(commandOutput.description, allowedDescriptionLength);
+            output += descriptionLines.join("\n" + stringUtil.repeat(" ", maxCommandOutputLength + 2));
 
             return output;
         });
@@ -134,6 +139,20 @@ define([
         callback: help,
         description: "Show this help.",
         roles: [roles.USER, roles.MODERATOR]
+    });
+
+    commands.push({
+        name: "rules",
+        argTypes: [tNick],
+        callback: function (nick) {
+            handleInvalidNick(nick, clientMessageSink.sendRules);
+        },
+        description:
+                "Remind the user with the specified nick of the rules. " +
+                    "This will first show a dialog informing the user you want " +
+                    "him to read the rules and then open the rules in a new window. " +
+                    "The user will stay logged in.",
+        roles: [roles.MODERATOR]
     });
 
     commands.push({

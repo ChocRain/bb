@@ -37,6 +37,40 @@ define([
         console.log("[MOD]", action);
     };
 
+    ModerationService.prototype.remindOfRules = function (session, nick, callback) {
+        this._ensureModerator(session, function (err) {
+            if (err) {
+                return callback(err);
+            }
+
+            sessionStore.findByNick(nick, function (err, userSession) {
+                if (err) {
+                    return callback(err);
+                }
+
+                if (!userSession) {
+                    return callback(new CommandException(
+                        "Cannot remind user of rules. User is gone or doesn't exist: " + nick
+                    ));
+                }
+
+                var messageSink = userSession.get("messageSink");
+                if (!messageSink) {
+                    return callback(new IllegalStateException(
+                        "Couldn't get message sink from session."
+                    ));
+                }
+
+                var remindedNick = userSession.getUser().getNick();
+
+                messageSink.sendRules();
+                this._logModAction(session, {remindedOfRules: nick});
+
+                callback(null, nick);
+            }.bind(this));
+        }.bind(this));
+    };
+
     ModerationService.prototype.kick = function (session, nick, callback) {
         this._ensureModerator(session, function (err) {
             if (err) {

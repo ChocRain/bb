@@ -53,6 +53,21 @@ define([
     };
 
     /**
+     * Send a message to remind the user of the rules.
+     */
+    ServerMessageSink.prototype.sendRules = function () {
+        this._messageDispatcher.send("server.moderation.rules", {});
+    };
+
+    /**
+     * Send once the user has been reminded of the rules.
+     */
+    ServerMessageSink.prototype.sendRemindedOfRules = function (nick) {
+        this._messageDispatcher.send("server.moderation.remindedOfRules", {
+            nick: nick
+        });
+    };
+    /**
      * Send once a user has been kicked.
      */
     ServerMessageSink.prototype.sendKicked = function (nick) {

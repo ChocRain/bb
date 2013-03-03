@@ -66,6 +66,46 @@ define([
             }
 
             return !!str.match(/^[\s]+/);
+        },
+
+        /**
+         * Splits the given string into an array of lines. Each line is at
+         * maximum allowedLineLength characters long, as long as there is
+         * no word within string being longer than allowedLineLength. In that
+         * case those words will be placed onto an own line each. The string
+         * is only split between words. All the whitespace characters in the
+         * resulting line strings are normalized as described for clean().
+         */
+        toWrappedLines: function (str, allowedLineLength) {
+            var words = this.words(str);
+            var lines = [];
+            var currentLine = "";
+
+            _.each(words, function (word) {
+                if (word.length > allowedLineLength) {
+                    // we do not wrap within words and thus this word is one line
+                    if (currentLine !== "") {
+                        lines.push(currentLine);
+                        currentLine = "";
+                    }
+
+                    lines.push(word);
+                } else if (currentLine === "") {
+                    currentLine = word;
+                } else if (currentLine.length + word.length + 1 > allowedLineLength) {
+                    // we need to wrap
+                    lines.push(currentLine);
+                    currentLine = word;
+                } else {
+                    currentLine += " " + word;
+                }
+            });
+
+            if (currentLine !== "") {
+                lines.push(currentLine);
+            }
+
+            return lines;
         }
     };
 });

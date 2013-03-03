@@ -1,4 +1,13 @@
 {
+    "client.moderation.rules": {
+        "nick": {
+            "type": "string",
+            "minlength": 3,
+            "maxlength": 20,
+            "regexp": "^[a-zA-Z0-9_]+$"
+        }
+    },
+
     "client.moderation.kick": {
         "nick": {
             "type": "string",

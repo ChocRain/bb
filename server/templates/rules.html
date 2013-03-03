@@ -1,12 +1,24 @@
 <html>
 <head>
     <%= commonHeaders %>
+
+    <script>
+        function goBack () {
+            if (window.name === "child-window") {
+                window.close();
+            } else {
+                location.href = "/";
+            }
+
+            return false;
+        }
+    </script>
 </head>
 <body>
     <div class="static-content">
         <h1>Ponyverse - The rules</h1>
 
-        <div class="action"><a href="/">&raquo; Back to Ponyverse</a></div>
+        <div class="action"><a href="#" onclick="goBack();">&raquo; Back to Ponyverse</a></div>
 
         <h2>Subsection</h2>
         
@@ -54,7 +66,7 @@
             <li>Third item</li>
         </ul>
 
-        <div class="action"><a href="/">&raquo; Back to Ponyverse</a></div>
+        <div class="action"><a href="#" onclick="goBack();">&raquo; Back to Ponyverse</a></div>
     </div>
 </body>
 </html>

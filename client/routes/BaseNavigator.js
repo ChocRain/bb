@@ -1,7 +1,7 @@
 /**
  * Base class for navigators.
  */
-/*global location: true */
+/*global location: true, window: true */
 define([
     "underscore",
     "backbone"
@@ -27,6 +27,17 @@ define([
                         replace: false // don't track in history
                     });
                 }.bind(this),
+
+                openInNewWindow: function () {
+                    window.open(
+                        fragment,
+                        "child-window",
+                        "width=500,height=400," +
+                            "location=no,toolbar=no,status=no,menubar=no,directories=no," +
+                            "scrollbars=yes,resizable=yes," +
+                            "copyhistory=no"
+                    );
+                },
 
                 reload: function () {
                     this.reload(fragment);

@@ -80,6 +80,24 @@ define([
                     console.error("unexpected server validation error:", payload);
                 },
 
+                "server.moderation.remindedOfRules": function (payload) {
+                    chatLogCollection.add({
+                        type: "system-out",
+                        lines: payload.nick + " has been reminded of the rules."
+                    });
+                },
+
+                "server.moderation.rules": function () {
+                    return dialog.showMessage(
+                        "A moderator wants to remind you of the rules",
+                        "You seem to have broken one or more of the rules. Please read those again before continuing.",
+                        "Show rules in new window",
+                        function () {
+                            rootNavigator.rules().openInNewWindow();
+                        }
+                    );
+                },
+
                 "server.moderation.kicked": function (payload) {
                     if (payload.nick === userSession.getUser().getNick()) {
                         return dialog.showMessage(

@@ -108,7 +108,7 @@ input[type=text]:disabled {
 }
 
 .dialog-view {
-    top: 40%;
+    top: 30%;
 }
 
 .login-view {
@@ -128,7 +128,7 @@ input[type=text]:disabled {
 }
 
 .static-content {
-    width: 916px;
+    max-width: 916px;
     margin-top: 20px;
     margin-bottom: 20px;
 }
