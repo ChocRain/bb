@@ -31,7 +31,7 @@ define([
      * Generates a session id to be used by the client to authenticate itself.
      * The session id is valid as long as the client is connected via socket.io.
      */
-    SessionStore.prototype._generateSessionId = function () {
+    SessionStore.prototype._generateSessionId = function (callback) {
         var i;
 
         for (i = 0; i < 10; i += 1) {
@@ -48,19 +48,24 @@ define([
 
             // the hash serves as our session id
             if (!this._sessionsById[hash]) {
-                return hash;
+                return callback(null, hash);
             }
         }
 
-        throw new FeedbackException("Unexpected error. Please try again.");
+        callback(new FeedbackException("Unexpected error. Please try again."));
     };
 
-    SessionStore.prototype.newSession = function () {
-        var sessionId = this._generateSessionId();
-        var session = new Session(sessionId, this);
-        this._sessionsById[sessionId] = session;
+    SessionStore.prototype.newSession = function (callback) {
+        var sessionId = this._generateSessionId(function (err, sessionId) {
+            if (err) {
+                return callback(err);
+            }
 
-        return session;
+            var session = new Session(sessionId, this);
+            this._sessionsById[sessionId] = session;
+
+            callback(null, session);
+        }.bind(this));
     };
 
     SessionStore.prototype.invalidate = function (sessionId) {

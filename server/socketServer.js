@@ -8,7 +8,7 @@ define([
     "server/utils/ServerMessageDispatcher",
     "server/utils/ServerMessageSink",
     "server/utils/ServerMessageSource",
-    "server/utils/Socket"
+    "server/utils/socketFactory"
 ], function (
     domain,
     io,
@@ -16,7 +16,7 @@ define([
     MessageDispatcher,
     MessageSink,
     MessageSource,
-    Socket
+    socketFactory
 ) {
     "use strict";
 
@@ -26,26 +26,37 @@ define([
         serverSocket.on("connection", function (connectedSocket) {
             var connectionDomain = domain.create();
 
-            connectionDomain.on("error", function (err) {
+            var handleError = function (err) {
                 // make sure the server won't crash for errors in connectionDomain
                 console.error("session:", err);
-            });
+            };
+
+            connectionDomain.on("error", handleError);
 
             connectionDomain.run(function () {
-                var session = sessionStore.newSession();
-                var socket = new Socket(connectedSocket);
+                var session = sessionStore.newSession(function (err, session) {
+                    if (err) {
+                        return handleError(err);
+                    }
 
-                var messageDispatcher = new MessageDispatcher(session, socket);
-                var messageSink = new MessageSink(messageDispatcher);
-                var messageSource = new MessageSource(session, messageDispatcher, messageSink);
+                    socketFactory.of(connectedSocket, function (err, socket) {
+                        if (err) {
+                            return handleError(err);
+                        }
 
-                session.set({
-                    socket: socket,
-                    messageSource: messageSource,
-                    messageSink: messageSink
-                });
+                        var messageDispatcher = new MessageDispatcher(session, socket);
+                        var messageSink = new MessageSink(messageDispatcher);
+                        var messageSource = new MessageSource(session, messageDispatcher, messageSink);
 
-                messageSink.sendSessionInitialized(session.getId());
+                        session.set({
+                            socket: socket,
+                            messageSource: messageSource,
+                            messageSink: messageSink
+                        });
+
+                        messageSink.sendSessionInitialized(session.getId());
+                    }.bind(this));
+                }.bind(this));
             }.bind(this));
         });
 

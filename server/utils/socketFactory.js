@@ -1,5 +1,6 @@
 /**
- * A socket for the server side connection of one client to the server.
+ * Factory for creating sockets for the server side connection of one client
+ * to the server.
  */
 define([
     "underscore",
@@ -69,6 +70,18 @@ define([
         this._messageHandler = messageHandler;
     };
 
-    return Socket;
+    return {
+        of: function (wrappedSocket, callback) {
+            var socket = null;
+
+            try {
+                socket = new Socket(wrappedSocket);
+            } catch (err) {
+                callback(err);
+            }
+
+            callback(null, socket);
+        }
+    };
 });
 
