@@ -1,7 +1,6 @@
 /**
  * Source for messaging via a socket. Must be required once to initialize.
  */
-/*global alert: true */ // TODO: Nicer feedback handling...
 define([
     "jquery",
     "routes/rootNavigator",
@@ -12,6 +11,7 @@ define([
     "collections/chatLogCollection",
     "collections/chatRoomUsersCollection",
     "views/ChatView",
+    "utils/dialog",
     "scenes/roomScene",
     "views/DisconnectedView",
     "shared/exceptions/IllegalArgumentException",
@@ -26,6 +26,7 @@ define([
     chatLogCollection,
     chatRoomUsersCollection,
     ChatView,
+    dialog,
     roomScene,
     DisconnectedView,
     IllegalArgumentException,
@@ -51,8 +52,7 @@ define([
 
             messageHandlers: {
                 "server.error.feedback": function (payload) {
-                    // TODO: Nicer feedback handling...
-                    alert(payload.message);
+                    dialog.showMessage(payload.message);
                 },
 
                 "server.error.command": function (payload) {

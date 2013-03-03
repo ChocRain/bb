@@ -6,7 +6,7 @@ define([
     "views/BaseView",
     "text!templates/LoginView.html",
     "shared/utils/validator",
-    "views/Button",
+    "utils/dialog",
     "shared/exceptions/ValidationException",
     "utils/persona"
 ], function (
@@ -14,7 +14,7 @@ define([
     BaseView,
     Template,
     validator,
-    Button,
+    dialog,
     ValidationException,
     persona
 ) {
@@ -92,7 +92,6 @@ define([
 
             this.setLoading(true);
 
-            // TODO: More general solution.
             var $nick = this.$(nickSelector);
             var nick = $nick.val();
 
@@ -107,8 +106,7 @@ define([
                 errorMsg += " characters long. ";
                 errorMsg += "Allowed are only letters, numbers and _.";
 
-                /*global alert: true */ // TODO: Nicer handling
-                alert(errorMsg);
+                dialog.showMessage(errorMsg);
 
                 return;
             }

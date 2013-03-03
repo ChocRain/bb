@@ -12,7 +12,8 @@ define([
     "utils/InputCompletor",
     "collections/chatRoomUsersCollection",
     "models/userSession",
-    "utils/string"
+    "utils/string",
+    "utils/dialog"
 ], function (
     _,
     BaseView,
@@ -24,7 +25,8 @@ define([
     InputCompletor,
     chatRoomUsersCollection,
     userSession,
-    stringUtil
+    stringUtil,
+    dialog
 ) {
     "use strict";
 
@@ -127,8 +129,7 @@ define([
                     errorMsg += constraints.text.maxlength;
                     errorMsg += " characters. ";
 
-                    /*global alert: true*/ // TODO: Nicer handling
-                    alert(errorMsg);
+                    dialog.showMessage(errorMsg);
                 } else {
                     // re-throw any unhandled exception
                     throw err;
