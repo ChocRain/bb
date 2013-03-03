@@ -37,9 +37,12 @@ define([
             var expectedSessionId = this._session.getId();
 
             if (actualSessionId !== expectedSessionId) {
-                throw new ProtocolException( // within message domain
+                console.error(
                     "Invalid session id: actual = " + actualSessionId + ", expected = " + expectedSessionId
                 );
+                // within message domain
+                // do not leak expected session id to the client here
+                throw new ProtocolException("Invalid session id: " + actualSessionId);
             }
 
             AbstractMessageDispatcher.handleMessage.call(this, message);
