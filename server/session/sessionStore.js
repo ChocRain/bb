@@ -89,13 +89,9 @@ define([
     };
 
     SessionStore.prototype.findByNicks = function (nicks) {
-        var lowerCaseNicks = _.map(nicks, function (nick) {
-            return nick.toLowerCase();
-        });
+        var sessionsByLowerCaseNick = {};
 
-        // FIXME: This a really poor implementation in terms of performance.
-        // O(n * m) with n being number of sessions and m being the number of nicks.
-        var sessions = _.filter(this._sessionsById, function (session) {
+        _.each(this._sessionsById, function (session) {
             if (!session) {
                 return false;
             }
@@ -105,7 +101,17 @@ define([
                 return false;
             }
 
-            return _.contains(lowerCaseNicks, user.getNick().toLowerCase());
+            sessionsByLowerCaseNick[user.getNick().toLowerCase()] = session;
+        });
+
+        var sessions = [];
+
+        _.each(nicks, function (nick) {
+            var session = sessionsByLowerCaseNick[nick.toLowerCase()];
+
+            if (session) {
+                sessions.push(session);
+            }
         });
 
         return sessions;

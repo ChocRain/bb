@@ -49,8 +49,6 @@ define([
     };
 
     RoomService.prototype.findByNick = function (nick, callback) {
-        // FIXME: This a really poor implementation in terms of performance.
-        // O(n * m) with n being number of rooms and m the numbers of users.
         var rooms = _.filter(this._rooms, function (room) {
             return room.isMember(nick);
         }, this);
