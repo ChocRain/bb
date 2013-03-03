@@ -1,3 +1,7 @@
+/**
+ * The main entrypoint for the server application.
+ */
+
 // require.js
 var requirejs = require("requirejs");
 
