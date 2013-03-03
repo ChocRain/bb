@@ -22,19 +22,9 @@ define([
         db.withCollection(this._collectionName, callback);
     };
 
-    BaseDao.prototype._ensureIndex = function (keys, opts) {
+    BaseDao.prototype._ensureIndex = function (keys, opts, callback) {
         this._withCollection(function (collection) {
-            collection.ensureIndex(keys, opts, function (err) {
-                if (err) {
-                    throw err;
-                }
-
-                console.log(
-                    "ensureIndex done: collection = " + this._collectionName +
-                        ", keys = " + JSON.stringify(keys) +
-                        ", opts = " + JSON.stringify(opts)
-                );
-            }.bind(this));
+            collection.ensureIndex(keys, opts, callback);
         }.bind(this));
     };
 

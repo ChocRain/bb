@@ -2,10 +2,12 @@
  * DAO for handling user data.
  */
 define([
+    "underscore",
     "server/daos/BaseDao",
     "server/models/User",
     "shared/models/roles"
 ], function (
+    _,
     BaseDao,
     User,
     roles
@@ -13,30 +15,45 @@ define([
     "use strict";
 
     var UserDao = function () {
-        // FIXME: Proper sequence of migration functions handling multiple collections.
-
-        // email addresses must be unique
-        this._ensureIndex({"email": 1}, {unique: true});
-
-        // nicks must be unique
-        this._ensureIndex({"canonicalNick": 1}, {unique: true});
-
-        // add default roles
-        this._updateAll({_version: {$exists: false}}, {$set: {role: roles.USER.toJSON()}}, function (err) {
-            if (err) {
-                throw err;
-            }
-
-            // increase version
-            this._updateAll({_version: {$exists: false}}, {$set: {_version: 1}}, function (err) {
-                if (err) {
-                    throw err;
-                }
-            }.bind(this));
-        }.bind(this));
     };
 
     UserDao.prototype = new BaseDao("user", User, 1);
+
+    UserDao.prototype.migrate = function (callback) {
+        var ensureIndices = function (indicesCallback) {
+            // email addresses must be unique
+            this._ensureIndex({"email": 1}, {unique: true}, function (err) {
+                if (err) {
+                    return indicesCallback(err);
+                }
+
+                // nicks must be unique
+                this._ensureIndex({"canonicalNick": 1}, {unique: true}, indicesCallback);
+            }.bind(this));
+        }.bind(this);
+
+        var initialVersion = function (initialCallback) {
+            // add default roles
+            this._updateAll({_version: {$exists: false}}, {$set: {role: roles.USER.toJSON()}}, function (err) {
+                if (err) {
+                    return initialCallback(err);
+                }
+
+                // increase version
+                this._updateAll({_version: {$exists: false}}, {$set: {_version: 1}}, function (err) {
+                    if (err) {
+                        return initialCallback(err);
+                    }
+
+                    initialCallback(null);
+                }.bind(this));
+            }.bind(this));
+        }.bind(this);
+
+        ensureIndices(
+            _.partial(initialVersion, callback)
+        );
+    };
 
     UserDao.prototype.create = function (email, nick, role, callback) {
         this._insert({

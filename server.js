@@ -27,24 +27,36 @@ requirejs.define("_nodejs", [
 requirejs([
     "server/utils/db",
     "server/httpApp",
-    "server/socketServer"
+    "server/socketServer",
+    "server/utils/dbMigrator"
 ], function (
     db,
     httpApp,
-    socketServer
+    socketServer,
+    dbMigrator
 ) {
     "use strict";
 
     // database
-    db.init(function () {
-        // db may now be used
+    db.init(function (err) {
+        if (err) {
+            throw err;
+        }
 
-        // http
-        var app = httpApp.create();
-        var httpServer = app.getHttpServer();
+        dbMigrator.migrate(function (err) {
+            if (err) {
+                throw err;
+            }
 
-        // socket.io
-        socketServer.create(httpServer);
+            // db may now be used
+
+            // http
+            var app = httpApp.create();
+            var httpServer = app.getHttpServer();
+
+            // socket.io
+            socketServer.create(httpServer);
+        });
     });
 });
 
