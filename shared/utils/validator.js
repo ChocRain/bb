@@ -3,7 +3,7 @@
  */
 define([
     "underscore",
-    "json!shared/definitions/constraints.json",
+    "shared/definitions/constraints",
     "shared/exceptions/IllegalArgumentException",
     "shared/exceptions/ValidationException"
 ], function (
@@ -34,10 +34,10 @@ define([
                 }
                 break;
 
-            case "minlength":
+            case "minLength":
                 return value.length >= constraint;
 
-            case "maxlength":
+            case "maxLength":
                 return value.length <= constraint;
 
             case "regexp":
