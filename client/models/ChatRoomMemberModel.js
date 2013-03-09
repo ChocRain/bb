@@ -18,7 +18,7 @@ define([
                 nick: json.user.nick,
                 user: json.user,
                 position: json.position
-            }
+            };
         },
 
         getNick: function () {
