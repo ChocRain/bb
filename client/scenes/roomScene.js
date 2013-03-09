@@ -8,6 +8,8 @@ define([
     "utils/asset",
     "collections/chatRoomUsersCollection",
     "models/userSession",
+    "shared/models/PublicUser",
+    "shared/models/roles",
     "json!definitions/avatars.json"
 ], function (
     _,
@@ -16,6 +18,8 @@ define([
     asset,
     chatRoomUsersCollection,
     userSession,
+    PublicUser,
+    roles,
     avatars
 ) {
     "use strict";
@@ -103,12 +107,18 @@ define([
             }
         });
 
-        var createEntityWithNick = function (entityName, x, y, nick) {
+        var createEntityWithNick = function (entityName, x, y, user) {
             var entity = Crafty.e(entityName);
             entity.attr({x: x, y: y});
 
             var nickEntity = Crafty.e("2D, DOM, HTML");
-            nickEntity.replace("<div class=\"avatar-nick\">" + nick + "</div>");
+            var classes = "avatar-nick";
+
+            if (user.getRole().getName() === roles.MODERATOR.getName()) {
+                classes += " moderator";
+            }
+
+            nickEntity.replace("<div class=\"" + classes + "\">" + user.getNick() + "</div>");
             nickEntity.attr({x: x + entity.w / 2, y: y + entity.h + 5});
 
             entity.attach(nickEntity);
@@ -116,7 +126,7 @@ define([
             return entity;
         };
 
-        var player = createEntityWithNick("Player", 400, 400, userSession.getUser().getNick());
+        var player = createEntityWithNick("Player", 400, 400, userSession.getUser());
 
         // TODO: This is not a very nice handling.
         // TODO: Initial positioning.
@@ -159,7 +169,12 @@ define([
             });
 
             var position = userModel.getPosition();
-            others[nick] = createEntityWithNick("Avatar", position.x, position.y, nick);
+            others[nick] = createEntityWithNick(
+                "Avatar",
+                position.x,
+                position.y,
+                PublicUser.fromJSON(userModel.attributes)
+            );
         };
 
         var removeOtherUser = function (userModel) {

@@ -37,7 +37,7 @@ define([
             var text = this.model.get("text").toLowerCase();
             var myNick = userSession.getUser().getNick().toLowerCase();
 
-            var candidateNicks = text.match(/[a-zA-Z0-9_]+/g);
+            var candidateNicks = text.match(/([a-zA-Z0-9]+_?)*[a-zA-Z0-9]+/g);
 
             var matches = _.filter(candidateNicks, function (candidateNick) {
                 return candidateNick.toLowerCase() === myNick;
@@ -49,15 +49,12 @@ define([
         isOwn: function () {
             var myNick = userSession.getUser().getNick();
 
-            var messageNick = this.model.get("nick");
-            if (!messageNick) {
-                var user = this.model.get("user");
-                if (!user) {
-                    return false;
-                }
-
-                messageNick = user.getNick();
+            var user = this.model.get("user");
+            if (!user) {
+                return false;
             }
+
+            var messageNick = user.getNick();
 
             return myNick === messageNick;
         }

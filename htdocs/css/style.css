@@ -211,6 +211,7 @@ li.chat-log-entry-view {
 
 li.chat-log-entry-view.last-read {
     border-bottom: 1px solid #EE3F96;
+    margin-bottom: 1px;
 }
 
 li.chat-log-entry-view.highlight {
@@ -226,10 +227,27 @@ li.chat-log-entry-view.highlight {
     font-style: italic;    
 }
 
-.chat-log-entry-type-entered .chat-log-entry-nick,
-.chat-log-entry-type-left .chat-log-entry-nick,
-.chat-log-entry-type-message .chat-log-entry-nick {
+.chat-log-entry-view .chat-log-entry-nick,
+.chat-room-user-list-item-view .chat-room-user-nick {
     font-weight: bold;
+    color: white;
+    background-color: #EE3F96;
+
+    -webkit-border-radius: 4px;
+    -moz-border-radius: 4px;
+    border-radius: 4px;
+    padding: 0px 4px;
+}
+
+.chat-log-entry-view .chat-log-entry-nick.moderator,
+.chat-room-user-list-item-view .chat-room-user-nick.moderator {
+    background-color: #E3B214;
+}
+
+.chat-log-entry-view  .chat-log-entry-nick.moderator:after,
+.chat-room-user-list-item-view .chat-room-user-nick.moderator:after {
+    font-size: 12px;
+    content: "\00a0(mod)";
 }
 
 .chat-log-entry-type-system-out .chat-log-entry-message,
@@ -264,6 +282,15 @@ li.chat-room-user-list-item-view {
     font-weight: bold;
     position: relative;
     left: -50%;
+}
+
+.avatar-nick.moderator {
+    background-color: #E3B214;
+}
+
+.avatar-nick.moderator:after {
+    font-size: 12px;
+    content: "\00a0(mod)";
 }
 
 .chat-actions {

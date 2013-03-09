@@ -32,6 +32,23 @@ define([
 ) {
     "use strict";
 
+    var getUserModelByNick = function (nick) {
+        var userModel = chatRoomUsersCollection.get(nick);
+
+        if (!userModel) {
+            throw new IllegalStateException(
+                "Don't have a user in the collection for that nick: " + nick
+            );
+        }
+
+        return userModel;
+    };
+
+    var getUserByNick = function (nick) {
+        var userModel = getUserModelByNick(nick);
+        return PublicUser.fromJSON(userModel.attributes);
+    };
+
     var init = function (opts) {
         if (!opts || !opts.sessionInitialized) {
             throw new IllegalArgumentException("No callback for session initialization given!");
@@ -181,12 +198,13 @@ define([
 
                 "server.room.left": function (payload, date) {
                     // TODO: Proper room handling.
+                    var user = getUserByNick(payload.nick);
                     chatRoomUsersCollection.remove({nick: payload.nick});
                     chatLogCollection.add({
                         type: "left",
                         date: date,
                         room: payload.room,
-                        nick: payload.nick
+                        user: user
                     });
                 },
 
@@ -196,23 +214,18 @@ define([
                 },
 
                 "server.room.message": function (payload, date) {
+                    var user = getUserByNick(payload.nick);
                     chatLogCollection.add({
                         type: "message",
                         date: date,
                         room: payload.room,
-                        nick: payload.nick,
+                        user: user,
                         text: payload.text
                     });
                 },
 
                 "server.room.moved": function (payload, date) {
-                    var userModel = chatRoomUsersCollection.get(payload.nick);
-                    if (!userModel) {
-                        throw new IllegalStateException(
-                            "Don't have a user in the collection for that nick: " + payload.nick
-                        );
-                    }
-
+                    var userModel = getUserModelByNick(payload.nick);
                     userModel.setPosition(payload.position);
                 }
             }

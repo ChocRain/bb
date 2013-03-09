@@ -37,7 +37,7 @@ define([
         var nick = json.nick;
 
         if (!_.isString(nick)) {
-            throw new IllegalArgumentException("Invalid or missing field nick: " +JSON.stringify(json));
+            throw new IllegalArgumentException("Invalid or missing field nick: " + JSON.stringify(json));
         }
 
         var role = roles.fromString(json.role);

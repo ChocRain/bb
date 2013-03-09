@@ -17,7 +17,7 @@ define([
      * match.
      */
     var normalizeNick = function (nick) {
-        return nick.toLowerCase().replace(/_/g, "").replace(/(.)(?=\1)/g, "");
+        return nick.toLowerCase().replace(/_/g, "").replace(/([a-zA-Z0-9])(?=\1)/g, "");
     };
 
     /**
