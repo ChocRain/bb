@@ -6,6 +6,7 @@ define([
     "domain",
     "server/services/authenticationService",
     "server/services/roomService",
+    "server/services/userService",
     "server/services/moderationService",
     "shared/utils/validator",
     "shared/models/roles",
@@ -18,6 +19,7 @@ define([
     domain,
     authenticationService,
     roomService,
+    userService,
     moderationService,
     validator,
     roles,
@@ -163,6 +165,32 @@ define([
                     });
                 }
             },
+
+            "client.user.ignore": {
+                roles: [roles.USER, roles.MODERATOR],
+                callback: function (payload) {
+                    userService.ignoreUser(session, payload.nick, function (err, nick) {
+                        if (err) {
+                            return handleError(err);
+                        }
+
+                        messageSink.sendIgnored(nick);
+                    });
+                }
+            },
+
+            "client.user.unignore": {
+                roles: [roles.USER, roles.MODERATOR],
+                callback: function (payload) {
+                    userService.unignoreUser(session, payload.nick, function (err, nick) {
+                        if (err) {
+                            return handleError(err);
+                        }
+
+                        messageSink.sendUnignored(nick);
+                    });
+                }
+            }
 
             "client.room.list": {
                 roles: [roles.USER, roles.MODERATOR],

@@ -60,7 +60,7 @@ define([
         return callback(null, rooms);
     };
 
-    RoomService.prototype._withEachMembersMessageSink = function (room, memberCallback, callback) {
+    RoomService.prototype._withEachMembersSession = function (room, memberCallback, callback) {
         var members = room.getMembers();
         var nicks = members; // currently a room only holds the nicks of the members
 
@@ -69,11 +69,15 @@ define([
                 return callback(err);
             }
 
-            parallel.each(sessions, function (memberSession, next) {
-                var messageSink = memberSession.getMessageSink();
-                memberCallback(messageSink, next);
-            }.bind(this), callback);
+            parallel.each(sessions, memberCallback, callback);
         }.bind(this));
+    };
+
+    RoomService.prototype._withEachMembersMessageSink = function (room, memberCallback, callback) {
+        this._withEachMembersSession(room, function (memberSession, next) {
+            var messageSink = memberSession.getMessageSink();
+            memberCallback(messageSink, next);
+        }.bind(this), callback);
     };
 
     RoomService.prototype.join = function (session, roomName, callback) {
@@ -159,8 +163,10 @@ define([
                 return callback(new FeedbackException("You are not a member of that room: " + roomName));
             }
 
-            this._withEachMembersMessageSink(room, function (messageSink, next) {
-                messageSink.sendRoomMessage(roomName, nick, text);
+            this._withEachMembersSession(room, function (memberSession, next) {
+                if (!memberSession.isIgnored(nick)) {
+                    memberSession.getMessageSink().sendRoomMessage(roomName, nick, text);
+                }
                 next(null);
             }.bind(this), callback);
         }.bind(this));

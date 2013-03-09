@@ -60,6 +60,24 @@
         }
     },
 
+    "client.user.ignore": {
+        "nick": {
+            "type": "string",
+            "minlength": 3,
+            "maxlength": 20,
+            "regexp": "^([a-zA-Z0-9]+_?)*[a-zA-Z0-9]+$"
+        }
+    },
+
+    "client.user.unignore": {
+        "nick": {
+            "type": "string",
+            "minlength": 3,
+            "maxlength": 20,
+            "regexp": "^([a-zA-Z0-9]+_?)*[a-zA-Z0-9]+$"
+        }
+    },
+
     "client.room.list": {
     },
 

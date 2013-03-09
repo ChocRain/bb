@@ -73,6 +73,23 @@ define([
         return messageSink;
     };
 
+    Session.prototype.isIgnored = function (nick) {
+        var ignoreList = this.get("ignoreList") || {};
+        return !!ignoreList[nick];
+    };
+
+    Session.prototype.ignore = function (nick) {
+        var ignoreList = this.get("ignoreList") || {};
+        ignoreList[nick] = true;
+        this.set("ignoreList", ignoreList);
+    };
+
+    Session.prototype.unignore = function (nick) {
+        var ignoreList = this.get("ignoreList") || {};
+        delete ignoreList[nick];
+        this.set("ignoreList", ignoreList);
+    };
+
     return Session;
 });
 

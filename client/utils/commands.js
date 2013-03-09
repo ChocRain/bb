@@ -185,6 +185,26 @@ define([
         roles: [roles.MODERATOR]
     });
 
+    commands.push({
+        name: "ignore",
+        argTypes: [tNick],
+        callback: function (nick) {
+            handleInvalidNick(nick, clientMessageSink.sendIgnore);
+        },
+        description: "Ingore the user with the given nick temporarily.",
+        roles: [roles.USER, roles.MODERATOR]
+    });
+
+    commands.push({
+        name: "unignore",
+        argTypes: [tNick],
+        callback: function (nick) {
+            handleInvalidNick(nick, clientMessageSink.sendUnignore);
+        },
+        description: "Stop ingoring the user with the given nick.",
+        roles: [roles.USER, roles.MODERATOR]
+    });
+
     var commandsByName = {};
     _.each(commands, function (command) {
         commandsByName[command.name] = command;

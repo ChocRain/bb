@@ -175,6 +175,20 @@ define([
                     rootNavigator.redirectAfterLogin();
                 }.bind(this),
 
+                "server.user.ignored": function (payload) {
+                    chatLogCollection.add({
+                        type: "system-out",
+                        lines: payload.nick + " will be ignored until you login again."
+                    });
+                },
+
+                "server.user.unignored": function (payload) {
+                    chatLogCollection.add({
+                        type: "system-out",
+                        lines: payload.nick + " will no longed be ignored."
+                    });
+                },
+
                 "server.room.list": function (payload) {
                     // TODO: Proper room handling.
                     var room = payload.rooms[0];

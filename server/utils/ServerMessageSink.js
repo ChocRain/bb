@@ -172,6 +172,24 @@ define([
         });
     };
 
+    /**
+     * Send the acknowledgement that the user with the given nick is now being ignored.
+     */
+    ServerMessageSink.prototype.sendIgnored = function (nick) {
+        this._messageDispatcher.send("server.user.ignored", {
+            nick: nick
+        });
+    };
+
+    /**
+     * Send the acknowledgement that the user with the given nick is no longer being ignored.
+     */
+    ServerMessageSink.prototype.sendUnignored = function (nick) {
+        this._messageDispatcher.send("server.user.unignored", {
+            nick: nick
+        });
+    };
+
     return ServerMessageSink;
 });
 

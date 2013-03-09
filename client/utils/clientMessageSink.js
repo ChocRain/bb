@@ -72,6 +72,24 @@ define([
         },
 
         /**
+         * Send a message to add an user to the ignore list.
+         */
+        sendIgnore: function (nick) {
+            messageDispatcher.send("client.user.ignore", {
+                nick: nick
+            });
+        },
+
+        /**
+         * Send a message to remove an user from the ignore list.
+         */
+        sendUnignore: function (nick) {
+            messageDispatcher.send("client.user.unignore", {
+                nick: nick
+            });
+        },
+
+        /**
          * Request the current list of rooms.
          */
         sendGetRooms: function () {
