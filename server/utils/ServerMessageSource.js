@@ -190,7 +190,7 @@ define([
                         messageSink.sendUnignored(nick);
                     });
                 }
-            }
+            },
 
             "client.room.list": {
                 roles: [roles.USER, roles.MODERATOR],
