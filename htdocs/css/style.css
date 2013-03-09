@@ -24,6 +24,10 @@ h1 {
     font-family: CelestiaMediumRedux, serif; 
 }
 
+h3, h4 {
+    text-align: left;
+}
+
 a {
     color: #EE3F96;
     text-decoration: none;

@@ -20,51 +20,41 @@
 
         <div class="action"><a href="#" onclick="goBack();">&raquo; Back to Ponyverse</a></div>
 
-        <h2>Subsection</h2>
-        
-        <p>
-            Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam
-            nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam
-            voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita
-            kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem
-            ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor
-            invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos
-            et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea
-            takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet,
-            consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et
-            dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo
-            duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est
-            Lorem ipsum dolor sit amet.
-        </p>
+        <h2>In few words</h2>
+
+        <h3>Dos</h3>
 
         <ol>
-            <li>First item</li>
-            <li>Second item</li>
-            <li>Third item</li>
+        <% _.each(rules.dos, function (rule) { %>
+            <li><a href="#<%- rule.tag %>"><%- rule.brief %></a></li>
+        <% }); %>
         </ol>
 
-        <h2>Subsection</h2>
+        <h3>Don'ts</h3>
 
-        <p>
-            Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam
-            nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam
-            voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita
-            kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem
-            ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor
-            invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos
-            et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea
-            takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet,
-            consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et
-            dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo
-            duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est
-            Lorem ipsum dolor sit amet.
-        </p>
+        <ol>
+        <% _.each(rules.donts, function (rule) { %>
+            <li><a href="#<%- rule.tag %>"><%- rule.brief %></a></li>
+        <% }); %>
+        </ol>
 
-        <ul>
-            <li>First item</li>
-            <li>Second item</li>
-            <li>Third item</li>
-        </ul>
+        <h2>In detail</h2>
+
+        <h3>Dos</h3>
+
+        <% _.each(rules.dos, function (rule) { %>
+            <a name="<%- rule.tag %>"></a><h4><%- rule.brief %></h4>
+
+            <p><%- rule.long %></p>
+        <% }); %>
+
+        <h3>Don'ts</h3>
+
+        <% _.each(rules.donts, function (rule) { %>
+            <a name="<%- rule.tag %>"></a><h4><%- rule.brief %></h4>
+
+            <p><%- rule.long %></p>
+        <% }); %>
 
         <div class="action"><a href="#" onclick="goBack();">&raquo; Back to Ponyverse</a></div>
     </div>

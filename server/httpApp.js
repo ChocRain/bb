@@ -15,6 +15,8 @@ define([
     "text!server/templates/rules.html",
     "text!server/templates/commonHeaders.html",
 
+    "json!shared/definitions/rules.json",
+
     "server/utils/parallel",
     "server/utils/asset"
 ], function (
@@ -30,6 +32,8 @@ define([
     IndexTemplate,
     RulesTemplate,
     CommonHeadersTemplate,
+
+    rules,
 
     parallel,
     asset
@@ -76,7 +80,7 @@ define([
             }
         };
 
-        var servePage = function (filename, requiredTemplate, req, res, next) {
+        var servePage = function (filename, requiredTemplate, data, req, res, next) {
             parallel.parallel([
                 asset.getAssets,
                 _.partial(getTemplate, filename, requiredTemplate),
@@ -86,24 +90,25 @@ define([
                     return next(err);
                 }
 
+                var viewModel = _.defaults({
+                    hashes: assets.hashes,
+                    asset: assets.asset
+                }, data);
+                viewModel.commonHeaders = _.template(commonHeadersTemplate, viewModel);
+
+                var body = _.template(indexTemplate, viewModel);
+
                 res.writeHead(200, {
                     "Content-type": "text/html",
                     "Cache-Control": "no-cache",
                     "Expires": moment(0).toDate().toUTCString() // immediately
                 });
-
-                var opts = {
-                    hashes: assets.hashes,
-                    asset: assets.asset
-                };
-                opts.commonHeaders = _.template(commonHeadersTemplate, opts);
-
-                res.end(_.template(indexTemplate, opts));
+                res.end(body);
             });
         };
 
-        app.get("/rules", _.partial(servePage, "rules.html", RulesTemplate));
-        app.get("/*", _.partial(servePage, "index.html", IndexTemplate));
+        app.get("/rules", _.partial(servePage, "rules.html", RulesTemplate, {rules: rules}));
+        app.get("/*", _.partial(servePage, "index.html", IndexTemplate, {}));
     };
 
     App.prototype.getHttpServer = function () {
