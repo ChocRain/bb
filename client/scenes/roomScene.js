@@ -107,10 +107,10 @@ define([
             }
         });
 
-        var createEntityWithNick = function (entityName, x, y, direction, user) {
+        var createEntityWithNick = function (entityName, position, user) {
             var entity = Crafty.e(entityName);
-            entity.attr({x: x, y: y});
-            entity.updateDirection(direction);
+            entity.attr({x: position.x, y: position.y});
+            entity.updateDirection(position.direction);
 
             var nickEntity = Crafty.e("2D, DOM, HTML");
             var classes = "avatar-nick";
@@ -120,17 +120,17 @@ define([
             }
 
             nickEntity.replace("<div class=\"" + classes + "\">" + user.getNick() + "</div>");
-            nickEntity.attr({x: x + entity.w / 2, y: y + entity.h + 5});
+            nickEntity.attr({x: position.x + entity.w / 2, y: position.y + entity.h + 5});
 
             entity.attach(nickEntity);
 
             return entity;
         };
 
-        var player = createEntityWithNick("Player", 400, 400, "right", userSession.getUser());
+        var prevPosition = chatRoomMembersCollection.get(userSession.getUser().getNick()).getPosition();
+        var player = createEntityWithNick("Player", prevPosition, userSession.getUser());
 
         // TODO: This is not a very nice handling.
-        var prevPosition = {};
         var updatePosition = function () {
             if (!running) {
                 return; // scene isn't running anymore, don't update
@@ -171,9 +171,7 @@ define([
             var position = memberModel.getPosition();
             others[nick] = createEntityWithNick(
                 "Avatar",
-                position.x,
-                position.y,
-                position.direction,
+                position,
                 memberModel.getUser()
             );
         };
