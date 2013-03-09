@@ -35,7 +35,7 @@ define([
                     return callback(err);
                 }
 
-                return callback(null, this._EntityClass.fromJSON(json));
+                return callback(null, this._EntityClass.fromJSON(result[0]));
             }.bind(this));
         }.bind(this));
     };
