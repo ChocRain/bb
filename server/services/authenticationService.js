@@ -6,14 +6,16 @@ define([
     "server/services/userService",
     "server/services/roomService",
     "server/utils/persona",
+    "server/utils/nickFilter",
     "shared/exceptions/FeedbackException",
     "shared/exceptions/ProtocolException",
-    "server/config"
+    "server/config",
 ], function (
     sessionStore,
     userService,
     roomService,
     persona,
+    nickFilter,
     FeedbackException,
     ProtocolException,
     config
@@ -66,8 +68,11 @@ define([
                     }
 
                     if (userByNick) {
-                        console.log(userByNick);
                         return callback(new FeedbackException("A user with that name already exists: " + nick));
+                    }
+
+                    if (!nickFilter.isAllowed(nick)) {
+                        return callback(new FeedbackException("That nickname is not allowed: " + nick));
                     }
 
                     userService.create(email, nick, function (err, user) {

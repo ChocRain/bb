@@ -25,19 +25,19 @@ define([
 
     User.fromJSON = function (json) {
         if (!_.isObject(json)) {
-            throw new IllegalArgumentException("JSON object expected: " + json);
+            throw new IllegalArgumentException("JSON object expected: " + JSON.stringify(json));
         }
 
         var id = json._id;
 
         if (!id) {
-            throw new IllegalArgumentException("Invalid or missing user id: " + json);
+            throw new IllegalArgumentException("Invalid or missing user id: " + JSON.stringify(json));
         }
 
         var nick = json.nick;
 
         if (!_.isString(nick)) {
-            throw new IllegalArgumentException("Invalid or missing field nick: " + json);
+            throw new IllegalArgumentException("Invalid or missing field nick: " +JSON.stringify(json));
         }
 
         var role = roles.fromString(json.role);

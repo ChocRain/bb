@@ -103,7 +103,11 @@ define([
                 errorMsg += " and at most ";
                 errorMsg += registrationConstraints.nick.maxlength;
                 errorMsg += " characters long. ";
-                errorMsg += "Allowed are only letters, numbers and _.";
+                errorMsg += "Allowed are only letters, numbers and _. ";
+                errorMsg += "Also the _ is not allowed at the beginning or ";
+                errorMsg += "end of the name and may not be used repeatedy. ";
+                errorMsg += "E. g. \"my_nick\" is okay, but \"_my_nick\" and ";
+                errorMsg += "\"my__nick\" are not.";
 
                 return dialog.showMessage(
                     "Your nick is invalid",
