@@ -158,6 +158,7 @@ define([
                         if (err) {
                             return handleError(err);
                         }
+
                         messageSink.sendLoggedIn(user.toPublicUser());
                     });
                 }

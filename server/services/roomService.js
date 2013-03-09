@@ -6,6 +6,7 @@ define([
     "server/models/Room",
     "server/session/sessionStore",
     "server/utils/parallel",
+    "shared/models/RoomMember",
     "shared/exceptions/FeedbackException",
     "shared/exceptions/IllegalArgumentException",
     "shared/exceptions/IllegalStateException",
@@ -15,6 +16,7 @@ define([
     Room,
     sessionStore,
     parallel,
+    RoomMember,
     FeedbackException,
     IllegalArgumentException,
     IllegalStateException,
@@ -91,6 +93,7 @@ define([
             }
 
             room.join(nick);
+            session.set("position", {x: 400, y: 400, direction: "right"});
 
             sessionStore.findByNicks(room.getMembers(), function (err, memberSessions) {
                 if (err) {
@@ -99,19 +102,24 @@ define([
 
                 parallel.mapFilter(memberSessions, function (memberSession, next) {
                     if (memberSession.isLoggedIn()) {
-                        return next(null, memberSession.getUser().toPublicUser());
+                        var publicUser = memberSession.getUser().toPublicUser();
+                        var position = memberSession.get("position");
+
+                        return next(null, new RoomMember(publicUser, position));
                     }
 
                     return next(null, null); // do not include
-                }, function (err, publicUsers) {
+                }, function (err, roomMembers) {
                     if (err) {
                         return callback(err);
                     }
 
-                    session.get("messageSink").sendRoomInfo(roomName, publicUsers);
+                    session.get("messageSink").sendRoomInfo(roomName, roomMembers);
+
+                    var roomMember = new RoomMember(user.toPublicUser(), session.get("position"));
 
                     this._withEachMembersMessageSink(room, function (messageSink, next) {
-                        messageSink.sendUserJoinedRoom(roomName, user.toPublicUser());
+                        messageSink.sendUserJoinedRoom(roomName, roomMember);
                         next(null);
                     }.bind(this), callback);
                 }.bind(this));
@@ -164,6 +172,7 @@ define([
                 return callback(err);
             }
 
+            session.set("position", position);
             var nick = session.getUser().getNick();
 
             if (!room.isMember(nick)) {

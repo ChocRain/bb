@@ -6,10 +6,11 @@ define([
     "routes/rootNavigator",
     "models/userSession",
     "shared/models/PublicUser",
+    "shared/models/RoomMember",
     "utils/clientMessageDispatcher",
     "utils/clientMessageSink",
     "collections/chatLogCollection",
-    "collections/chatRoomUsersCollection",
+    "collections/chatRoomMembersCollection",
     "views/ChatView",
     "utils/dialog",
     "scenes/roomScene",
@@ -20,10 +21,11 @@ define([
     rootNavigator,
     userSession,
     PublicUser,
+    RoomMember,
     messageDispatcher,
     messageSink,
     chatLogCollection,
-    chatRoomUsersCollection,
+    chatRoomMembersCollection,
     ChatView,
     dialog,
     roomScene,
@@ -32,21 +34,21 @@ define([
 ) {
     "use strict";
 
-    var getUserModelByNick = function (nick) {
-        var userModel = chatRoomUsersCollection.get(nick);
+    var getMemberModelByNick = function (nick) {
+        var memberModel = chatRoomMembersCollection.get(nick);
 
-        if (!userModel) {
+        if (!memberModel) {
             throw new IllegalStateException(
-                "Don't have a user in the collection for that nick: " + nick
+                "Don't have a member in the collection for that nick: " + nick
             );
         }
 
-        return userModel;
+        return memberModel;
     };
 
-    var getUserByNick = function (nick) {
-        var userModel = getUserModelByNick(nick);
-        return PublicUser.fromJSON(userModel.attributes);
+    var getMemberByNick = function (nick) {
+        var memberModel = getMemberModelByNick(nick);
+        return RoomMember.fromJSON(memberModel.attributes);
     };
 
     var init = function (opts) {
@@ -180,15 +182,15 @@ define([
                 },
 
                 "server.room.joined": function (payload, date) {
-                    chatRoomUsersCollection.add(payload.user);
+                    chatRoomMembersCollection.add(payload.member);
                     chatLogCollection.add({
                         type: "entered",
                         date: date,
                         room: payload.room,
-                        user: PublicUser.fromJSON(payload.user)
+                        user: PublicUser.fromJSON(payload.member.user)
                     });
 
-                    if (payload.user.nick === userSession.getUser().getNick()) {
+                    if (payload.member.user.nick === userSession.getUser().getNick()) {
                         // current user has joined a room, thus run the room
                         // scene and attach the ChatView.
                         roomScene.run(payload.room);
@@ -198,35 +200,35 @@ define([
 
                 "server.room.left": function (payload, date) {
                     // TODO: Proper room handling.
-                    var user = getUserByNick(payload.nick);
-                    chatRoomUsersCollection.remove({nick: payload.nick});
+                    var member = getMemberByNick(payload.nick);
+                    chatRoomMembersCollection.remove({nick: payload.nick});
                     chatLogCollection.add({
                         type: "left",
                         date: date,
                         room: payload.room,
-                        user: user
+                        user: member.getUser()
                     });
                 },
 
                 "server.room.info": function (payload, date) {
                     // TODO: Proper room handling.
-                    chatRoomUsersCollection.reset(payload.users);
+                    chatRoomMembersCollection.reset(payload.members);
                 },
 
                 "server.room.message": function (payload, date) {
-                    var user = getUserByNick(payload.nick);
+                    var member = getMemberByNick(payload.nick);
                     chatLogCollection.add({
                         type: "message",
                         date: date,
                         room: payload.room,
-                        user: user,
+                        user: member.getUser(),
                         text: payload.text
                     });
                 },
 
                 "server.room.moved": function (payload, date) {
-                    var userModel = getUserModelByNick(payload.nick);
-                    userModel.setPosition(payload.position);
+                    var memberModel = getMemberModelByNick(payload.nick);
+                    memberModel.setPosition(payload.position);
                 }
             }
         };

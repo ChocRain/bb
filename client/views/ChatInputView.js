@@ -10,7 +10,7 @@ define([
     "shared/utils/validator",
     "shared/exceptions/ValidationException",
     "utils/InputCompletor",
-    "collections/chatRoomUsersCollection",
+    "collections/chatRoomMembersCollection",
     "models/userSession",
     "utils/string",
     "utils/dialog"
@@ -23,7 +23,7 @@ define([
     validator,
     ValidationException,
     InputCompletor,
-    chatRoomUsersCollection,
+    chatRoomMembersCollection,
     userSession,
     stringUtil,
     dialog
@@ -84,8 +84,8 @@ define([
                     switch (completionType) {
                     case "nick":
                         // Always complete nicks for now.
-                        var nicksInRoom = chatRoomUsersCollection.map(function (userModel) {
-                            return userModel.getNick();
+                        var nicksInRoom = chatRoomMembersCollection.map(function (memberModel) {
+                            return memberModel.getNick();
                         });
                         var myNick = userSession.getUser().getNick();
                         return _.sortBy(_.filter(nicksInRoom, function (nick) {

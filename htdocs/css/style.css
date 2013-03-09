@@ -183,7 +183,7 @@ input[type=text]:disabled {
 }
 
 .chat-log-view,
-.chat-room-users-list-view {
+.chat-room-members-list-view {
     position: absolute;
     top: 20px;
     height: 300px;
@@ -200,7 +200,7 @@ input[type=text]:disabled {
     width: 500px;
 }
 
-.chat-room-users-list-view {
+.chat-room-members-list-view {
     right: 20px;
     width: 200px;
 }
@@ -228,7 +228,7 @@ li.chat-log-entry-view.highlight {
 }
 
 .chat-log-entry-view .chat-log-entry-nick,
-.chat-room-user-list-item-view .chat-room-user-nick {
+.chat-room-members-list-item-view .chat-room-member-nick {
     font-weight: bold;
     color: white;
     background-color: #EE3F96;
@@ -240,12 +240,12 @@ li.chat-log-entry-view.highlight {
 }
 
 .chat-log-entry-view .chat-log-entry-nick.moderator,
-.chat-room-user-list-item-view .chat-room-user-nick.moderator {
+.chat-room-members-list-item-view .chat-room-member-nick.moderator {
     background-color: #E3B214;
 }
 
 .chat-log-entry-view  .chat-log-entry-nick.moderator:after,
-.chat-room-user-list-item-view .chat-room-user-nick.moderator:after {
+.chat-room-members-list-item-view .chat-room-member-nick.moderator:after {
     font-size: 12px;
     content: "\00a0(mod)";
 }
@@ -266,7 +266,7 @@ li.chat-log-entry-view.highlight {
     color: red;
 }
 
-li.chat-room-user-list-item-view {
+li.chat-room-members-list-item-view {
     list-style: none;
 }
 

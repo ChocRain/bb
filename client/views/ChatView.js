@@ -6,7 +6,7 @@ define([
     "text!templates/ChatView.html",
     "views/ChatLogView",
     "views/ChatInputView",
-    "views/ChatRoomUsersListView",
+    "views/ChatRoomMembersListView",
     "utils/persona",
     "models/userSession"
 ], function (
@@ -14,7 +14,7 @@ define([
     Template,
     ChatLogView,
     ChatInputView,
-    ChatRoomUsersListView,
+    ChatRoomMembersListView,
     persona,
     userSession
 ) {
@@ -33,7 +33,7 @@ define([
 
             this._chatLogView = new ChatLogView();
             this._chatInputView = new ChatInputView();
-            this._chatRoomUsersView = new ChatRoomUsersListView();
+            this._chatRoomMembersView = new ChatRoomMembersListView();
         },
 
         render: function (opts) {
@@ -41,7 +41,7 @@ define([
 
             this.$(".chat-log").html(this._chatLogView.render().el);
             this.$(".chat-input").html(this._chatInputView.render().el);
-            this.$(".chat-room-users").html(this._chatRoomUsersView.render().el);
+            this.$(".chat-room-members").html(this._chatRoomMembersView.render().el);
 
             return this;
         },

@@ -123,10 +123,10 @@ define([
     /**
      * Send a message to inform about a user having joined a room.
      */
-    ServerMessageSink.prototype.sendUserJoinedRoom = function (roomName, publicUser) {
+    ServerMessageSink.prototype.sendUserJoinedRoom = function (roomName, roomMember) {
         this._messageDispatcher.send("server.room.joined", {
             room: roomName,
-            user: publicUser
+            member: roomMember
         });
     };
 
@@ -143,10 +143,10 @@ define([
     /**
      * Send information about a room.
      */
-    ServerMessageSink.prototype.sendRoomInfo = function (roomName, publicUsers) {
+    ServerMessageSink.prototype.sendRoomInfo = function (roomName, roomMembers) {
         this._messageDispatcher.send("server.room.info", {
             room: roomName,
-            users: publicUsers
+            members: roomMembers
         });
     };
 

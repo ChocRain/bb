@@ -1,28 +1,32 @@
 /**
- * Model representing an user within a chat room.
+ * Model representing a member within a chat room.
  */
 define([
     "models/BaseModel",
-    "shared/models/roles"
+    "shared/models/PublicUser"
 ], function (
     BaseModel,
-    roles
+    PublicUser
 ) {
     "use strict";
 
-    var ChatRoomUserModel = BaseModel.extend({
+    var ChatRoomMemberModel = BaseModel.extend({
         idAttribute: "nick",
 
         parse: function (json) {
             return {
-                nick: json.nick,
-                role: roles.fromString(json.role),
+                nick: json.user.nick,
+                user: json.user,
                 position: json.position
-            };
+            }
         },
 
         getNick: function () {
             return this.get("nick");
+        },
+
+        getUser: function () {
+            return PublicUser.fromJSON(this.get("user"));
         },
 
         setPosition: function (position) {
@@ -34,6 +38,6 @@ define([
         }
     });
 
-    return ChatRoomUserModel;
+    return ChatRoomMemberModel;
 });
 

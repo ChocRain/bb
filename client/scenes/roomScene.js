@@ -6,20 +6,20 @@ define([
     "jquery",
     "crafty",
     "utils/asset",
-    "collections/chatRoomUsersCollection",
+    "collections/chatRoomMembersCollection",
     "models/userSession",
-    "shared/models/PublicUser",
     "shared/models/roles",
+    "utils/clientMessageSink",
     "json!definitions/avatars.json"
 ], function (
     _,
     $,
     Crafty,
     asset,
-    chatRoomUsersCollection,
+    chatRoomMembersCollection,
     userSession,
-    PublicUser,
     roles,
+    messageSink,
     avatars
 ) {
     "use strict";
@@ -107,9 +107,10 @@ define([
             }
         });
 
-        var createEntityWithNick = function (entityName, x, y, user) {
+        var createEntityWithNick = function (entityName, x, y, direction, user) {
             var entity = Crafty.e(entityName);
             entity.attr({x: x, y: y});
+            entity.updateDirection(direction);
 
             var nickEntity = Crafty.e("2D, DOM, HTML");
             var classes = "avatar-nick";
@@ -126,11 +127,9 @@ define([
             return entity;
         };
 
-        var player = createEntityWithNick("Player", 400, 400, userSession.getUser());
+        var player = createEntityWithNick("Player", 400, 400, "right", userSession.getUser());
 
         // TODO: This is not a very nice handling.
-        // TODO: Initial positioning.
-        // TODO: Nicks.
         var prevPosition = {};
         var updatePosition = function () {
             if (!running) {
@@ -146,7 +145,8 @@ define([
             if (position.x !== prevPosition.x
                     || position.y !== prevPosition.y
                     || position.direction !== prevPosition.direction) {
-                userSession.setPosition(position);
+                chatRoomMembersCollection.get(userSession.getUser().getNick()).setPosition(position);
+                messageSink.sendMoved(position);
             }
 
             prevPosition = position;
@@ -156,29 +156,30 @@ define([
 
         var others = {};
 
-        var addOtherUser = function (userModel) {
-            var nick = userModel.getNick();
+        var addOtherMember = function (memberModel) {
+            var nick = memberModel.getNick();
 
             if (userSession.getUser().getNick() === nick) {
                 return;
             }
 
-            userModel.on("change", function () {
-                var position = userModel.getPosition();
+            memberModel.on("change", function () {
+                var position = memberModel.getPosition();
                 others[nick].moveTo(position.x, position.y, position.direction);
             });
 
-            var position = userModel.getPosition();
+            var position = memberModel.getPosition();
             others[nick] = createEntityWithNick(
                 "Avatar",
                 position.x,
                 position.y,
-                PublicUser.fromJSON(userModel.attributes)
+                position.direction,
+                memberModel.getUser()
             );
         };
 
-        var removeOtherUser = function (userModel) {
-            var nick = userModel.getNick();
+        var removeOtherMember = function (memberModel) {
+            var nick = memberModel.getNick();
 
             if (userSession.getUser().getNick() === nick) {
                 return;
@@ -187,19 +188,19 @@ define([
             others[nick].destroy();
         };
 
-        var resetOtherUsers = function () {
+        var resetOtherMembers = function () {
             _.each(others, function (entity) {
                 entity.destroy();
             });
             others = {};
-            chatRoomUsersCollection.each(addOtherUser);
+            chatRoomMembersCollection.each(addOtherMember);
         };
 
-        chatRoomUsersCollection.on("add", addOtherUser);
-        chatRoomUsersCollection.on("remove", removeOtherUser);
-        chatRoomUsersCollection.on("reset", resetOtherUsers);
+        chatRoomMembersCollection.on("add", addOtherMember);
+        chatRoomMembersCollection.on("remove", removeOtherMember);
+        chatRoomMembersCollection.on("reset", resetOtherMembers);
 
-        chatRoomUsersCollection.each(addOtherUser);
+        chatRoomMembersCollection.each(addOtherMember);
     };
     var destroyScene = function () {
         running = false;
