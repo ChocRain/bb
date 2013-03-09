@@ -50,8 +50,6 @@ define([
             this._inputCompletor = new InputCompletor(
                 this.$("input[name=text]"),
                 function (prefix) {
-                    console.log(JSON.stringify(prefix));
-
                     var completionType = "";
 
                     if (commands.isCommand(prefix)) {
