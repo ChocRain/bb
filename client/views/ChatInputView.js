@@ -9,6 +9,7 @@ define([
     "utils/commands",
     "shared/utils/validator",
     "shared/exceptions/ValidationException",
+    "json!shared/definitions/rules.json",
     "utils/InputCompletor",
     "collections/chatRoomMembersCollection",
     "models/userSession",
@@ -22,6 +23,7 @@ define([
     commands,
     validator,
     ValidationException,
+    rules,
     InputCompletor,
     chatRoomMembersCollection,
     userSession,
@@ -29,6 +31,10 @@ define([
     dialog
 ) {
     "use strict";
+
+    var ruleNames = _.map(rules.dos.concat(rules.donts), function (rule) {
+        return rule.tag;
+    });
 
     var ChatInputView = BaseView.extend({
         className: "chat-input-view view",
@@ -91,6 +97,8 @@ define([
                         }), function (nick) {
                             return nick.toLowerCase();
                         });
+                    case "rule":
+                        return ruleNames;
                     }
 
                     return [];
