@@ -19,15 +19,26 @@ define([
         collection: chatLogCollection,
 
         _hasBeenRendered: false,
+        _autoScroll: true,
+        _autoScrollOffset: 20,
+
+        events: {
+            "scroll": "handleScroll"
+        },
 
         createItemView: function (model) {
             return new ChatLogEntryView({model: model});
         },
 
+        handleScroll: function (e) {
+            this._autoScroll =
+                    this.$el.scrollTop() + this.$el.innerHeight() >= this.el.scrollHeight - this._autoScrollOffset;
+        },
+
         add: function (model) {
             ListView.prototype.add.call(this, model);
 
-            if (this._hasBeenRendered) {
+            if (this._hasBeenRendered && this._autoScroll) {
                 // scroll chat log
                 this.$el.stop().animate({
                     scrollTop: this.el.scrollHeight
