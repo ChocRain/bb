@@ -36,13 +36,13 @@ define([
 
             var row = this.model.getRow();
             var x = 0;
-            var y = row * 100;
+            var y = - row * avatars.tileHeight * scaleFactor;
             var width = avatars.maxFrames * 100;
 
             var $img = this.$(".avatar-selector-image");
             $img.css("width", avatars.tileWidth * scaleFactor);
             $img.css("height", avatars.tileHeight * scaleFactor);
-            $img.css("background-position", x + "% " + y + "%");
+            $img.css("background-position", x + "px " + y + "px");
             $img.css("background-image", "url(" + avatarsImage + ")");
             $img.css("background-size", width + "%");
 
