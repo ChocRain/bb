@@ -1,4 +1,3 @@
-* Disable keyboard movement until movement locking is fixed.
 * Restrict movement to the boundaries of the room.
 * Friend system.
 * Nicer command validation.

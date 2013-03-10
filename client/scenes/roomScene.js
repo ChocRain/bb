@@ -103,7 +103,8 @@ define([
         Crafty.c("Player", {
             init: function () {
                 this.requires("Avatar, Multiway");
-                this.multiway(4, {UP_ARROW: -90, DOWN_ARROW: 90, RIGHT_ARROW: 0, LEFT_ARROW: 180});
+                // FIXME: Keyboard movement is disabled due to a bug for now.
+                // this.multiway(4, {UP_ARROW: -90, DOWN_ARROW: 90, RIGHT_ARROW: 0, LEFT_ARROW: 180});
 
                 // move player to clicked position
                 $(Crafty.stage.elem).click(this._moveOnClick.bind(this));
