@@ -39,7 +39,7 @@ define([
         var position = json.position;
         var avatar = json.avatar;
 
-        return new RoomMember(publicUser, position);
+        return new RoomMember(publicUser, position, avatar);
     };
 
     RoomMember.prototype.toJSON = function () {
