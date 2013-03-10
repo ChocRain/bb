@@ -18,6 +18,7 @@ define([
 
     var nickConstraints = nameConstraints;
     var roomConstraints = nameConstraints;
+    var ruleConstraints = nameConstraints;
 
 
     // persona assertions
@@ -32,6 +33,11 @@ define([
         /*
          * moderation
          */
+        "client.moderation.rule": {
+            rule: ruleConstraints,
+            nick: nickConstraints
+        },
+
         "client.moderation.rules": {
             nick: nickConstraints
         },

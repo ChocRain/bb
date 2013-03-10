@@ -50,6 +50,7 @@ define([
     // argument types
 
     var tNick = "nick";
+    var tRule = "rule";
 
 
     // getting help
@@ -142,13 +143,29 @@ define([
     });
 
     commands.push({
+        name: "rule",
+        argTypes: [tRule, tNick],
+        callback: function (rule, nick) {
+            handleInvalidNick(nick, function (validNick) {
+                clientMessageSink.sendRule(rule, nick);
+            });
+        },
+        description:
+                "Remind the user of the specified rule. " +
+                    "This will first show a dialog informing the user you want " +
+                    "him to read the rule and then open the rule in a new window. " +
+                    "The user will stay logged in.",
+        roles: [roles.MODERATOR]
+    });
+
+    commands.push({
         name: "rules",
         argTypes: [tNick],
         callback: function (nick) {
             handleInvalidNick(nick, clientMessageSink.sendRules);
         },
         description:
-                "Remind the user with the specified nick of the rules. " +
+                "Remind the user of the rules. " +
                     "This will first show a dialog informing the user you want " +
                     "him to read the rules and then open the rules in a new window. " +
                     "The user will stay logged in.",

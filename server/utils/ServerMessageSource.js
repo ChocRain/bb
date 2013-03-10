@@ -70,6 +70,21 @@ define([
         };
 
         var messageHandlers = {
+            "client.moderation.rule": {
+                roles: [roles.MODERATOR],
+                callback: function (payload) {
+                    var rule = payload.rule;
+                    var nick = payload.nick;
+                    moderationService.remindOfRule(session, rule, nick, function (err, rule, nick) {
+                        if (err) {
+                            return handleError(err);
+                        }
+
+                        messageSink.sendRemindedOfRule(rule, nick);
+                    });
+                }
+            },
+
             "client.moderation.rules": {
                 roles: [roles.MODERATOR],
                 callback: function (payload) {

@@ -15,8 +15,12 @@ define([
             return this.createRoute("");
         },
 
-        rules: function () {
-            return this.createRoute("rules");
+        rules: function (ruleName) {
+            var path = "rules";
+            if (ruleName) {
+                path += "#" + ruleName;
+            }
+            return this.createRoute(path);
         },
 
         login: function (redirect) {

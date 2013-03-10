@@ -2,6 +2,7 @@
  * Source for messaging via a socket. Must be required once to initialize.
  */
 define([
+    "underscore",
     "jquery",
     "routes/rootNavigator",
     "models/userSession",
@@ -14,9 +15,11 @@ define([
     "views/ChatView",
     "utils/dialog",
     "scenes/roomScene",
+    "json!shared/definitions/rules.json",
     "shared/exceptions/IllegalArgumentException",
     "shared/exceptions/IllegalStateException"
 ], function (
+    _,
     $,
     rootNavigator,
     userSession,
@@ -29,6 +32,7 @@ define([
     ChatView,
     dialog,
     roomScene,
+    rules,
     IllegalArgumentException,
     IllegalStateException
 ) {
@@ -57,6 +61,24 @@ define([
         }
 
         var _sessionAlreadyInitialized = false;
+
+        var getRule = function (ruleName) {
+            var matchingRules = _.filter(rules.dos.concat(rules.donts), function (rule) {
+                return rule.tag.toLowerCase() === ruleName.toLowerCase();
+            });
+
+            if (matchingRules.length > 1) {
+                throw new IllegalStateException(
+                    "Found more than one rule: tag = " + ruleName + ", rules = " + matchingRules
+                );
+            }
+
+            if (matchingRules.length === 1) {
+                return matchingRules[0];
+            }
+
+            throw new IllegalArgumentException("No such rule: " + ruleName);
+        };
 
         var handlers = {
             connected: function () {
@@ -97,6 +119,28 @@ define([
                 "server.error.validation": function (payload) {
                     // should not happen since validation already happens on the client
                     console.error("unexpected server validation error:", payload);
+                },
+
+                "server.moderation.remindedOfRule": function (payload) {
+                    chatLogCollection.add({
+                        type: "system-out",
+                        lines: payload.nick + " has been reminded of the rule " + payload.rule + "."
+                    });
+                },
+
+                "server.moderation.rule": function (payload) {
+                    var message = "You seem to have broken the following rule: \"";
+                    message += getRule(payload.rule).brief + "\" ";
+                    message += "Please look at the details again before continuing.";
+
+                    return dialog.showMessage(
+                        "A moderator wants to remind you of one of the rules",
+                        message,
+                        "Show details in new window",
+                        function () {
+                            rootNavigator.rules(payload.rule).openInNewWindow();
+                        }
+                    );
                 },
 
                 "server.moderation.remindedOfRules": function (payload) {

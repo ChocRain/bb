@@ -43,17 +43,25 @@
         <h3>Dos</h3>
 
         <% _.each(rules.dos, function (rule) { %>
-            <a name="<%- rule.tag %>"></a><h4><%- rule.brief %></h4>
+            <a class="rule-anchor" name="<%- rule.tag %>"></a>
 
-            <p><%- rule.long %></p>
+            <div class="rule-details">
+                <h4><%- rule.brief %></h4>
+
+                <p><%- rule.long %></p>
+            </div>
         <% }); %>
 
         <h3>Don'ts</h3>
 
         <% _.each(rules.donts, function (rule) { %>
-            <a name="<%- rule.tag %>"></a><h4><%- rule.brief %></h4>
+            <a class="rule-anchor" name="<%- rule.tag %>"></a>
 
-            <p><%- rule.long %></p>
+            <div class="rule-details">
+                <h4><%- rule.brief %></h4>
+
+                <p><%- rule.long %></p>
+            </div>
         <% }); %>
 
         <div class="action"><a href="#" onclick="goBack();">&raquo; Back to Ponyverse</a></div>

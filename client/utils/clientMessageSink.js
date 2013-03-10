@@ -10,6 +10,16 @@ define([
 
     var clientMessageSink = {
         /**
+         * Send a message to remind the specified user of the specified rule.
+         */
+        sendRule: function (rule, nick) {
+            messageDispatcher.send("client.moderation.rule", {
+                rule: rule,
+                nick: nick
+            });
+        },
+
+        /**
          * Send a message to remind the specified user of the rules.
          */
         sendRules: function (nick) {
