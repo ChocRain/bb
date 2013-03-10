@@ -1,3 +1,4 @@
+* Fix position calculation for small sprites.
 * Friend system.
 * Nicer command validation.
 * A nicer UI.
