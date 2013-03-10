@@ -52,6 +52,10 @@ Directory structure
 /htdocs
     Static files served by the webserver.
 
+/nicknames
+    Holds the blacklist and a script to generate a JSON file. Used to filter
+    nicknames.
+
 /node_modules
     Created by npm install. Holds node.js dependencies. Do not commit this.
 
