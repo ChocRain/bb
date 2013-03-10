@@ -10,7 +10,9 @@ define([
     "models/userSession",
     "shared/models/roles",
     "utils/clientMessageSink",
-    "json!shared/definitions/avatars.json"
+    "json!shared/definitions/avatars.json",
+    "json!shared/definitions/rooms.json",
+    "shared/exceptions/IllegalStateException"
 ], function (
     _,
     $,
@@ -20,13 +22,33 @@ define([
     userSession,
     roles,
     messageSink,
-    avatars
+    avatars,
+    roomData,
+    IllegalStateException
 ) {
     "use strict";
 
+    var getRoomByName = function (roomName) {
+        var rooms = _.filter(roomData.rooms, function (roomEntry) {
+            return roomName === roomEntry.name;
+        });
+
+        if (rooms.length > 1) {
+            throw new IllegalStateException("There is more than one room with that name: " + roomName);
+        }
+
+        if (rooms.length <= 0) {
+            throw new IllegalStateException("There is no room with that name: " + roomName);
+        }
+
+        return rooms[0];
+    };
+
     // TODO: Clean up this mess...
 
-    var roomBgImage = asset.asset("/img/backgrounds/madam_pinkies_tent.jpg");
+    var currentRoom = null;
+    var roomBgImage = null;
+
     var avatarsImage = asset.asset("/img/sprites/avatars.png");
 
     var sceneName = "room";
@@ -96,7 +118,10 @@ define([
                 this.updateDirection(opt_direction || newX - this.x);
 
                 // do the movement
-                this.tween({x: newX, y: newY}, 10);
+                this.tween({
+                    x: Math.max(0, Math.min(currentRoom.width - this.w, newX)),
+                    y: Math.max(0, Math.min(currentRoom.height - this.h, newY))
+                }, 10);
             }
         });
 
@@ -242,6 +267,9 @@ define([
     Crafty.scene(sceneName, initScene, destroyScene);
     return {
         run: function (roomName) {
+            currentRoom = getRoomByName(roomName);
+            roomBgImage = asset.asset("/img/backgrounds/" + currentRoom.image);
+
             Crafty.load([roomBgImage, avatarsImage], function () {
                 Crafty.scene(sceneName);
             });

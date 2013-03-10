@@ -8,8 +8,10 @@ define([
 ) {
     "use strict";
 
-    var Room = function (name) {
+    var Room = function (name, width, height) {
         this._name = name;
+        this._width = width;
+        this._height = height;
         this._members = {}; // map being true-ish for each member being in the room
     };
 
@@ -19,6 +21,14 @@ define([
 
     Room.prototype.getName = function () {
         return this._name;
+    };
+
+    Room.prototype.getWidth = function () {
+        return this._width;
+    };
+
+    Room.prototype.getHeight = function () {
+        return this._height;
     };
 
     Room.prototype.join = function (nick) {

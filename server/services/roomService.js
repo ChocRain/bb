@@ -11,7 +11,8 @@ define([
     "shared/exceptions/IllegalArgumentException",
     "shared/exceptions/IllegalStateException",
     "shared/exceptions/ProtocolException",
-    "json!shared/definitions/avatars.json"
+    "json!shared/definitions/avatars.json",
+    "json!shared/definitions/rooms.json"
 ], function (
     _,
     Room,
@@ -22,22 +23,29 @@ define([
     IllegalArgumentException,
     IllegalStateException,
     ProtocolException,
-    avatars
+    avatars,
+    roomData
 ) {
     "use strict";
 
     var RoomService = function () {
+        this._sortedRoomNames = [];
         this._rooms = {};
 
-        this._createRoom("ponyverse");
+        _.each(roomData.rooms, this._createRoom.bind(this));
     };
 
-    RoomService.prototype._createRoom = function (name) {
-        this._rooms[name] = new Room(name);
+    RoomService.prototype._createRoom = function (roomEntry) {
+        this._rooms[roomEntry.name] = new Room(
+            roomEntry.name,
+            roomEntry.width,
+            roomEntry.height
+        );
+        this._sortedRoomNames.push(roomEntry.name);
     };
 
     RoomService.prototype.getRoomNames = function (callback) {
-        return callback(null, _.keys(this._rooms));
+        return callback(null, this._sortedRoomNames);
     };
 
     RoomService.prototype.getByName = function (roomName, callback) {
@@ -196,7 +204,13 @@ define([
                 return callback(err);
             }
 
-            // TODO: Check if position allowed in that room.
+            if (position.x < 0 || position.x > room.getWidth() || position.y < 0 || position.y > room.getHeight()) {
+                return callback(new FeedbackException(
+                    "That position " + position.x + ":" + position.y +
+                            " is not allowed within the room \"" + room.getName() + "\""
+                ));
+            }
+
             session.set("position", position);
 
             this._withEachMembersMessageSink(room, function (messageSink, next) {
