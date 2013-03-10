@@ -15,8 +15,15 @@
             "height": 126,
             "frames": 8,
             "frameDelay": 70
+        },
+        "sweetie_belle_scoot": {
+            "row": 2,
+            "width": 120,
+            "height": 88,
+            "frames": 10,
+            "frameDelay": 70
         }
     },
-    "rows": 2,
+    "rows": 3,
     "maxFrames": 40
 }
