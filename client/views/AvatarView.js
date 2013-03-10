@@ -36,7 +36,7 @@ define([
 
             var row = this.model.getRow();
             var x = 0;
-            var y = - row * avatars.tileHeight * scaleFactor;
+            var y = -row * avatars.tileHeight * scaleFactor;
             var width = avatars.maxFrames * 100;
 
             var $img = this.$(".avatar-selector-image");
