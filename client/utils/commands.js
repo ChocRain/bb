@@ -146,9 +146,17 @@ define([
         name: "rule",
         argTypes: [tRule, tNick],
         callback: function (rule, nick) {
-            handleInvalidNick(nick, function (validNick) {
+            try {
                 clientMessageSink.sendRule(rule, nick);
-            });
+            } catch (err) {
+                if (err instanceof ValidationException) {
+                    _.each(err.getValidationResult().invalid, function (param) {
+                        error("Invalid parameter: " + param);
+                    });
+                } else {
+                    throw err;
+                }
+            }
         },
         description:
                 "Remind the user of the specified rule. " +
