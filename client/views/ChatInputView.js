@@ -131,7 +131,7 @@ define([
                     var constraints = validator.getConstraints("client.room.message");
 
                     var errorMsg = "The message may not be longer than ";
-                    errorMsg += constraints.text.maxlength;
+                    errorMsg += constraints.text.maxLength;
                     errorMsg += " characters. ";
 
                     dialog.showMessage(

@@ -99,9 +99,9 @@ define([
                 this.setLoading(false);
 
                 var errorMsg = "Nicknames have to be at least ";
-                errorMsg += registrationConstraints.nick.minlength;
+                errorMsg += registrationConstraints.nick.minLength;
                 errorMsg += " and at most ";
-                errorMsg += registrationConstraints.nick.maxlength;
+                errorMsg += registrationConstraints.nick.maxLength;
                 errorMsg += " characters long. ";
                 errorMsg += "Allowed are only letters, numbers and _. ";
                 errorMsg += "Also the _ is not allowed at the beginning or ";
