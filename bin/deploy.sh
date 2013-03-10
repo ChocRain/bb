@@ -7,6 +7,9 @@ cd `dirname $0`/.. || exit 1
 DEVELOPMENT_REPO=`pwd`
 DEPLOYMENT_REPO=/tmp/ponyverse_deployment
 
+# regenerate files
+./avatars/createAvatarMap.sh
+./nicknames/generateBlacklistJson.sh
 
 # check we're clean
 if [ ! -z "$(git status --porcelain)" ]; then
