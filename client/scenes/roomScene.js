@@ -144,15 +144,9 @@ define([
         var prevAvatar = memberModel.getAvatar();
         var player = createEntityWithNick("Player", prevPosition, prevAvatar, userSession.getUser());
 
-        var toggle = function (avatar) {
-            player.avatar(avatar);
-            _.delay(toggle.bind(
-                this,
-                avatar === "pinkie_pie_jumpie" ? "pinkie_pie_dancing" : "pinkie_pie_jumpie"
-            ), 2100);
-        };
-
-        toggle(prevAvatar);
+        memberModel.bind("change", function () {
+            player.avatar(memberModel.getAvatar());
+        });
 
         // TODO: This is not a very nice handling.
         var updatePlayer = function () {

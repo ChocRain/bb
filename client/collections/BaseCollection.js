@@ -11,6 +11,14 @@ define([
     "use strict";
 
     var BaseCollection = Backbone.Collection.extend({
+        initialize: function (models, opts) {
+            Backbone.Collection.prototype.initialize.call(
+                this,
+                this.parse(models),
+                opts
+            );
+        },
+
         add: function (models, opts) {
             Backbone.Collection.prototype.add.call(
                 this,
@@ -28,6 +36,10 @@ define([
         },
 
         parse: function (models) {
+            if (_.isNull(models) || _.isUndefined(models)) {
+                return [];
+            }
+
             if (!_.isArray(models)) {
                 models = [models];
             }

@@ -201,9 +201,9 @@ input[type=text]:disabled {
 }
 
 .chat-log-view,
-.chat-room-members-list-view {
+.chat-room-members-list-view,
+.avatar-selector-view {
     position: absolute;
-    top: 20px;
     height: 300px;
     overflow-y: scroll;
 
@@ -214,12 +214,20 @@ input[type=text]:disabled {
 }
 
 .chat-log-view {
+    top: 20px;
     left: 20px;
     width: 500px;
 }
 
 .chat-room-members-list-view {
+    top: 20px;
     right: 20px;
+    width: 200px;
+}
+
+.avatar-selector-view {
+    right: 20px;
+    bottom: 60px;
     width: 200px;
 }
 
@@ -315,5 +323,25 @@ li.chat-room-members-list-item-view {
     position: absolute;
     bottom: 20px;
     right: 20px;    
+}
+
+li.avatar-view {
+    list-style: none;
+    float: left;
+    margin: 0px;
+    padding: 0px;
+}
+
+.avatar-selector-image {
+    background-repeat: no-repeat;
+    margin: 10px;
+    padding: 0px;
+    border: 1px solid #EE3F96;
+    cursor: pointer;
+}
+
+.avatar-selector-image:hover {
+    background-color: #EE3F96;
+    opacity: 0.8;
 }
 

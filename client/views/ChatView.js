@@ -7,6 +7,7 @@ define([
     "views/ChatLogView",
     "views/ChatInputView",
     "views/ChatRoomMembersListView",
+    "views/AvatarSelectorView",
     "utils/persona",
     "models/userSession"
 ], function (
@@ -15,6 +16,7 @@ define([
     ChatLogView,
     ChatInputView,
     ChatRoomMembersListView,
+    AvatarSelectorView,
     persona,
     userSession
 ) {
@@ -34,6 +36,7 @@ define([
             this._chatLogView = new ChatLogView();
             this._chatInputView = new ChatInputView();
             this._chatRoomMembersView = new ChatRoomMembersListView();
+            this._avatarSelectorView = new AvatarSelectorView();
         },
 
         render: function (opts) {
@@ -42,6 +45,7 @@ define([
             this.$(".chat-log").html(this._chatLogView.render().el);
             this.$(".chat-input").html(this._chatInputView.render().el);
             this.$(".chat-room-members").html(this._chatRoomMembersView.render().el);
+            this.$(".avatar-selector").html(this._avatarSelectorView.render().el);
 
             return this;
         },

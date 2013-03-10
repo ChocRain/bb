@@ -81,6 +81,7 @@ echo "    \"tileHeight\": $max_height,"
 # create rows
 echo "    \"sprites\": {"
 row=0
+max_frames=0
 
 for f in $avatars_dir/*.gif; do
     if [ $row -gt 0 ]; then
@@ -104,11 +105,19 @@ for f in $avatars_dir/*.gif; do
 
     toRow $max_width $max_height $f
 
+    if [ $frames -gt $max_frames ]; then
+        max_frames=$frames
+    fi
+
     row=$(expr $row + 1)
 done
 
 echo
-echo "    }"
+echo "    },"
+
+echo "    \"rows\": $row,"
+echo "    \"maxFrames\": $max_frames"
+
 echo "}"
 
 # create map

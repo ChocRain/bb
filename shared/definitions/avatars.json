@@ -16,5 +16,7 @@
             "frames": 8,
             "frameDelay": 70
         }
-    }
+    },
+    "rows": 2,
+    "maxFrames": 40
 }
