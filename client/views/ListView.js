@@ -15,6 +15,8 @@ define([
     "use strict";
 
     var ListView = BaseView.extend({
+        tagName: "ul",
+
         initialize: function (opts) {
             BaseView.prototype.initialize.call(this, opts);
 

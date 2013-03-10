@@ -1,3 +1,35 @@
+::-webkit-scrollbar {
+    width: 10px;
+}
+
+::-webkit-scrollbar-track {
+    -webkit-border-radius: 3px;
+    -moz-border-radius: 3px;
+    border-radius: 3px;
+    background-color: white;
+    border: 1px solid #EE3F96;
+}
+
+::-webkit-scrollbar-thumb {
+    background-color: #EE3F96;
+    -webkit-border-radius: 4px;
+    -moz-border-radius: 4px;
+    border-radius: 4px;
+}
+
+html, body {
+scrollbar-darkshadow-color: green;
+    scrollbar-highlight-color: #EE3F96;
+
+    scrollbar-arrow-color: white;
+    scrollbar-shadow-color: #EE3F96;
+    scrollbar-track-color: white;
+    scrollbar-face-color: #EE3F96;
+    scrollbar-3dlight-color: #EE3F96;
+
+    scrollbar-darkshadow-color: white;
+}
+
 body {
     margin: 0;
     padding: 0;
@@ -21,7 +53,7 @@ h1 {
 
     color: #EE3F96;
     font-size: 28px;
-    font-family: CelestiaMediumRedux, serif; 
+    font-family: CelestiaMediumRedux, serif;
 }
 
 h2 {
@@ -200,12 +232,10 @@ input[type=text]:disabled {
     width: 80%;
 }
 
-.chat-log-view,
-.chat-room-members-list-view,
-.avatar-selector-view {
+.chat-log,
+.chat-room-members,
+.avatar-selector {
     position: absolute;
-    height: 300px;
-    overflow-y: scroll;
 
     border: 1px solid #EE3F96;
     background-color: white;
@@ -213,22 +243,38 @@ input[type=text]:disabled {
     padding: 2px;
 }
 
-.chat-log-view {
+.chat-log {
     top: 20px;
     left: 20px;
     width: 500px;
+    padding: 2px;
+    height: 300px;
 }
 
-.chat-room-members-list-view {
+.chat-room-members {
     top: 20px;
     right: 20px;
-    width: 200px;
+    padding: 2px;
+    height: 30%;
+    width: 20%;
 }
 
-.avatar-selector-view {
+.avatar-selector {
     right: 20px;
     bottom: 60px;
-    width: 200px;
+    height: 30%;
+    width: 20%;
+}
+
+.chat-log-view,
+.chat-room-members-list-view,
+.avatar-selector-view {
+    width: 100%;
+    height: 100%;
+    overflow-hidden;
+    overflow-y: auto;
+    margin: 0px;
+    padding: 0px;
 }
 
 li.chat-log-entry-view {
@@ -250,7 +296,7 @@ li.chat-log-entry-view.highlight {
 
 .chat-log-entry-type-entered,
 .chat-log-entry-type-left {
-    font-style: italic;    
+    font-style: italic;
 }
 
 .chat-log-entry-view .chat-log-entry-nick,
@@ -322,7 +368,7 @@ li.chat-room-members-list-item-view {
 .chat-actions {
     position: absolute;
     bottom: 20px;
-    right: 20px;    
+    right: 20px;
 }
 
 li.avatar-view {
@@ -338,6 +384,12 @@ li.avatar-view {
     padding: 0px;
     border: 1px solid #EE3F96;
     cursor: pointer;
+
+    -webkit-transition: all 0.1s linear;
+    -moz-transition: all 0.1s linear;
+    -ms-transition: all 0.1s linear;
+    -o-transition: all 0.1s linear;
+    transition: all 0.1s linear;
 }
 
 .avatar-selector-image:hover {
