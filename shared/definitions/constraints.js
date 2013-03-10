@@ -2,11 +2,13 @@
  * Constraints for validating messages send from the client to the server.
  */
 define([
+    "underscore"
 ], function (
+    _
 ) {
     "use strict";
 
-    // for nicks and rooms
+    // general
     var nameRegExp = /^([a-zA-Z0-9]+_?)*[a-zA-Z0-9]+$/;
 
     var nameConstraints = {
@@ -16,8 +18,16 @@ define([
         regexp: nameRegExp
     };
 
+
+    // users
     var nickConstraints = nameConstraints;
+
+
+    // rooms
     var roomConstraints = nameConstraints;
+
+
+    // moderation
     var ruleConstraints = nameConstraints;
 
 
@@ -27,6 +37,33 @@ define([
         minLength: 1,
         maxLength: 3000
     };
+
+
+    // chat
+    var textConstraints = {
+        type: "string",
+        minLength: 1,
+        maxLength: 200
+    };
+
+
+    // player information
+    var positionConstraints = {
+        object: {
+            x: {
+                type: "number"
+            },
+            y: {
+                type: "number"
+            },
+            direction: {
+                regexp: /^(left|right)$/
+            }
+        }
+    };
+
+    var avatarConstraints = _.clone(nameConstraints);
+    avatarConstraints.maxLength = 30;
 
 
     var constraints = {
@@ -87,28 +124,17 @@ define([
 
         "client.room.message": {
             room: roomConstraints,
-            text: {
-                type: "string",
-                minLength: 1,
-                maxLength: 200
-            }
+            text: textConstraints
         },
 
         "client.room.move": {
             room: roomConstraints,
-            position: {
-                object: {
-                    x: {
-                        type: "number"
-                    },
-                    y: {
-                        type: "number"
-                    },
-                    direction: {
-                        regexp: /^(left|right)$/
-                    }
-                }
-            }
+            position: positionConstraints
+        },
+
+        "client.room.avatarChange": {
+            room: roomConstraints,
+            avatar: avatarConstraints
         }
     };
     return constraints;

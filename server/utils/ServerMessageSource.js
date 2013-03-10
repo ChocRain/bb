@@ -245,6 +245,13 @@ define([
                 callback: function (payload) {
                     roomService.moveMember(session, payload.room, payload.position, handleError);
                 }
+            },
+
+            "client.room.avatarChange": {
+                roles: [roles.USER, roles.MODERATOR],
+                callback: function (payload) {
+                    roomService.changeAvatar(session, payload.room, payload.avatar, handleError);
+                }
             }
         };
 

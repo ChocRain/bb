@@ -10,7 +10,8 @@ define([
     "shared/exceptions/FeedbackException",
     "shared/exceptions/IllegalArgumentException",
     "shared/exceptions/IllegalStateException",
-    "shared/exceptions/ProtocolException"
+    "shared/exceptions/ProtocolException",
+    "json!shared/definitions/avatars.json"
 ], function (
     _,
     Room,
@@ -20,7 +21,8 @@ define([
     FeedbackException,
     IllegalArgumentException,
     IllegalStateException,
-    ProtocolException
+    ProtocolException,
+    avatars
 ) {
     "use strict";
 
@@ -98,6 +100,7 @@ define([
 
             room.join(nick);
             session.set("position", {x: 400, y: 400, direction: "right"});
+            session.set("avatar", _.keys(avatars.sprites)[0]);
 
             sessionStore.findByNicks(room.getMembers(), function (err, memberSessions) {
                 if (err) {
@@ -108,8 +111,9 @@ define([
                     if (memberSession.isLoggedIn()) {
                         var publicUser = memberSession.getUser().toPublicUser();
                         var position = memberSession.get("position");
+                        var avatar = memberSession.get("avatar");
 
-                        return next(null, new RoomMember(publicUser, position));
+                        return next(null, new RoomMember(publicUser, position, avatar));
                     }
 
                     return next(null, null); // do not include
@@ -120,7 +124,11 @@ define([
 
                     session.get("messageSink").sendRoomInfo(roomName, roomMembers);
 
-                    var roomMember = new RoomMember(user.toPublicUser(), session.get("position"));
+                    var roomMember = new RoomMember(
+                        user.toPublicUser(),
+                        session.get("position"),
+                        session.get("avatar")
+                    );
 
                     this._withEachMembersMessageSink(room, function (messageSink, next) {
                         messageSink.sendUserJoinedRoom(roomName, roomMember);
@@ -151,7 +159,7 @@ define([
         }.bind(this));
     };
 
-    RoomService.prototype.sendMessage = function (session, roomName, text, callback) {
+    RoomService.prototype._withRoomMemberIsIn = function (session, roomName, callback) {
         this.getByName(roomName, function (err, room) {
             if (err) {
                 return callback(err);
@@ -161,6 +169,16 @@ define([
 
             if (!room.isMember(nick)) {
                 return callback(new FeedbackException("You are not a member of that room: " + roomName));
+            }
+
+            callback(null, room, nick);
+        }.bind(this));
+    };
+
+    RoomService.prototype.sendMessage = function (session, roomName, text, callback) {
+        this._withRoomMemberIsIn(session, roomName, function (err, room, nick) {
+            if (err) {
+                return callback(err);
             }
 
             this._withEachMembersSession(room, function (memberSession, next) {
@@ -173,24 +191,50 @@ define([
     };
 
     RoomService.prototype.moveMember = function (session, roomName, position, callback) {
-        this.getByName(roomName, function (err, room) {
+        this._withRoomMemberIsIn(session, roomName, function (err, room, nick) {
             if (err) {
                 return callback(err);
             }
 
-            session.set("position", position);
-            var nick = session.getUser().getNick();
-
-            if (!room.isMember(nick)) {
-                return callback(new FeedbackException("You are not a member of that room: " + roomName));
-            }
-
             // TODO: Check if position allowed in that room.
+            session.set("position", position);
 
             this._withEachMembersMessageSink(room, function (messageSink, next) {
                 messageSink.sendMoved(roomName, nick, position);
                 next(null);
             }.bind(this), callback);
+        }.bind(this));
+    };
+
+    RoomService.prototype._findAvatar = function (avatarName, callback) {
+        var avatar = avatars.sprites[avatarName];
+        callback(null, avatar || null);
+    };
+
+    RoomService.prototype.changeAvatar = function (session, roomName, avatarName, callback) {
+        this._withRoomMemberIsIn(session, roomName, function (err, room, nick) {
+            if (err) {
+                return callback(err);
+            }
+
+            this._findAvatar(avatarName, function (err, avatar) {
+                if (err) {
+                    return callback(err);
+                }
+
+                if (!avatar) {
+                    return callback(new ProtocolException(
+                        "Invalid avatar: " + avatarName
+                    ));
+                }
+
+                session.set("avatar", avatarName);
+
+                this._withEachMembersMessageSink(room, function (messageSink, next) {
+                    messageSink.sendAvatarChanged(roomName, nick, avatarName);
+                    next(null);
+                }.bind(this), callback);
+            }.bind(this));
         }.bind(this));
     };
 

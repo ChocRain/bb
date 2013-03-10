@@ -17,7 +17,8 @@ define([
             return {
                 nick: json.user.nick,
                 user: json.user,
-                position: json.position
+                position: json.position,
+                avatar: json.avatar
             };
         },
 
@@ -35,6 +36,14 @@ define([
 
         getPosition: function () {
             return this.get("position");
+        },
+
+        setAvatar: function (avatar) {
+            this.set("avatar", avatar);
+        },
+
+        getAvatar: function () {
+            return this.get("avatar");
         }
     });
 

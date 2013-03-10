@@ -193,6 +193,17 @@ define([
     };
 
     /**
+     * Send a new avatar of a member in a room.
+     */
+    ServerMessageSink.prototype.sendAvatarChanged = function (roomName, nick, avatar) {
+        this._messageDispatcher.send("server.room.avatarChanged", {
+            room: roomName,
+            nick: nick,
+            avatar: avatar
+        });
+    };
+
+    /**
      * Send the acknowledgement that the user with the given nick is now being ignored.
      */
     ServerMessageSink.prototype.sendIgnored = function (nick) {

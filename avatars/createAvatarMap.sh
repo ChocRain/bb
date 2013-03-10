@@ -6,7 +6,7 @@ avatars_dir=$(pwd)
 row_dir=$avatars_dir/rows
 
 out_map=$avatars_dir/../htdocs/img/sprites/avatars.png
-out_json=$avatars_dir/../client/definitions/avatars.json
+out_json=$avatars_dir/../shared/definitions/avatars.json
 
 function getNumFrames() {
     identify -format "%[scenes] " $1 | cut -d ' ' -f 1
@@ -34,7 +34,7 @@ function toRow() {
         -background 'rgba(0,0,0,0.0)' \
         -quality 100 \
         -extent "${tile_width}x${tile_height}" \
-        -gravity northwest \
+        -gravity center \
         $gif \
         $png
 }

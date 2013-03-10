@@ -268,7 +268,7 @@ define([
                     });
                 },
 
-                "server.room.info": function (payload, date) {
+                "server.room.info": function (payload) {
                     // TODO: Proper room handling.
                     chatRoomMembersCollection.reset(payload.members);
                 },
@@ -284,9 +284,14 @@ define([
                     });
                 },
 
-                "server.room.moved": function (payload, date) {
+                "server.room.moved": function (payload) {
                     var memberModel = getMemberModelByNick(payload.nick);
                     memberModel.setPosition(payload.position);
+                },
+
+                "server.room.avatarChanged": function (payload) {
+                    var memberModel = getMemberModelByNick(payload.nick);
+                    memberModel.setAvatar(payload.avatar);
                 }
             }
         };

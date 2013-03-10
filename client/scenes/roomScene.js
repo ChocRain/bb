@@ -10,7 +10,7 @@ define([
     "models/userSession",
     "shared/models/roles",
     "utils/clientMessageSink",
-    "json!definitions/avatars.json"
+    "json!shared/definitions/avatars.json"
 ], function (
     _,
     $,
@@ -44,16 +44,27 @@ define([
 
         Crafty.c("Avatar", {
             init: function () {
-                var spriteName = "pinkie_pie_dancing";
-                var sprite = avatars.sprites[spriteName];
-
-                this.requires("2D, HTML, DOM, Tween, SpriteAnimation, " + spriteName);
+                this.requires("2D, HTML, DOM, Tween, SpriteAnimation");
                 this.bind("Moved", this._moved.bind(this));
                 this.direction = "right";
+            },
 
+            avatar: function (spriteName) {
+                if (spriteName === this.spriteName) {
+                    return;
+                }
+
+                this.spriteName = spriteName;
+                var sprite = avatars.sprites[spriteName];
+
+                this.requires(spriteName);
+
+                this.stop();
                 this.animate("anim", 0, sprite.row, sprite.frames - 1);
                 this.animate("anim", Crafty.timer.getFPS() * sprite.frames * sprite.frameDelay / 1000 * 0.8, -1);
-                this.crop(0, 0, sprite.width, sprite.height);
+
+                var offsetY = (avatars.tileHeight - sprite.height) / 2;
+                this.crop(0, offsetY, avatars.tileWidth, sprite.height + offsetY);
             },
 
             _moved: function (e) {
@@ -107,10 +118,11 @@ define([
             }
         });
 
-        var createEntityWithNick = function (entityName, position, user) {
+        var createEntityWithNick = function (entityName, position, avatar, user) {
             var entity = Crafty.e(entityName);
             entity.attr({x: position.x, y: position.y});
             entity.updateDirection(position.direction);
+            entity.avatar(avatar);
 
             var nickEntity = Crafty.e("2D, DOM, HTML");
             var classes = "avatar-nick";
@@ -127,11 +139,23 @@ define([
             return entity;
         };
 
-        var prevPosition = chatRoomMembersCollection.get(userSession.getUser().getNick()).getPosition();
-        var player = createEntityWithNick("Player", prevPosition, userSession.getUser());
+        var memberModel = chatRoomMembersCollection.get(userSession.getUser().getNick());
+        var prevPosition = memberModel.getPosition();
+        var prevAvatar = memberModel.getAvatar();
+        var player = createEntityWithNick("Player", prevPosition, prevAvatar, userSession.getUser());
+
+        var toggle = function (avatar) {
+            player.avatar(avatar);
+            _.delay(toggle.bind(
+                this,
+                avatar === "pinkie_pie_jumpie" ? "pinkie_pie_dancing" : "pinkie_pie_jumpie"
+            ), 2100);
+        };
+
+        toggle(prevAvatar);
 
         // TODO: This is not a very nice handling.
-        var updatePosition = function () {
+        var updatePlayer = function () {
             if (!running) {
                 return; // scene isn't running anymore, don't update
             }
@@ -145,14 +169,23 @@ define([
             if (position.x !== prevPosition.x
                     || position.y !== prevPosition.y
                     || position.direction !== prevPosition.direction) {
-                chatRoomMembersCollection.get(userSession.getUser().getNick()).setPosition(position);
+                memberModel.setPosition(position);
                 messageSink.sendMoved(position);
             }
 
+            var avatar = player.spriteName;
+
+            if (avatar !== prevAvatar) {
+                memberModel.setAvatar(avatar);
+                messageSink.sendAvatarChanged(avatar);
+            }
+
             prevPosition = position;
-            _.delay(updatePosition, 100);
+            prevAvatar = avatar;
+
+            _.delay(updatePlayer, 100);
         };
-        _.delay(updatePosition, 100);
+        _.delay(updatePlayer, 100);
 
         var others = {};
 
@@ -164,14 +197,21 @@ define([
             }
 
             memberModel.on("change", function () {
+                var entity = others[nick];
+
+                var avatar = memberModel.getAvatar();
+                entity.avatar(avatar);
+
                 var position = memberModel.getPosition();
-                others[nick].moveTo(position.x, position.y, position.direction);
+                entity.moveTo(position.x, position.y, position.direction);
             });
 
             var position = memberModel.getPosition();
+            var avatar = memberModel.getAvatar();
             others[nick] = createEntityWithNick(
                 "Avatar",
                 position,
+                avatar,
                 memberModel.getUser()
             );
         };

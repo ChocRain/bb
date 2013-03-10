@@ -133,6 +133,16 @@ define([
                 room: "ponyverse", // TODO: Proper room handling...
                 position: position
             });
+        },
+
+        /**
+         * Send a message to notify the server about an avatar change.
+         */
+        sendAvatarChanged: function (avatar) {
+            messageDispatcher.send("client.room.avatarChange", {
+                room: "ponyverse", // TODO: Proper room handling...
+                avatar: avatar
+            });
         }
     };
 

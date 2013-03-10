@@ -12,9 +12,22 @@ define([
 ) {
     "use strict";
 
-    var RoomMember = function (publicUser, position) {
+    var RoomMember = function (publicUser, position, avatar) {
+        if (!(publicUser instanceof PublicUser)) {
+            throw new IllegalArgumentException("Not a PublicUser: " + JSON.stringify(publicUser));
+        }
+
+        if (!_.isObject(position)) {
+            throw new IllegalArgumentException("Invalid position: " + JSON.stringify(position));
+        }
+
+        if (!_.isString(avatar) || avatar === "") {
+            throw new IllegalArgumentException("Invalid avatar: " + JSON.stringify(avatar));
+        }
+
         this._user = publicUser;
         this._position = position;
+        this._avatar = avatar;
     };
 
     RoomMember.fromJSON = function (json) {
@@ -24,10 +37,7 @@ define([
 
         var publicUser = PublicUser.fromJSON(json.user);
         var position = json.position;
-
-        if (position && !_.isObject(position)) {
-            throw new IllegalArgumentException("Invalid position: " + JSON.stringify(json));
-        }
+        var avatar = json.avatar;
 
         return new RoomMember(publicUser, position);
     };
@@ -35,7 +45,8 @@ define([
     RoomMember.prototype.toJSON = function () {
         return {
             user: this._user.toJSON(),
-            position: this._position
+            position: this._position,
+            avatar: this._avatar
         };
     };
 
@@ -57,6 +68,10 @@ define([
 
     RoomMember.prototype.getPosition = function () {
         return this._position;
+    };
+
+    RoomMember.prototype.getAvatar = function () {
+        return this._avatar;
     };
 
     return RoomMember;

@@ -8,6 +8,13 @@
             "height": 126,
             "frames": 40,
             "frameDelay": 80
+        },
+        "pinkie_pie_jumpie": {
+            "row": 1,
+            "width": 106,
+            "height": 126,
+            "frames": 8,
+            "frameDelay": 70
         }
     }
 }
