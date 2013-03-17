@@ -1,6 +1,20 @@
 {
-    "name": "bb",
+    "name": "ponyverse",
+    "description": "A 2d pony chat.",
     "version": "0.0.0",
+    "maintainers": [{
+        "name": "ChocolateRain",
+        "email": "chocolaterain@anypony.com",
+        "web": "https://github.com/ChocRain"
+    }],
+    "repositories": [{
+        "type": "git",
+        "url": "https://github.com/ChocRain/bb.git"
+    }],
+    "licenses": [{
+        "name": "MIT",
+        "url": "http://www.opensource.org/licenses/MIT"
+    }],
     "engines": {
         "node": "0.8.x",
         "npm": "1.1.x"

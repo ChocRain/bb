@@ -1,4 +1,11 @@
 [{
+    "type": "ponyverse",
+    "name": "The Ponyverse software",
+    "by": "ChocolateRain",
+    "url": "https://github.com/ChocRain/bb",
+    "license": "MIT",
+    "licenseUrl": "http://opensource.org/licenses/MIT"
+}, {
     "type": "font",
     "name": "Celestia Medium Redux",
     "by": "mattyhex",
