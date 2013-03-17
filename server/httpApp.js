@@ -62,6 +62,10 @@ define([
 
         app.use(auth);
 
+        // compression
+
+        app.use(express.compress({level: 9, filter: function () { return true; }}));
+
         // asset management / static content
 
         if (config.isDevelopment) {
