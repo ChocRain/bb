@@ -1,62 +1,53 @@
 {
-    "dos": [
-        {
-            "tag": "mature",
-            "brief": "Act mature.",
-            "long": "Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet."
-        },
-        {
-            "tag": "help",
-            "brief": "Help others.",
-            "long": "Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet."
-        },
-        {
-            "tag": "bugs",
-            "brief": "Please report bugs, glitches and security issues to the staff.",
-            "long": "Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet."
-        },
-        {
-            "tag": "respect_staff",
-            "brief": "Be respectful to staff members.",
-            "long": "Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet."
-        }
-    ],
+    "dos": [{
+        "tag": "mature",
+        "brief": "Act mature.",
+        "long": "Ponyverse is build as a place for the whole family. This means that people of different age and even minors are around. As a consequence not everypony will be as mature as others. That's okay. But: Being young isn't an excuse to not to try to act mature. Just because someone doesn't do what you want or behave the way you expect doesn't mean you have to be miffed by it. Just try to accept it and move on."
+    }, {
+        "tag": "help",
+        "brief": "Help others.",
+        "long": "Being new in a group / community is not always easy. There are rules you are not familiar with and details of e.g. how to achieve something, get an item, etc. Also you don't always know whom to ask or if you question might be considered dumb. To make joining the community and having a good time as easy as possible every helping hand is more than welcome. This means you don't have to be a member of the staff to answer others questions or help resolving a not so nice situation. And remember: Another pony asking a question you have heard a hundred times before or that is answered in the rules or in some FAQs doesn't mean you may respond rude. Always be nice as you most certainly have been asking this kind of questions in your life before too."
+    }, {
+        "tag": "bugs",
+        "brief": "Please report bugs, glitches and security issues to the staff.",
+        "long": "Ponyverse as every other software out there will always have some bugs or glitches. Fixing those problems is only possible, if we as the staff are aware of them. Being annoyed but not telling anyone won't make bugs disappear. For that reason we kindly ask you to tell us if some part of Ponyverse doesn't work as expected. Don't be disappointed though if we consider one of your bug reports a feature request instead. Also: If you find bugs or security issues don't abuse them to gain access to user data or to give yourself or others special abilities or bonuses."
+    }, {
+        "tag": "respect_staff",
+        "brief": "Be respectful to staff members.",
+        "long": "We are trying our very best to allow everpony having a good time, but we aren't perfect. If you notice some member of the staff did something wrong or misinterpreted a situation it's always okay to talk to them. But: This doesn't mean you may be mean or insulting in such a situation. Always be respectful and constructive and your concerns will be heard. On the other hand: Behaving disrespectful or immature won't help you making your point."
+    }, {
+        "tag": "english",
+        "brief": "English only please.",
+        "long": "We know there are a lot of people out there who don't speak English very well or even at all and we wished we could give those a home here. But even though some of us do speak other languages (for some English even isn't the native language) we would ask you to stick to English in the public chat. The reason is that we otherwise wouldn't be able to help and moderate as good as possible and make sure everything posted is appropriate for all age groups and complies with the rules."
+    }],
 
-    "donts": [
-        {
-            "tag": "harassment",
-            "brief": "Do not harass or threaten your fellow members.",
-            "long": "Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet."
-        },
-        {
-            "tag": "sexual_content",
-            "brief": "All types of sexual content is prohibited.",
-            "long": "Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet."
-        },
-        {
-            "tag": "spam",
-            "brief": "Refrain from spamming the chat and heavily using capslock / canterlock.",
-            "long": "Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet."
-        },
-        {
-            "tag": "swearing",
-            "brief": "Swearing is not allowed.",
-            "long": "Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet."
-        },
-        {
-            "tag": "advertising_chats",
-            "brief": "Do not advertise or talk about other chatrooms here.",
-            "long": "Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet."
-        },
-        {
-            "tag": "becoming_moderator",
-            "brief": "Do not ask to become a moderator.",
-            "long": "Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet."
-        },
-        {
-            "tag": "other",
-            "brief": "Just because something isn't listed it here doesn't automatically make it okay.",
-            "long": "Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet."
-        }
-    ]
+    "donts": [{
+        "tag": "harassment",
+        "brief": "Do not harass or threaten your fellow members.",
+        "long": "One of the few things that will most certainly result in an immediate kick or ban is threatening or harassing others. This also includes announcing you are going to or have tried to commit suicide or harming yourself or others. Don't even do this as a joke, ever."
+    }, {
+        "tag": "sexual_content",
+        "brief": "All types of sexual content is prohibited.",
+        "long": "Always remember Ponyverse is a place for the whole family and thus sexual content of any kind is prohibited. This includes (but is not limited to) cybering, sexual content as a part of roleplaying, misusing Ponyverse as a dating platform, molesting others or pasting links to websites hosting sexual content."
+    }, {
+        "tag": "spam",
+        "brief": "Refrain from spamming the chat and heavily using capslock / canterlock.",
+        "long": "We know you don't like to be ignored and you want your messages to be read / heard. That's fine. But you should also accept that not everpony might be interested in everything you say, as that's fine too. Trying to gain more attention by repeatedly posting the same or a similar message or making heavy use of capslock / canterlock (writing all uppercase) will not make your messages being more important or notable. Adding a whole bunch of exclamation marks won't help either. Actually quite the contrary is the case. Others will most certainly get annoyed and ignore you even more. Thus spamming / flooding is not allowed. This also includes pasting song lyrics or long text passages into the chat."
+    }, {
+        "tag": "swearing",
+        "brief": "Swearing is not allowed.",
+        "long": "Again remember Ponyverse is a place for the whole family. Swearing or insulting others is not family friendly and thus not allowed. Please also keep in mind the magic of friendship. If you're in doubt, consult some of your favourite \"My Little Pony - Friendship Is Magic\" episodes and come back afterwards."
+    }, {
+        "tag": "advertising",
+        "brief": "Do not advertise in here.",
+        "long": "We provide Ponyverse as a free service for our members. This means we won't annoy you with advertisements. On the other hand we expect the same from our members. It's great if you have some great Tumblr site, Youtube channel or other project you're working on and you may talk about it in here, but: Please restrain from bluntly advertising those. Giving a link to a video in your channel that fits into the ongoing discussion is fine, but posting links over and over just to make others visit your site and increase your view count is forbidden and will result in a kick or ban."
+    }, {
+        "tag": "becoming_moderator",
+        "brief": "Do not ask to become a moderator.",
+        "long": "Really, please don't. If we feel we need support we will look out for people who have earned our trust and who are mature enough. Asking to become a moderator will disqualify you immediately. Also annoying staff members will not only not get you closer to becoming a moderator, but most certainly result in you being kicked."
+    }, {
+        "tag": "other",
+        "brief": "Just because something isn't listed it here doesn't automatically make it okay.",
+        "long": "This also means: Do not argue about the rules. Constructive criticism is fine and always welcome, but if you have done something wrong try to learn from this and not justify it."
+    }]
 }
