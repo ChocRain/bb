@@ -1,8 +1,8 @@
 {
     "rooms": [{
         "name": "ponyverse",
-        "width": 1640,
-        "height": 520,
+        "width": 3200,
+        "height": 1100,
         "image": "sweet_apple_acres.svg"
     }]
 }
