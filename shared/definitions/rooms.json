@@ -1,8 +1,8 @@
 {
     "rooms": [{
         "name": "ponyverse",
-        "width": 1200,
-        "height": 675,
-        "image": "madam_pinkies_tent.jpg"
+        "width": 1640,
+        "height": 520,
+        "image": "sweet_apple_acres.svg"
     }]
 }
