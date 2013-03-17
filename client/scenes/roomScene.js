@@ -10,6 +10,7 @@ define([
     "models/userSession",
     "shared/models/roles",
     "utils/clientMessageSink",
+    "utils/windowHelper",
     "json!shared/definitions/avatars.json",
     "json!shared/definitions/rooms.json",
     "shared/exceptions/IllegalStateException"
@@ -22,6 +23,7 @@ define([
     userSession,
     roles,
     messageSink,
+    windowHelper,
     avatars,
     roomData,
     IllegalStateException
@@ -55,12 +57,18 @@ define([
     var running = false;
     var initScene = function () {
         running = true;
-        Crafty.background("url(" + roomBgImage + ") no-repeat");
 
         var spriteMap = {};
         _.each(avatars.sprites, function (sprite, name) {
             spriteMap[name] = [0, sprite.row];
         }.bind(this));
+
+        var bg = Crafty.e("2D, DOM, Image").image(roomBgImage, "no-repeat").attr({
+            x: 0,
+            y: 0,
+            w: currentRoom.width,
+            h: currentRoom.height
+        });
 
         Crafty.sprite(avatars.tileWidth, avatars.tileHeight, avatarsImage, spriteMap);
 
@@ -136,11 +144,16 @@ define([
             },
 
             _moveOnClick: function (e) {
+                var v = Crafty.viewport.rect();
+
                 // center of sprite should be at clicked position
-                var newX = e.pageX - this.w / 2;
-                var newY = e.pageY - this.h / 2;
+                var newX = e.pageX - this.w / 2 + v._x;
+                var newY = e.pageY - this.h / 2 + v._y;
 
                 this.moveTo(newX, newY);
+
+                Crafty.viewport.pan("x", newX + this.w / 2 - v._x - v._w / 2, 20);
+                Crafty.viewport.pan("y", newY + this.h / 2 - v._y - v._h / 2, 20);
             }
         });
 
@@ -169,6 +182,11 @@ define([
         var prevPosition = memberModel.getPosition();
         var prevAvatar = memberModel.getAvatar();
         var player = createEntityWithNick("Player", prevPosition, prevAvatar, userSession.getUser());
+        Crafty.viewport.centerOn(player, 0);
+
+        windowHelper.onResize(function () {
+            Crafty.viewport.centerOn(player, 10);
+        }.bind(this));
 
         memberModel.bind("change", function () {
             player.avatar(memberModel.getAvatar());

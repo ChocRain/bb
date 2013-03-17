@@ -13,9 +13,11 @@ define([
 
     var onBlur = $window.blur.bind($window);
     var onFocus = $window.focus.bind($window);
+    var onResize = $window.resize.bind($window);
 
     return {
         onBlur: onBlur,
-        onFocus: onFocus
+        onFocus: onFocus,
+        onResize: onResize
     };
 });
