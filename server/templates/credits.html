@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <%= commonHeaders %>
+
+    <script>
+        function goBack () {
+            if (window.name === "child-window") {
+                window.close();
+            } else {
+                location.href = "/";
+            }
+
+            return false;
+        }
+    </script>
+</head>
+<body>
+    <div class="static-content">
+        <h1>Ponyverse - Credits</h1>
+
+        <div class="action"><a href="#" onclick="goBack();">&raquo; Back to Ponyverse</a></div>
+
+        <p>Credit where credit is due:</p>
+
+        <%
+            var sectionNames = {
+                font: "Fonts",
+                css: "Stylesheets",
+                avatar: "Avatars",
+                background: "Backgrounds",
+                sprites: "Sprites"
+            };
+
+            var prevType;
+        %>
+
+        <ol>
+        <%
+            prevType = null;
+            _.each(credits, function (credit) {
+                if (prevType !== credit.type) {
+                    %><li><a href="#<%= credit.type %>"><%= sectionNames[credit.type] %></a></li><%
+                }
+                prevType = credit.type;
+            });
+        %>
+        </ol>
+
+        <%
+            prevType = null;
+            _.each(credits, function (credit) {
+                if (prevType !== credit.type) {
+                    %>
+                        <a name="<%- credit.type %>"></a>
+                        <h2><%= sectionNames[credit.type] %></h2>
+                    <%
+                }
+        %>
+                <h3><%= credit.name  %></h3>
+
+                <ul>
+                    <li>By: <a target="_blank" href="<%- credit.url %>"><%= credit.by %></a></li>
+                    <li>License: <a target="_blank"  href="<%- credit.licenseUrl %>"><%= credit.license %></a></li>
+                </ul>
+        <%
+                prevType = credit.type;
+            });
+        %>
+
+        <div class="action"><a href="#" onclick="goBack();">&raquo; Back to Ponyverse</a></div>
+    </div>
+</body>
+</html>
+

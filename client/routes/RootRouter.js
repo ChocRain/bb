@@ -25,6 +25,7 @@ define([
             "login": "login",
             "login/*redirect": "login",
             "rules": "rules",
+            "credits": "credits",
             "*path": "fallback"
         },
 
@@ -61,6 +62,10 @@ define([
 
         rules: function () {
             rootNavigator.loadUrl("/rules");
+        },
+
+        credits: function () {
+            rootNavigator.loadUrl("/credits");
         }
     });
 

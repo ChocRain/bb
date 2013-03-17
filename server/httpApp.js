@@ -13,9 +13,11 @@ define([
 
     "text!server/templates/index.html",
     "text!server/templates/rules.html",
+    "text!server/templates/credits.html",
     "text!server/templates/commonHeaders.html",
 
     "json!shared/definitions/rules.json",
+    "json!shared/definitions/credits.json",
 
     "server/utils/parallel",
     "server/utils/asset"
@@ -31,9 +33,11 @@ define([
 
     IndexTemplate,
     RulesTemplate,
+    CreditsTemplate,
     CommonHeadersTemplate,
 
     rules,
+    credits,
 
     parallel,
     asset
@@ -112,6 +116,7 @@ define([
         };
 
         app.get("/rules", _.partial(servePage, "rules.html", RulesTemplate, {rules: rules}));
+        app.get("/credits", _.partial(servePage, "credits.html", CreditsTemplate, {credits: credits}));
         app.get("/*", _.partial(servePage, "index.html", IndexTemplate, {}));
     };
 

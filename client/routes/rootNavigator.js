@@ -23,6 +23,14 @@ define([
             return this.createRoute(path);
         },
 
+        credits: function (objectName) {
+            var path = "credits";
+            if (objectName) {
+                path += "#" + objectName;
+            }
+            return this.createRoute(path);
+        },
+
         login: function (redirect) {
             var suffix = redirect ? "/" + redirect : "";
             return this.createRoute("login" + suffix);

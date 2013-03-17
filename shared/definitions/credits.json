@@ -1,0 +1,57 @@
+[{
+    "type": "font",
+    "name": "Celestia Medium Redux",
+    "by": "mattyhex",
+    "url": "http://www.mattyhex.net/CMR/",
+    "license": "Public Domain",
+    "licenseUrl": "http://www.mattyhex.net/CMR/?id=license"
+}, {
+    "type": "css",
+    "name": "Mozilla Persona buttons",
+    "by": "Sawyer Hollenshead",
+    "url": "http://sawyerhollenshead.com/",
+    "license": "Unknown",
+    "licenseUrl": "https://developer.mozilla.org/en/docs/persona/branding"
+}, {
+    "type": "avatar",
+    "name": "Pinkie Pie dancing",
+    "by": "DeathPwny",
+    "url": "http://deathpwny.deviantart.com/art/Pinkie-Pie-dancing-258855912",
+    "license": "CC BY-NC-SA 3.0",
+    "licenseUrl": "http://creativecommons.org/licenses/by-nc-sa/3.0/"
+}, {
+    "type": "avatar",
+    "name": "Pinkie Pie jumpie",
+    "by": "DeathPwny",
+    "url": "http://deathpwny.deviantart.com/art/Pinkie-Pie-dancing-258855912",
+    "license": "CC BY-NC-SA 3.0",
+    "licenseUrl": "http://creativecommons.org/licenses/by-nc-sa/3.0/"
+}, {
+    "type": "avatar",
+    "name": "Sweetie Belle Scoot",
+    "by": "StarStepPony",
+    "url": "http://starsteppony.deviantart.com/art/Sweetie-Belle-Scoot-269742351",
+    "license": "CC BY-NC-SA 3.0",
+    "licenseUrl": "http://creativecommons.org/licenses/by-nc-sa/3.0/"
+}, {
+    "type": "background",
+    "name": "Madam Pinkie's Tent",
+    "by": "EricFortney",
+    "url": "http://www.deviantart.com/art/Madam-Pinkie-s-Tent-Subtle-Wallpaper-289953712",
+    "license": "CC BY 3.0",
+    "licenseUrl": "http://creativecommons.org/licenses/by/3.0/"
+}, {
+    "type": "background",
+    "name": "Sweet Apple Acres",
+    "by": "ZuTheSkunk",
+    "url": "http://zutheskunk.deviantart.com/art/MLP-Resource-Bgr-009-Sweet-Apple-Acres-350289781",
+    "license": "CC BY-NC-SA 3.0",
+    "licenseUrl": "http://creativecommons.org/licenses/by-nc-sa/3.0/"
+}, {
+    "type": "sprites",
+    "name": "Candy",
+    "by": "ChocolateRain",
+    "url": "http://chocrain.deviantart.com/",
+    "license": "CC BY-SA 3.0",
+    "licenseUrl": "http://creativecommons.org/licenses/by-sa/3.0/"
+}]
