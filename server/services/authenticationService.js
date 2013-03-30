@@ -7,6 +7,7 @@ define([
     "server/services/roomService",
     "server/utils/persona",
     "server/utils/nickFilter",
+    "server/utils/emailHashingUtil",
     "shared/exceptions/FeedbackException",
     "shared/exceptions/ProtocolException",
     "server/config",
@@ -16,6 +17,7 @@ define([
     roomService,
     persona,
     nickFilter,
+    emailHashingUtil,
     FeedbackException,
     ProtocolException,
     config
@@ -31,18 +33,24 @@ define([
                 return callback(err);
             }
 
-            userService.findByEmail(email, function (err, user) {
+            emailHashingUtil.hashEmailAddress(email, function (err, emailHash) {
                 if (err) {
                     return callback(err);
                 }
 
-                if (!user) {
-                    return callback(new FeedbackException(
-                        "There is no user for your account. Please register one."
-                    ));
-                }
+                userService.findByEmailHash(emailHash, function (err, user) {
+                    if (err) {
+                        return callback(err);
+                    }
 
-                this._login(session, user, callback);
+                    if (!user) {
+                        return callback(new FeedbackException(
+                            "There is no user for your account. Please register one."
+                        ));
+                    }
+
+                    this._login(session, user, callback);
+                }.bind(this));
             }.bind(this));
         }.bind(this));
     };
@@ -53,34 +61,40 @@ define([
                 return callback(err);
             }
 
-            userService.findByEmail(email, function (err, userByEmail) {
+            emailHashingUtil.hashEmailAddress(email, function (err, emailHash) {
                 if (err) {
                     return callback(err);
                 }
 
-                if (userByEmail) {
-                    return callback(new FeedbackException("You already have registered an account."));
-                }
-
-                userService.findByNick(nick, function (err, userByNick) {
+                userService.findByEmailHash(emailHash, function (err, userByEmailHash) {
                     if (err) {
                         return callback(err);
                     }
 
-                    if (userByNick) {
-                        return callback(new FeedbackException("A user with that name already exists: " + nick));
+                    if (userByEmailHash) {
+                        return callback(new FeedbackException("You already have registered an account."));
                     }
 
-                    if (!nickFilter.isAllowed(nick)) {
-                        return callback(new FeedbackException("That nickname is not allowed: " + nick));
-                    }
-
-                    userService.create(email, nick, function (err, user) {
+                    userService.findByNick(nick, function (err, userByNick) {
                         if (err) {
                             return callback(err);
                         }
 
-                        this._login(session, user, callback);
+                        if (userByNick) {
+                            return callback(new FeedbackException("A user with that name already exists: " + nick));
+                        }
+
+                        if (!nickFilter.isAllowed(nick)) {
+                            return callback(new FeedbackException("That nickname is not allowed: " + nick));
+                        }
+
+                        userService.create(emailHash, nick, function (err, user) {
+                            if (err) {
+                                return callback(err);
+                            }
+
+                            this._login(session, user, callback);
+                        }.bind(this));
                     }.bind(this));
                 }.bind(this));
             }.bind(this));

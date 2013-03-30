@@ -5,12 +5,16 @@ define([
     "underscore",
     "server/daos/BaseDao",
     "server/models/User",
-    "shared/models/roles"
+    "shared/models/roles",
+    "server/utils/parallel",
+    "server/utils/emailHashingUtil"
 ], function (
     _,
     BaseDao,
     User,
-    roles
+    roles,
+    parallel,
+    emailHashingUtil
 ) {
     "use strict";
 
@@ -50,14 +54,47 @@ define([
             }.bind(this));
         }.bind(this);
 
+        var v1To2 = function (callback) {
+            // hash all email addresses
+            // no batching since at the current state there aren't many users
+            this._findAll(
+                {_version: 1},
+                function (err, users) {
+                    parallel.each(
+                        users,
+                        function (user, userCallback) {
+                            emailHashingUtil.hashEmailAddress(user.getEmailHash(), function (err, hashedEmail) {
+                                if (err) {
+                                    return userCallback(err);
+                                }
+
+                                this._updateAll(
+                                    {_id: user.getId()},
+                                    {$set: {_version: 2, email: hashedEmail}},
+                                    userCallback
+                                );
+                            }.bind(this));
+                        }.bind(this),
+                        callback
+                    );
+                }.bind(this)
+            );
+        }.bind(this);
+
         ensureIndices(
-            _.partial(initialVersion, callback)
+            _.partial(
+                v1To2,
+                _.partial(
+                    initialVersion,
+                    callback
+                )
+            )
         );
     };
 
-    UserDao.prototype.create = function (email, nick, role, callback) {
+    UserDao.prototype.create = function (emailHash, nick, role, callback) {
         this._insert({
-            email: email.toLowerCase(),
+            email: emailHash,
             nick: nick,
             canonicalNick: nick.toLowerCase(),
             role: role.toJSON()
@@ -68,14 +105,13 @@ define([
         this._findUnique({canonicalNick: nick.toLowerCase()}, callback);
     };
 
-    UserDao.prototype.findByEmail = function (email, callback) {
-        this._findUnique({email: email.toLowerCase()}, callback);
+    UserDao.prototype.findByEmailHash = function (emailHash, callback) {
+        this._findUnique({email: emailHash}, callback);
     };
 
     UserDao.prototype.updateBanned = function (nick, isBanned, callback) {
         this._findAndModify({canonicalNick: nick.toLowerCase()}, {$set: {isBanned: isBanned}}, callback);
     };
-
 
     return new UserDao();
 });

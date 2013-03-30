@@ -79,6 +79,19 @@ define([
         }.bind(this));
     };
 
+    BaseDao.prototype._findAll = function (query, callback) {
+        this._withCollection(function (collection) {
+            var cursor = collection.find(query);
+            cursor.toArray(function (err, results) {
+                if (err) {
+                    return callback(err);
+                }
+
+                return callback(null, _.map(results, this._EntityClass.fromJSON));
+            }.bind(this));
+        }.bind(this));
+    };
+
     BaseDao.prototype._findAndModify = function (query, update, callback) {
         this._withCollection(function (collection) {
             var opts = {

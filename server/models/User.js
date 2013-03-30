@@ -16,10 +16,11 @@ define([
 ) {
     "use strict";
 
-    var User = function (id, nick, role, isBanned) {
+    var User = function (id, nick, role, emailHash, isBanned) {
         this._id = id;
         this._nick = nick;
         this._role = role;
+        this._emaiHash = emailHash;
         this._isBanned = !!isBanned;
     };
 
@@ -41,9 +42,16 @@ define([
         }
 
         var role = roles.fromString(json.role);
+
+        var emailHash = json.email;
+
+        if (!_.isString(emailHash)) {
+            throw new IllegalArgumentException("Invalid or missing field emailHash: " + JSON.stringify(json));
+        }
+
         var isBanned = json.isBanned;
 
-        return new User(id, nick, role, isBanned);
+        return new User(id, nick, role, emailHash, isBanned);
     };
 
     User.prototype.toJSON = function () {
@@ -57,12 +65,20 @@ define([
         });
     };
 
+    User.prototype.getId = function () {
+        return this._id;
+    };
+
     User.prototype.getNick = function () {
         return this._nick;
     };
 
     User.prototype.getRole = function () {
         return this._role;
+    };
+
+    User.prototype.getEmailHash = function () {
+        return this._emaiHash;
     };
 
     User.prototype.isBanned = function () {

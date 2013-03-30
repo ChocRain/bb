@@ -5,6 +5,7 @@ define([
     "underscore",
     "server/models/User",
     "server/daos/userDao",
+    "server/utils/emailHashingUtil",
     "shared/models/roles",
     "shared/exceptions/CommandException",
     "shared/exceptions/IllegalArgumentException"
@@ -12,6 +13,7 @@ define([
     _,
     User,
     userDao,
+    emailHashingUtil,
     roles,
     CommandException,
     IllegalArgumentException
@@ -21,23 +23,23 @@ define([
     var UserService = function () {
     };
 
-    UserService.prototype.findByEmail = function (email, callback) {
-        userDao.findByEmail(email, callback);
+    UserService.prototype.findByEmailHash = function (emailHash, callback) {
+        userDao.findByEmailHash(emailHash, callback);
     };
 
     UserService.prototype.findByNick = function (nick, callback) {
         userDao.findByNick(nick, callback);
     };
 
-    UserService.prototype.create = function (email, nick, callback) {
-        this.findByEmail(email, function (err, userByEmail) {
+    UserService.prototype.create = function (emailHash, nick, callback) {
+        this.findByEmailHash(emailHash, function (err, userByEmailHash) {
             if (err) {
                 return callback(err);
             }
 
-            if (userByEmail) {
+            if (userByEmailHash) {
                 return callback(new IllegalArgumentException(
-                    "User with email address already exists:" + email
+                    "User with email address already exists."
                 ));
             }
 
@@ -52,7 +54,7 @@ define([
                     ));
                 }
 
-                userDao.create(email, nick, roles.USER, callback);
+                userDao.create(emailHash, nick, roles.USER, callback);
             }.bind(this));
         }.bind(this));
     };
