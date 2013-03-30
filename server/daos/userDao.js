@@ -21,7 +21,7 @@ define([
     var UserDao = function () {
     };
 
-    UserDao.prototype = new BaseDao("user", User, 1);
+    UserDao.prototype = new BaseDao("user", User, 2);
 
     UserDao.prototype.migrate = function (callback) {
         var ensureIndices = function (indicesCallback) {
