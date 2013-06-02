@@ -16,6 +16,7 @@ define([
     "utils/dialog",
     "scenes/roomScene",
     "json!shared/definitions/rules.json",
+    "json!shared/definitions/status.json",
     "shared/exceptions/IllegalArgumentException",
     "shared/exceptions/IllegalStateException"
 ], function (
@@ -33,6 +34,7 @@ define([
     dialog,
     roomScene,
     rules,
+    status,
     IllegalArgumentException,
     IllegalStateException
 ) {
@@ -230,6 +232,13 @@ define([
                     chatLogCollection.add({
                         type: "system-out",
                         lines: payload.nick + " will no longed be ignored."
+                    });
+                },
+
+                "server.user.status": function (payload) {
+                    chatLogCollection.add({
+                        type: "system-out",
+                        lines: payload.nick + " changed status: " + status[payload.status]
                     });
                 },
 

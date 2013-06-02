@@ -51,6 +51,7 @@ define([
 
     var tNick = "nick";
     var tRule = "rule";
+    var tStatus = "status";
 
 
     // getting help
@@ -82,7 +83,15 @@ define([
         return _.contains(roleNames, userRole.getName());
     };
 
-    var help = function () {
+    var addCompletions = function (description, completions) {
+        _.each(completions, function (values, type) {
+            description = description.replace(new RegExp("\\${" + type + "}", "g"), values.join(", "));
+        });
+
+        return description;
+    };
+
+    var help = function (completions) {
         var allowedLineLength = 55;
         var maxCommandOutputLength = 0;
 
@@ -110,7 +119,10 @@ define([
             var output = commandOutput.command;
             output += stringUtil.repeat(" ", maxCommandOutputLength - len + 2);
 
-            var descriptionLines = stringUtil.toWrappedLines(commandOutput.description, allowedDescriptionLength);
+            var descriptionLines = stringUtil.toWrappedLines(
+                addCompletions(commandOutput.description, completions),
+                allowedDescriptionLength
+            );
             output += descriptionLines.join("\n" + stringUtil.repeat(" ", maxCommandOutputLength + 2));
 
             return output;
@@ -134,6 +146,13 @@ define([
         }
     };
 
+    var callback = function (fun) {
+        return function () {
+            // ignore the available completions map
+            fun.apply(this, Array.prototype.slice.call(arguments, 1));
+        };
+    };
+
     commands.push({
         name: "help",
         argTypes: [],
@@ -145,7 +164,7 @@ define([
     commands.push({
         name: "rule",
         argTypes: [tRule, tNick],
-        callback: function (rule, nick) {
+        callback: callback(function (rule, nick) {
             try {
                 clientMessageSink.sendRule(rule, nick);
             } catch (err) {
@@ -157,21 +176,21 @@ define([
                     throw err;
                 }
             }
-        },
+        }),
         description:
                 "Remind the user of the specified rule. " +
                     "This will first show a dialog informing the user you want " +
                     "him to read the rule and then open the rule in a new window. " +
-                    "The user will stay logged in.",
+                    "The user will stay logged in. <rule> may be one of: ${rule}",
         roles: [roles.MODERATOR]
     });
 
     commands.push({
         name: "rules",
         argTypes: [tNick],
-        callback: function (nick) {
+        callback: callback(function (nick) {
             handleInvalidNick(nick, clientMessageSink.sendRules);
-        },
+        }),
         description:
                 "Remind the user of the rules. " +
                     "This will first show a dialog informing the user you want " +
@@ -183,9 +202,9 @@ define([
     commands.push({
         name: "kick",
         argTypes: [tNick],
-        callback: function (nick) {
+        callback: callback(function (nick) {
             handleInvalidNick(nick, clientMessageSink.sendKick);
-        },
+        }),
         description: "Kick the user with the specified nick.",
         roles: [roles.MODERATOR]
     });
@@ -193,9 +212,9 @@ define([
     commands.push({
         name: "ban",
         argTypes: [tNick],
-        callback: function (nick) {
+        callback: callback(function (nick) {
             handleInvalidNick(nick, clientMessageSink.sendBan);
-        },
+        }),
         description: "Ban the user with the specified nick forever.",
         roles: [roles.MODERATOR]
     });
@@ -203,19 +222,29 @@ define([
     commands.push({
         name: "unban",
         argTypes: [tNick],
-        callback: function (nick) {
+        callback: callback(function (nick) {
             handleInvalidNick(nick, clientMessageSink.sendUnban);
-        },
+        }),
         description: "Unban the user with the specified nick.",
         roles: [roles.MODERATOR]
     });
 
     commands.push({
+        name: "status",
+        argTypes: [tStatus],
+        callback: callback(function (userStatus) {
+            clientMessageSink.sendUpdateStatus(userStatus);
+        }),
+        description: "Update your status. <status> may be one of: ${status}",
+        roles: [roles.USER, roles.MODERATOR]
+    });
+
+    commands.push({
         name: "ignore",
         argTypes: [tNick],
-        callback: function (nick) {
+        callback: callback(function (nick) {
             handleInvalidNick(nick, clientMessageSink.sendIgnore);
-        },
+        }),
         description: "Ingore the user with the given nick temporarily.",
         roles: [roles.USER, roles.MODERATOR]
     });
@@ -223,9 +252,9 @@ define([
     commands.push({
         name: "unignore",
         argTypes: [tNick],
-        callback: function (nick) {
+        callback: callback(function (nick) {
             handleInvalidNick(nick, clientMessageSink.sendUnignore);
-        },
+        }),
         description: "Stop ingoring the user with the given nick.",
         roles: [roles.USER, roles.MODERATOR]
     });
@@ -288,7 +317,7 @@ define([
             return command ? command.argTypes : null;
         },
 
-        exec: function (commandStr) {
+        exec: function (commandStr, completions) {
             var parseResult = parse(commandStr);
             var commandName = parseResult.commandName;
             var args = parseResult.args;
@@ -302,7 +331,7 @@ define([
                 return error("Wrong number of parameters. Usage: " + usage(command));
             }
 
-            command.callback.apply(this, args);
+            command.callback.apply(this, [completions].concat(args));
         }
     };
 });

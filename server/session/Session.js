@@ -90,6 +90,14 @@ define([
         this.set("ignoreList", ignoreList);
     };
 
+    Session.prototype.getStatus = function () {
+        return this.get("status");
+    };
+
+    Session.prototype.setStatus = function (status) {
+        this.set("status", status);
+    };
+
     return Session;
 });
 

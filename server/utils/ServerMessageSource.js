@@ -207,6 +207,13 @@ define([
                 }
             },
 
+            "client.user.status": {
+                roles: [roles.USER, roles.MODERATOR],
+                callback: function (payload) {
+                    userService.updateStatus(session, payload.status, handleError);
+                }
+            },
+
             "client.room.list": {
                 roles: [roles.USER, roles.MODERATOR],
                 callback: function () {

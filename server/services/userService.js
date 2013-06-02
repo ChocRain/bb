@@ -4,17 +4,21 @@
 define([
     "underscore",
     "server/models/User",
+    "server/services/roomService",
     "server/daos/userDao",
     "server/utils/emailHashingUtil",
     "shared/models/roles",
+    "json!shared/definitions/status.json",
     "shared/exceptions/CommandException",
     "shared/exceptions/IllegalArgumentException"
 ], function (
     _,
     User,
+    roomService,
     userDao,
     emailHashingUtil,
     roles,
+    statusDefinitions,
     CommandException,
     IllegalArgumentException
 ) {
@@ -117,6 +121,20 @@ define([
 
             callback(null, nickToUnignore);
         });
+    };
+
+    UserService.prototype.updateStatus = function (session, status, callback) {
+        if (!statusDefinitions[status]) {
+            return callback(new CommandException("Invalid status: " + status));
+        }
+
+        var currentStatus = session.getStatus();
+        if (currentStatus === status) {
+            return callback(new CommandException("You already have that status set: " + status));
+        }
+
+        session.setStatus(status);
+        roomService.sendStatusUpdate(session, status, callback);
     };
 
     return new UserService();

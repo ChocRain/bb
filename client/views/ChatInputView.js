@@ -10,6 +10,7 @@ define([
     "shared/utils/validator",
     "shared/exceptions/ValidationException",
     "json!shared/definitions/rules.json",
+    "json!shared/definitions/status.json",
     "utils/InputCompletor",
     "collections/chatRoomMembersCollection",
     "models/userSession",
@@ -24,6 +25,7 @@ define([
     validator,
     ValidationException,
     rules,
+    status,
     InputCompletor,
     chatRoomMembersCollection,
     userSession,
@@ -32,9 +34,12 @@ define([
 ) {
     "use strict";
 
-    var ruleNames = _.map(rules.dos.concat(rules.donts), function (rule) {
-        return rule.tag;
-    });
+    var staticCompletions = {
+        "rule": _.map(rules.dos.concat(rules.donts), function (rule) {
+            return rule.tag;
+        }),
+        "status": _.keys(status)
+    };
 
     var ChatInputView = BaseView.extend({
         className: "chat-input-view view",
@@ -86,6 +91,7 @@ define([
                     }
 
                     switch (completionType) {
+
                     case "nick":
                         // Always complete nicks for now.
                         var nicksInRoom = chatRoomMembersCollection.map(function (memberModel) {
@@ -97,8 +103,13 @@ define([
                         }), function (nick) {
                             return nick.toLowerCase();
                         });
+
                     case "rule":
-                        return ruleNames;
+                        return staticCompletions.rule;
+
+                    case "status":
+                        return staticCompletions.status;
+
                     }
 
                     return [];
@@ -117,7 +128,7 @@ define([
             var text = $text.val().trim();
 
             if (commands.isCommand(text)) {
-                commands.exec(text);
+                commands.exec(text, staticCompletions);
                 $text.val("");
                 return;
             }

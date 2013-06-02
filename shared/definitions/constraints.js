@@ -21,6 +21,7 @@ define([
 
     // users
     var nickConstraints = nameConstraints;
+    var statusConstraints = nameConstraints;
 
 
     // rooms
@@ -113,6 +114,10 @@ define([
 
         "client.user.unignore": {
             nick: nickConstraints
+        },
+
+        "client.user.status": {
+            status: statusConstraints
         },
 
         "client.room.list": {

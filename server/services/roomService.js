@@ -198,6 +198,24 @@ define([
         }.bind(this));
     };
 
+    RoomService.prototype.sendStatusUpdate = function (session, status, callback) {
+        var nick = session.getUser().getNick();
+        this.findByNick(nick, function (err, rooms) {
+            if (err) {
+                return callback(err);
+            }
+
+            _.each(rooms, function (room) {
+                this._withEachMembersMessageSink(room, function (messageSink, next) {
+                    messageSink.sendStatusUpdate(nick, status);
+                    next(null);
+                }.bind(this), callback);
+            }.bind(this));
+
+            callback(null);
+        }.bind(this));
+    };
+
     RoomService.prototype.moveMember = function (session, roomName, position, callback) {
         this._withRoomMemberIsIn(session, roomName, function (err, room, nick) {
             if (err) {

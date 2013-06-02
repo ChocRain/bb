@@ -221,6 +221,16 @@ define([
         });
     };
 
+    /**
+     * Send a message notifying about a status update of an user.
+     */
+    ServerMessageSink.prototype.sendStatusUpdate = function (nick, status) {
+        this._messageDispatcher.send("server.user.status", {
+            nick: nick,
+            status: status
+        });
+    };
+
     return ServerMessageSink;
 });
 

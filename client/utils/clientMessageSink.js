@@ -100,6 +100,15 @@ define([
         },
 
         /**
+         * Send a message to update the user status.
+         */
+        sendUpdateStatus: function (status) {
+            messageDispatcher.send("client.user.status", {
+                status: status
+            });
+        },
+
+        /**
          * Request the current list of rooms.
          */
         sendGetRooms: function () {
