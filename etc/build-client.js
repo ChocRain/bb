@@ -7,8 +7,8 @@
         shared: "../shared",
 
         jquery: "empty:",
-        json: "../shared/libs/json-0.3.0",
-        text: "../shared/libs/text-2.0.3",
+        json: "../shared/libs/json-0.3.1",
+        text: "../shared/libs/text-2.0.6",
 
         _socketio: "empty:",
         _underscore: "libs/underscore-amd-1.4.3-min"
