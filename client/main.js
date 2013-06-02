@@ -18,7 +18,7 @@ require.config({
 
 // wrapper modules for keeping the global namespace clean
 
-define("backbone", ["_underscore", "libs/backbone-amd-1.0.0-min", "libs/jquery.caret.1.02.min"], function () {
+define("backbone", ["_underscore", "libs/backbone-amd-1.0.0-min", "libs/jquery.caret-1.2.0"], function () {
     "use strict";
 
     // this is dirty, but doesn't seem to work otherwise...

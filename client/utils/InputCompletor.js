@@ -39,7 +39,7 @@ define([
 
     InputCompleter.prototype._complete = function () {
         // decide wether to cycle or to start a new completion 
-        var caretPos = this._$input.caret().start;
+        var caretPos = this._$input.caret();
         var text = this._$input.val();
         this._shallCycle =
             this._shallCycle && caretPos === this._expectedCarretPos && text === this._expectedText;
