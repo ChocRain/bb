@@ -55,16 +55,24 @@ define([
             console.log("Public URL is:", config.http.publicBaseUrl);
         });
 
-        // basic authentication to keep public out for now
-        var auth = function (req, res, next) {
-            next();
-        };
+        // redirect HTTP traffic to use HTTPS
 
-        if (config.http.isBasicAuthEnabled) {
-            auth = express.basicAuth(config.http.user, config.http.password);
+        if (config.http.isEnforceHttpsEnabled) {
+            app.use(function (req, res, next) {
+                if (req.headers["x-forwarded-proto"] !== "https") {
+                    var newUrl = config.http.publicBaseUrl + req.url;
+                    res.redirect(newUrl);
+                } else {
+                    next(); // we're on HTTPS, so we don't redirect
+                }
+            });
         }
 
-        app.use(auth);
+        // basic authentication to keep public out for now
+
+        if (config.http.isBasicAuthEnabled) {
+            app.use(express.basicAuth(config.http.user, config.http.password));
+        }
 
         // compression
 

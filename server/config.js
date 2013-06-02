@@ -26,6 +26,7 @@ define([
     var protocol = process.env.PROTOCOL || "http";
     var publicHostname = process.env.PUBLIC_HOSTNAME || "localhost";
     var publicPort = process.env.PUBLIC_PORT || port;
+    var isEnforceHttpsEnabled = protocol === "https";
 
     var publicBaseUrl = protocol + "://" + publicHostname;
     if (!((publicPort === "80" && protocol === "http") ||
@@ -66,7 +67,8 @@ define([
             port: port,
             user: isBasicAuthEnabled ? user : null,
             password: isBasicAuthEnabled ? password : null,
-            isBasicAuthEnabled: isBasicAuthEnabled
+            isBasicAuthEnabled: isBasicAuthEnabled,
+            isEnforceHttpsEnabled: isEnforceHttpsEnabled
         },
 
         db: {
