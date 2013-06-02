@@ -11,7 +11,7 @@
         text: "../shared/libs/text-2.0.6",
 
         _socketio: "empty:",
-        _underscore: "libs/underscore-amd-1.4.3-min"
+        _underscore: "libs/underscore-amd-1.4.4-min"
     }
 })
 

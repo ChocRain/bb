@@ -12,13 +12,13 @@ require.config({
 
         // Internal modules that will be wrapped. Do never use directly!
         "_socketio": "/socket.io/socket.io",
-        "_underscore": "libs/underscore-amd-1.4.3-min"
+        "_underscore": "libs/underscore-amd-1.4.4-min"
     }
 });
 
 // wrapper modules for keeping the global namespace clean
 
-define("backbone", ["_underscore", "libs/backbone-amd-0.9.10-min", "libs/jquery.caret.1.02.min"], function () {
+define("backbone", ["_underscore", "libs/backbone-amd-1.0.0-min", "libs/jquery.caret.1.02.min"], function () {
     "use strict";
 
     // this is dirty, but doesn't seem to work otherwise...
@@ -41,7 +41,7 @@ define("crafty", ["libs/crafty-0.5.3-min"], function () {
     return Crafty;
 });
 
-define("moment", ["libs/moment-1.7.2-min"], function () {
+define("moment", ["libs/moment-2.0.0-min"], function () {
     "use strict";
 
     var moment = window.moment;

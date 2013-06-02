@@ -3,7 +3,7 @@
  */
 define([
     "underscore",
-    "libs/spin-1.2.7-min"
+    "libs/spin-1.3.0-min"
 ], function (
     _,
     Spinner
