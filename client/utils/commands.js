@@ -9,7 +9,8 @@ define([
     "collections/chatLogCollection",
     "utils/clientMessageSink",
     "shared/exceptions/IllegalArgumentException",
-    "shared/exceptions/ValidationException"
+    "shared/exceptions/ValidationException",
+    "utils/fullscreen"
 ], function (
     _,
     userSession,
@@ -18,7 +19,8 @@ define([
     chatLogCollection,
     clientMessageSink,
     IllegalArgumentException,
-    ValidationException
+    ValidationException,
+    fullscreen
 ) {
     "use strict";
 
@@ -258,6 +260,18 @@ define([
         description: "Stop ingoring the user with the given nick.",
         roles: [roles.USER, roles.MODERATOR]
     });
+
+    if (fullscreen.isSupported) {
+        commands.push({
+            name: "fullscreen",
+            argTypes: [],
+            callback: callback(function () {
+                fullscreen.toggle();
+            }),
+            description: "Toggle fullscreen mode.",
+            roles: [roles.USER, roles.MODERATOR]
+        });
+    }
 
     var commandsByName = {};
     _.each(commands, function (command) {
