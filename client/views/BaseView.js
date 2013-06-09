@@ -5,14 +5,14 @@ define([
     "underscore",
     "backbone",
     "moment",
-    "crafty",
-    "shared/exceptions/IllegalArgumentException"
+    "shared/exceptions/IllegalArgumentException",
+    "hacks/craftyInput"
 ], function (
     _,
     Backbone,
     moment,
-    Crafty,
-    IllegalArgumentException
+    IllegalArgumentException,
+    craftyInput
 ) {
     "use strict";
 
@@ -45,16 +45,7 @@ define([
 
             this.$el.html(_.template(this.template, viewModel));
 
-            // Hack to allow usage of input fields, as Crafty will handle all keyboard events otherwise.
-            this.$("input").focus(function () {
-                Crafty.removeEvent(this, "keydown", Crafty.keyboardDispatch);
-                Crafty.removeEvent(this, "keyup", Crafty.keyboardDispatch);
-            });
-
-            this.$("input").blur(function () {
-                Crafty.addEvent(this, "keydown", Crafty.keyboardDispatch);
-                Crafty.addEvent(this, "keyup", Crafty.keyboardDispatch);
-            });
+            craftyInput.applyHack(this.$("input"));
 
             if (this.initialFocus) {
                 // Hopefully focus after view being put into DOM.
