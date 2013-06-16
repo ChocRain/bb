@@ -45,15 +45,19 @@ define([
         className: "chat-input-view view",
         template: Template,
 
-        initialFocus: "input[name=text]",
-
         events: {
+            "click form": "doFocus",
             "submit form": "sendChatMessage"
+        },
+
+        doFocus: function (e) {
+            this.$("input[name=text]").focus();
         },
 
         render: function (opts) {
             opts = opts || {};
             opts.viewModel = opts.viewModel || {};
+            opts.viewModel.nick = userSession.getUser().getNick();
             opts.viewModel.constraints = validator.getConstraints("client.room.message");
 
             BaseView.prototype.render.call(this, opts);

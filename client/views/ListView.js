@@ -42,6 +42,8 @@ define([
             var view = this.createItemView(model);
             this.$el.append(view.render().el);
             this._itemViewsByClientId[model.cid] = view;
+
+            return view;
         },
 
         remove: function (model) {

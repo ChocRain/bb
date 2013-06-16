@@ -2,11 +2,13 @@
  * View for the chat log.
  */
 define([
+    "underscore",
     "views/ListView",
     "views/ChatLogEntryView",
     "collections/chatLogCollection",
     "utils/windowHelper"
 ], function (
+    _,
     ListView,
     ChatLogEntryView,
     chatLogCollection,
@@ -27,7 +29,9 @@ define([
         },
 
         createItemView: function (model) {
-            return new ChatLogEntryView({model: model});
+            var view = new ChatLogEntryView({model: model});
+            view.$el.toggleClass("invisible", true);
+            return view;
         },
 
         handleScroll: function (e) {
@@ -36,7 +40,11 @@ define([
         },
 
         add: function (model) {
-            ListView.prototype.add.call(this, model);
+            var view = ListView.prototype.add.call(this, model);
+
+            _.defer(function () {
+                view.$el.toggleClass("invisible", false);
+            }.bind(this));
 
             if (this._hasBeenRendered && this._autoScroll) {
                 // scroll chat log

@@ -1,4 +1,7 @@
 <form action="#" method="post">
-    <input name="text" type="text" autocomplete="off" maxlength="<%- constraints.text.maxLength %>" />
+    <div class="nick"><%- nick %></div>
+    <div class="input-wrapper">
+        <input name="text" type="text" autocomplete="off" maxlength="<%- constraints.text.maxLength %>" placeholder="Write a message..." />
+    </div>
     <button type="submit">Send</button>
 </form>

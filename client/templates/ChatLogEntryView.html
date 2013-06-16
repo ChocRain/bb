@@ -1,5 +1,4 @@
-<span class="chat-log-entry-type-<%- model.type %>">
-    <span class="chat-log-entry-date">[<%- r.time(model.date) %>]</span>
+<div class="chat-log-entry-type-<%- model.type %>">
     <% switch(model.type) {
         case "entered": %>
             <span class="chat-log-entry-nick <%- model.user.getRole().getName() %>"><%- model.user.getNick() %></span>
@@ -12,7 +11,7 @@
         <% break; %>
         
         <% case "message": %>
-            <span class="chat-log-entry-nick <%- model.user.getRole().getName() %>"><%- model.user.getNick() %></span>:
+            <span class="chat-log-entry-nick <%- model.user.getRole().getName() %>"><%- model.user.getNick() %></span>
             <span class="chat-log-entry-text"><%- model.text %></span>
         <% break; %>
 
@@ -24,4 +23,5 @@
             <span class="chat-log-entry-message"><%- model.lines %></span>
         <% break;
     } %>
-</span>
+</div>
+<div class="chat-log-entry-date"><%- r.time(model.date) %></div>
