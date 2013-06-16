@@ -12,6 +12,7 @@ NODE_MODULES_DIR=$REPO_DIR/node_modules
 
 # binaries
 
+CSSLINT=$NODE_MODULES_DIR/csslint/cli.js
 JSLINT=$NODE_MODULES_DIR/jslint/bin/jslint.js
 
 
@@ -25,6 +26,26 @@ mkdir $BUILD_DIR || exit 1
 
 npm install
 
+
+# check CSS
+
+TMP=$(mktemp)
+$CSSLINT \
+    --quiet \
+    --ignore=adjoining-classes,outline-none,box-sizing,known-properties,ids,box-model \
+    htdocs/css/style.css \
+    > $TMP
+EXIT_CODE=$?
+
+TMP_SIZE=$(du $TMP | grep -o '^[0-9]\+')
+
+if [ $EXIT_CODE -ne 0 ] || [ $TMP_SIZE -gt 0 ]; then
+    cat $TMP
+    rm -f $TMP
+    exit 1
+fi
+
+rm -f $TMP
 
 # check JS files
 

@@ -6,7 +6,7 @@
     -webkit-border-radius: 3px;
     -moz-border-radius: 3px;
     border-radius: 3px;
-    background-color: white;
+    background-color: #ffffff;
     border: 2px solid #EE3F96;
 }
 
@@ -20,13 +20,13 @@
 html, body {
     scrollbar-highlight-color: #EE3F96;
 
-    scrollbar-arrow-color: white;
+    scrollbar-arrow-color: #ffffff;
     scrollbar-shadow-color: #EE3F96;
-    scrollbar-track-color: white;
+    scrollbar-track-color: #ffffff;
     scrollbar-face-color: #EE3F96;
     scrollbar-3dlight-color: #EE3F96;
 
-    scrollbar-darkshadow-color: white;
+    scrollbar-darkshadow-color: #ffffff;
 }
 
 body {
@@ -49,100 +49,80 @@ body {
     box-sizing: border-box;
 }
 
-#border_top {
+.horizontal-screen-border {
     position: absolute;
-    top: 0;
-    left: 0;
     background-image: url(/img/ui/screen_border_horizontal.png);
     background-repeat: repeat-x;
-    background-position: 0px 0px;
+    left: 0;
     width: 100%;
     height: 20px;
     z-index: 1000;
 }
 
-#border_bottom {
-    position: absolute;
-    bottom: 0;
-    left: 0;
-    background-image: url(/img/ui/screen_border_horizontal.png);
-    background-repeat: repeat-x;
-    background-position: 0px -20px;
-    width: 100%;
-    height: 20px;
-    z-index: 1000;
+.horizontal-screen-border.top {
+    top: 0;
+    background-position: 0 0;
 }
 
-#border_left {
+.horizontal-screen-border.bottom {
+    bottom: 0;
+    background-position: 0 -20px;
+}
+
+.vertical-screen-border {
     position: absolute;
     top: 0;
-    left: 0;
     background-image: url(/img/ui/screen_border_vertical.png);
     background-repeat: repeat-y;
-    background-position: 0px 0px;
     width: 20px;
     height: 100%;
     z-index: 1000;
 }
 
-#border_right {
-    position: absolute;
-    top: 0;
-    right: 0;
-    background-image: url(/img/ui/screen_border_vertical.png);
-    background-repeat: repeat-y;
-    background-position: -20px 0px;
-    width: 20px;
-    height: 100%;
-    z-index: 1000;
+.vertical-screen-border.left {
+    left: 0;
+    background-position: 0 0;
 }
 
-#border_corner_top_left {
+.vertical-screen-border.right {
+    right: 0;
+    background-position: -20px 0;
+}
+
+.sprite {
+    background-image: url(/img/ui/sprites.png);
+    background-repeat: no-repeat;
+}
+
+.screen-border-corner {
     position: absolute;
+    z-index: 1000;
+    width: 32px;
+    height: 32px;
+}
+
+.screen-border-corner.top-left {
     top: 0;
     left: 0;
-    z-index: 1000;
-    background-image: url(/img/ui/sprites.png);
-    background-repeat: no-repeat;
-    background-position: 0px 0px;
-    width: 32px;
-    height: 32px;
+    background-position: 0 0;
 }
 
-#border_corner_top_right {
-    position: absolute;
+.screen-border-corner.top-right {
     top: 0;
     right: 0;
-    z-index: 1000;
-    background-image: url(/img/ui/sprites.png);
-    background-repeat: no-repeat;
-    background-position: -32px 0px;
-    width: 32px;
-    height: 32px;
+    background-position: -32px 0;
 }
 
-#border_corner_bottom_left {
-    position: absolute;
+.screen-border-corner.bottom-left {
     bottom: 0;
     left: 0;
-    z-index: 1000;
-    background-image: url(/img/ui/sprites.png);
-    background-repeat: no-repeat;
-    background-position: 0px -32px;
-    width: 32px;
-    height: 32px;
+    background-position: 0 -32px;
 }
 
-#border_corner_bottom_right {
-    position: absolute;
+.screen-border-corner.bottom-right {
     bottom: 0;
     right: 0;
-    z-index: 1000;
-    background-image: url(/img/ui/sprites.png);
-    background-repeat: no-repeat;
     background-position: -32px -32px;
-    width: 32px;
-    height: 32px;
 }
 
 button, input {
@@ -173,9 +153,10 @@ h2 {
 
 h3 {
     margin-top: 25px;
+    text-align: left;
 }
 
-h3, h4 {
+h4 {
     text-align: left;
 }
 
@@ -222,7 +203,7 @@ label {
 
 .button,
 button {
-    background-color: white;
+    background-color: #ffffff;
     border: 1px solid #EE3F96;
 
     height: 22px;
@@ -234,11 +215,11 @@ button {
 }
 
 .button.loading.disabled {
-    color: white;
+    color: #ffffff;
 }
 
 input[type=text] {
-    background-color: white;
+    background-color: #ffffff;
     border: 1px solid #EE3F96;
 
     height: 22px;
@@ -248,10 +229,7 @@ input[type=text] {
 .button.disabled,
 button:disabled,
 input[type=text]:disabled {
-    color: lightgrey;
-}
-
-.view {
+    color: #D3D3D3;
 }
 
 /* TODO: Generalize login dialog. */
@@ -273,10 +251,10 @@ input[type=text]:disabled {
 .dialog-view .modal,
 .login-view .modal,
 .static-content {
-    margin: 0px auto;
+    margin: 0 auto;
     padding: 20px;
 
-    background-color: white;
+    background-color: #ffffff;
     border: 2px solid #EE3F96;
 
     text-align: center;
@@ -354,7 +332,7 @@ input[type=text]:disabled {
 
 li.chat-log-entry-view {
     list-style: none;
-    margin: 0px 0px 10px 10px;
+    margin: 0 0 10px 10px;
     width: 266px;
     border: 2px solid #EE3F96;
     -webkit-border-radius: 4px;
@@ -423,7 +401,7 @@ li.chat-log-entry-view {
 
 .chat-input {
     position: absolute;
-    bottom: 0px;
+    bottom: 0;
     width: 100%;
     height: 60px;
 }
@@ -468,6 +446,9 @@ li.chat-log-entry-view {
     margin: 0;
     line-height: 25px;
     border: none;
+}
+
+.chat-input-view input[name=text]:focus {
     outline: none;
 }
 
@@ -511,7 +492,7 @@ li.chat-log-entry-view {
     position: absolute;
 
     border: 1px solid #EE3F96;
-    background-color: white;
+    background-color: #ffffff;
 
     padding: 2px;
 }
@@ -535,10 +516,10 @@ li.chat-log-entry-view {
 .avatar-selector-view {
     width: 100%;
     height: 100%;
-    overflow-hidden;
+    overflow: hidden;
     overflow-y: auto;
-    margin: 0px;
-    padding: 0px;
+    margin: 0;
+    padding: 0;
 }
 
 /*
@@ -575,7 +556,7 @@ li.chat-room-members-list-item-view {
 }
 
 .avatar-nick {
-    color: white;
+    color: #ffffff;
     background-color: #EE3F96;
     padding: 3px 5px;
 
@@ -603,17 +584,17 @@ li.chat-room-members-list-item-view {
     right: 20px;
 }
 
-li.avatar-view {
+.avatar-view {
     list-style: none;
     float: left;
-    margin: 0px;
-    padding: 0px;
+    margin: 0;
+    padding: 0;
 }
 
 .avatar-selector-image {
     background-repeat: no-repeat;
     margin: 10px;
-    padding: 0px;
+    padding: 0;
     border: 1px solid #EE3F96;
     cursor: pointer;
 
